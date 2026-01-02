@@ -37,26 +37,26 @@
             <span class="font-bold uppercase tracking-wider">{{ ucfirst($role) }} Login</span>
         </div>
 
-        <form action="#" class="space-y-5">
-            <div>
-                <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
-                <input type="email" class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" placeholder="Enter your email">
-            </div>
-            <div>
-                <label class="text-xs font-bold text-gray-400 uppercase">Password</label>
-                <input type="password" class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" placeholder="Enter your password">
-            </div>
-            
-            <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-lg hover:bg-[#660000] transition shadow-lg mb-3">
-                Login
-            </button>
-            
-            <a href="{{ route('login') }}" 
-               class="block w-full text-center py-3 border-2 border-[#800000]/20 bg-white text-[#800000] font-bold rounded-lg transition-all duration-300 
-                      hover:bg-[#FFB800] hover:text-[#800000] hover:border-[#FFB800] shadow-sm text-sm uppercase tracking-tight">
-                Back to Role Selection
-            </a>
-        </form>
+        <form action="{{ route('login.process', $role) }}" method="POST" class="space-y-5">
+    @csrf <div>
+        <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
+        <input type="email" name="email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" placeholder="Enter your email">
+    </div>
+    
+    <div>
+        <label class="text-xs font-bold text-gray-400 uppercase">Password</label>
+        <input type="password" name="password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" placeholder="Enter your password">
+    </div>
+    
+    <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-lg hover:bg-[#660000] transition shadow-lg mb-3">
+        Login
+    </button>
+    
+    <a href="{{ route('login') }}" 
+       class="block w-full text-center py-3 border-2 border-[#800000]/20 bg-white text-[#800000] font-bold rounded-lg transition-all duration-300 hover:bg-[#FFB800] hover:text-[#800000] hover:border-[#FFB800] shadow-sm text-sm uppercase tracking-tight">
+        Back to Role Selection
+    </a>
+</form>
 
         <div class="mt-6 text-center">
             <a href="{{ route('home') }}" class="text-gray-400 hover:text-[#800000] text-xs font-medium transition flex items-center justify-center">

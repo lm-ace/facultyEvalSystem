@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,3 +30,19 @@ Route::get('/login', function () {
 Route::get('/login/{role}', function ($role) {
     return view('auth.login-form', ['role' => $role]);
 })->name('login.role');
+
+Route::get('/faculty/dashboard', function () {
+    return view('faculty.dashboard');
+})->name('faculty.dashboard');
+
+Route::post('/login/process/{role}', function (Request $request, $role) {
+  
+
+    if ($role === 'faculty') {
+        return redirect()->route('faculty.dashboard');
+    } elseif ($role === 'admin') {
+        return redirect('/admin/dashboard'); 
+    } else {
+        return redirect('/'); 
+    }
+})->name('login.process');
