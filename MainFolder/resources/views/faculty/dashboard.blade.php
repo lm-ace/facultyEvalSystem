@@ -84,14 +84,17 @@
             </div>
 
             <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10 pb-10 border-b border-gray-100">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10 pb-10 border-b border-gray-100">
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Faculty ID</p>
+                        <p class="text-lg font-bold text-[#800000]">2024-FAC-0012</p> </div>
                     <div class="space-y-1">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Faculty Name</p>
                         <p class="text-lg font-bold text-gray-800">Prof. Juan Dela Cruz, PhD</p>
                     </div>
                     <div class="space-y-1">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Department</p>
-                        <p class="text-lg font-bold text-gray-800">College of Computer Science</p>
+                        <p class="text-lg font-bold text-gray-800">College of Computer and Information Sciences</p>
                     </div>
                     <div class="space-y-1">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Review Period</p>
@@ -214,20 +217,21 @@
             // Report Title
             doc.setFontSize(16); doc.text("EduRate Faculty Evaluation Report", 105, 58, { align: 'center' });
 
-            // Faculty Details Section
+            // Faculty Details Section with Faculty ID included
             doc.setTextColor(0, 0, 0); doc.setFontSize(11);
-            doc.text("Faculty Name:", 20, 75); doc.setFont("helvetica", "normal"); doc.text("Prof. Juan Dela Cruz, PhD", 60, 75);
-            doc.setFont("helvetica", "bold"); doc.text("Department:", 20, 83); doc.setFont("helvetica", "normal"); doc.text("College of Computer Science", 60, 83);
-            doc.setFont("helvetica", "bold"); doc.text("Review Period:", 20, 91); doc.setFont("helvetica", "normal"); doc.text("First Semester | 2025-2026", 60, 91);
-            doc.line(20, 100, 190, 100);
+            doc.text("Faculty ID:", 20, 75); doc.setFont("helvetica", "normal"); doc.text("2024-FAC-0012", 60, 75);
+            doc.setFont("helvetica", "bold"); doc.text("Faculty Name:", 20, 83); doc.setFont("helvetica", "normal"); doc.text("Prof. Juan Dela Cruz, PhD", 60, 83);
+            doc.setFont("helvetica", "bold"); doc.text("Department:", 20, 91); doc.setFont("helvetica", "normal"); doc.text("College of Computer Science", 60, 91);
+            doc.setFont("helvetica", "bold"); doc.text("Review Period:", 20, 99); doc.setFont("helvetica", "normal"); doc.text("First Semester | 2025-2026", 60, 99);
+            doc.line(20, 108, 190, 108);
 
-            doc.setFont("helvetica", "bold"); doc.text("Overall Rating:", 20, 110);
-            doc.setFont("helvetica", "normal"); doc.text("4.85 / 5.0", 60, 110);
-            doc.setFont("helvetica", "bold"); doc.text("Student Feedback:", 20, 120);
+            doc.setFont("helvetica", "bold"); doc.text("Overall Rating:", 20, 118);
+            doc.setFont("helvetica", "normal"); doc.text("4.85 / 5.0", 60, 118);
+            doc.setFont("helvetica", "bold"); doc.text("Student Feedback:", 20, 128);
 
-            // Feedback Entries (sample data)
+            // Feedback Entries
             doc.autoTable({
-                startY: 125, margin: { left: 20, right: 20 }, theme: 'plain',
+                startY: 133, margin: { left: 20, right: 20 }, theme: 'plain',
                 styles: { cellPadding: 4, fontSize: 9, font: 'helvetica', lineColor: [220, 220, 220], lineWidth: 0.1 },
                 body: [
                     ["The professor provides very clear examples and is approachable."],
@@ -236,7 +240,6 @@
                 ],
             });
 
-            // Save for View & Automatic Download
             generatedPDFBlob = doc.output('bloburl');
             doc.save('Faculty_Evaluation_Report_2025.pdf');
 

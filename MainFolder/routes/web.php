@@ -46,3 +46,14 @@ Route::post('/login/process/{role}', function (Request $request, $role) {
         return redirect('/'); 
     }
 })->name('login.process');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () { return view('admin.dashboard'); })->name('dashboard');
+    Route::get('/departments', function () { return view('admin.departments.index'); })->name('departments');
+    Route::get('/criteria', function () { return view('admin.criteria'); })->name('criteria');
+    Route::get('/reports', function () { return view('admin.reports'); })->name('reports');
+});
+
+Route::get('/admin/sections/{section_code}', function ($section_code) {
+    return view('admin.section-detail', ['section' => $section_code]);
+})->name('admin.section.detail');
