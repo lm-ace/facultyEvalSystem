@@ -38,25 +38,38 @@
         </div>
 
         <form action="{{ route('login.process', $role) }}" method="POST" class="space-y-5">
-    @csrf <div>
-        <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
-        <input type="email" name="email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" placeholder="Enter your email">
-    </div>
-    
-    <div>
-        <label class="text-xs font-bold text-gray-400 uppercase">Password</label>
-        <input type="password" name="password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" placeholder="Enter your password">
-    </div>
-    
-    <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-lg hover:bg-[#660000] transition shadow-lg mb-3">
-        Login
-    </button>
-    
-    <a href="{{ route('login') }}" 
-       class="block w-full text-center py-3 border-2 border-[#800000]/20 bg-white text-[#800000] font-bold rounded-lg transition-all duration-300 hover:bg-[#FFB800] hover:text-[#800000] hover:border-[#FFB800] shadow-sm text-sm uppercase tracking-tight">
-        Back to Role Selection
-    </a>
-</form>
+            @csrf 
+            
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
+                <input type="email" name="email" required 
+                    class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" 
+                    placeholder="Enter your email">
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase">Password</label>
+                <div class="relative">
+                    <input id="password" type="password" name="password" required 
+                        class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none pr-12" 
+                        placeholder="Enter your password">
+                    
+                    <button type="button" onclick="togglePasswordVisibility()" 
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#800000] focus:outline-none">
+                        <i id="eyeIcon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-lg hover:bg-[#660000] transition shadow-lg mb-3">
+                Login
+            </button>
+            
+            <a href="{{ route('login') }}" 
+               class="block w-full text-center py-3 border-2 border-[#800000]/20 bg-white text-[#800000] font-bold rounded-lg transition-all duration-300 hover:bg-[#FFB800] hover:text-[#800000] hover:border-[#FFB800] shadow-sm text-sm uppercase tracking-tight">
+                Back to Role Selection
+            </a>
+        </form>
 
         <div class="mt-6 text-center">
             <a href="{{ route('home') }}" class="text-gray-400 hover:text-[#800000] text-xs font-medium transition flex items-center justify-center">
@@ -69,4 +82,23 @@
         Copyright © {{ date('Y') }} | EduRate, Polytechnic University of the Philippines - Main Campus
     </div>
 </div>
+
+<script>
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            // Change icon to eye-slash
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            // Change icon back to eye
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+</script>
 @endsection
