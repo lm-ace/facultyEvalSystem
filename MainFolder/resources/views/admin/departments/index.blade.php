@@ -31,11 +31,13 @@
         <a href="{{ route('admin.departments') }}" class="flex items-center text-[#800000] border-b-2 border-[#800000] pb-1 transition-all">
             <i class="fa-solid fa-sitemap mr-2"></i> Departments
         </a>
-        <a href="#" class="text-gray-400 hover:text-[#800000] pb-1 transition-all">
-            <i class="fa-solid fa-list-check mr-2"></i> Criteria
-        </a>
-        <a href="#" class="text-gray-400 hover:text-[#800000] pb-1 transition-all">
-            <i class="fa-solid fa-file-contract mr-2"></i> Reports
+        <a href="{{ route('admin.criteria') }}" class="flex items-center text-gray-400 hover:text-[#800000] pb-1 transition-all">
+    <i class="fa-solid fa-list-check mr-2"></i> Criteria
+</a>
+<a href="{{ route('admin.reports') }}" class="flex items-center text-gray-400 hover:text-[#800000] pb-1 transition-all">
+    <i class="fa-solid fa-file-contract mr-2"></i> Reports
+</a>
+            
         </a>
     </div>
 </div>

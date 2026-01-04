@@ -15,16 +15,32 @@
         </div>
     </div>
     
-    <div class="hidden md:flex items-center space-x-6">
-        <button type="button" onclick="showLogoutModal()" class="bg-white/10 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-white/20 transition flex items-center border border-white/20">
-            <i class="fa-solid fa-right-from-bracket mr-2"></i> Log Out
+    <div class="flex items-center relative">
+        <button type="button" onclick="toggleDropdown()" id="userMenuBtn" class="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 transition-all focus:outline-none">
+            <i class="fa-solid fa-circle-user text-2xl text-white"></i>
         </button>
+
+        <div id="userDropdown" class="hidden absolute right-0 top-full mt-3 w-56 bg-white rounded-2xl shadow-2xl py-2 z-[60] border border-gray-100 transform origin-top-right transition-all">
+            <div class="px-5 py-3 border-b border-gray-50">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Faculty Portal</p>
+                <p class="text-sm font-bold text-[#800000] truncate">Prof. Juan Dela Cruz, PhD</p>
+            </div>
+            
+            <div class="p-1">
+                <button onclick="showChangePasswordModal()" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl flex items-center transition group">
+                    <i class="fa-solid fa-key mr-3 text-gray-400 group-hover:text-[#800000] transition-colors"></i> Change Password
+                </button>
+                <hr class="my-1 border-gray-50">
+                <button onclick="showLogoutModal()" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl flex items-center font-semibold transition">
+                    <i class="fa-solid fa-right-from-bracket mr-3"></i> Log Out
+                </button>
+            </div>
+        </div>
     </div>
 </nav>
 
 <main class="pt-24 pb-16 bg-gray-50 min-h-screen">
     <div class="container mx-auto px-6 max-w-6xl">
-        
         <div class="bg-white p-8 rounded-2xl shadow-sm border-l-8 border-[#800000] mb-8">
             <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome, Professor Juan Dela Cruz, PhD!</h2>
             <div class="space-y-4 text-gray-600 leading-relaxed text-sm md:text-base">
@@ -63,7 +79,6 @@
         <div id="capture-area" class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100">
             <div class="bg-[#800000] px-8 py-4 flex flex-col md:flex-row justify-between items-center text-white">
                 <h3 class="font-bold text-lg mb-2 md:mb-0 uppercase tracking-wider">Evaluation Details</h3>
-                
                 <div class="flex items-center space-x-3">
                     <div id="statusContainer" class="hidden flex items-center space-x-3">
                         <div id="downloadNotif" class="bg-yellow-500 text-[#800000] px-4 py-1.5 rounded-full text-xs font-bold animate-pulse">
@@ -76,7 +91,6 @@
                             <i class="fa-solid fa-eye mr-1"></i> View Report
                         </button>
                     </div>
-
                     <button id="dlBtn" onclick="startDownload()" class="bg-[#FFB800] hover:bg-[#E6A600] text-[#800000] px-6 py-2 rounded-lg font-bold text-sm transition shadow-md active:scale-95">
                         <i class="fa-solid fa-file-pdf mr-2"></i> Generate PDF Report
                     </button>
@@ -87,7 +101,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10 pb-10 border-b border-gray-100">
                     <div class="space-y-1">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Faculty ID</p>
-                        <p class="text-lg font-bold text-[#800000]">2024-FAC-0012</p> </div>
+                        <p class="text-lg font-bold text-[#800000]">2024-FAC-0012</p> 
+                    </div>
                     <div class="space-y-1">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Faculty Name</p>
                         <p class="text-lg font-bold text-gray-800">Prof. Juan Dela Cruz, PhD</p>
@@ -146,6 +161,64 @@
     </div>
 </main>
 
+<div id="passwordModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-black text-gray-800">Change Password</h3>
+            <button onclick="hideChangePasswordModal()" class="text-gray-400 hover:text-gray-600 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <form onsubmit="handlePasswordUpdate(event)" class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">Current Password</label>
+                <div class="relative">
+                    <input type="password" id="currentPwd" required placeholder="••••••••" class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#800000] focus:ring-4 focus:ring-[#800000]/10 outline-none transition text-sm">
+                    <button type="button" onclick="togglePasswordVisibility('currentPwd', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">New Password</label>
+                <div class="relative">
+                    <input type="password" id="newPwd" required placeholder="••••••••" class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#800000] focus:ring-4 focus:ring-[#800000]/10 outline-none transition text-sm">
+                    <button type="button" onclick="togglePasswordVisibility('newPwd', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">Confirm New Password</label>
+                <div class="relative">
+                    <input type="password" id="confirmPwd" required placeholder="••••••••" class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#800000] focus:ring-4 focus:ring-[#800000]/10 outline-none transition text-sm">
+                    <button type="button" onclick="togglePasswordVisibility('confirmPwd', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <p id="matchError" class="hidden text-red-500 text-[10px] font-bold mt-1 ml-1 uppercase">Passwords do not match!</p>
+            </div>
+            
+            <div class="pt-4 flex flex-col space-y-3">
+                <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98]">Update Password</button>
+                <button type="button" onclick="hideChangePasswordModal()" class="w-full py-3 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="successModal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 text-center transform transition-all scale-95 duration-300 border-t-8 border-green-500">
+        <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-check text-green-600 text-4xl"></i>
+        </div>
+        <h3 class="text-2xl font-black text-gray-800 mb-2">Success!</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-8">Your password has been <strong>successfully changed</strong>.</p>
+        <button onclick="hideSuccessModal()" class="w-full py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg hover:bg-green-600 transition active:scale-[0.98]">Great, thanks!</button>
+    </div>
+</div>
+
 <div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
         <div class="bg-[#800000]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -172,20 +245,86 @@
 <script>
     let generatedPDFBlob = null;
 
-    // MODAL FUNCTIONS
+    function toggleDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.classList.toggle('hidden');
+        window.onclick = function(event) {
+            if (!event.target.closest('#userMenuBtn') && !event.target.closest('#userDropdown')) {
+                dropdown.classList.add('hidden');
+            }
+        }
+    }
+
+    function togglePasswordVisibility(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    function showChangePasswordModal() {
+        document.getElementById('userDropdown').classList.add('hidden');
+        document.getElementById('matchError').classList.add('hidden');
+        const modal = document.getElementById('passwordModal');
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        setTimeout(() => { modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); }, 10);
+    }
+
+    function hideChangePasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+    }
+
+    function handlePasswordUpdate(event) {
+        event.preventDefault();
+        const newPwd = document.getElementById('newPwd').value;
+        const confirmPwd = document.getElementById('confirmPwd').value;
+        const errorMsg = document.getElementById('matchError');
+
+        if (newPwd !== confirmPwd) {
+            errorMsg.classList.remove('hidden');
+            document.getElementById('confirmPwd').classList.add('border-red-500');
+            return;
+        }
+
+        errorMsg.classList.add('hidden');
+        document.getElementById('confirmPwd').classList.remove('border-red-500');
+        
+        hideChangePasswordModal();
+        setTimeout(() => {
+            const sModal = document.getElementById('successModal');
+            sModal.classList.remove('hidden'); sModal.classList.add('flex');
+            setTimeout(() => { sModal.querySelector('div').classList.remove('scale-95'); sModal.querySelector('div').classList.add('scale-100'); }, 10);
+        }, 300);
+    }
+
+    function hideSuccessModal() {
+        const modal = document.getElementById('successModal');
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+    }
+
     function showLogoutModal() {
+        document.getElementById('userDropdown').classList.add('hidden');
         const modal = document.getElementById('logoutModal');
         modal.classList.remove('hidden'); modal.classList.add('flex');
         setTimeout(() => { modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); }, 10);
     }
+
     function hideLogoutModal() {
         const modal = document.getElementById('logoutModal');
         modal.querySelector('div').classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
     }
+
     function executeLogout() { window.location.href = "{{ route('home') }}"; }
 
-    // PDF GENERATION LOGIC
     function startDownload() {
         const { jsPDF } = window.jspdf;
         const statusContainer = document.getElementById('statusContainer');
@@ -200,36 +339,24 @@
 
         setTimeout(() => {
             const doc = new jsPDF();
-            
             doc.setFillColor(128, 0, 0); doc.rect(20, 10, 170, 8, 'F');
             doc.setTextColor(255, 255, 255); doc.setFontSize(10); doc.setFont("helvetica", "bold");
             doc.text("Polytechnic University of the Philippines - Main Campus", 105, 15.5, { align: 'center' });
-
-            if (logoImg) {
-                doc.addImage(logoImg, 'PNG', 20, 25, 15, 15);
-            }
+            if (logoImg) { doc.addImage(logoImg, 'PNG', 20, 25, 15, 15); }
             doc.setTextColor(128, 0, 0); doc.setFontSize(14); doc.setFont("helvetica", "bold");
             doc.text("EduRate", 38, 31); 
-            doc.setFontSize(10);
-            doc.text("Faculty Evaluation System", 38, 37);
+            doc.setFontSize(10); doc.text("Faculty Evaluation System", 38, 37);
             doc.setDrawColor(200, 200, 200); doc.line(20, 45, 190, 45);
-
-            // Report Title
             doc.setFontSize(16); doc.text("EduRate Faculty Evaluation Report", 105, 58, { align: 'center' });
-
-            // Faculty Details Section with Faculty ID included
             doc.setTextColor(0, 0, 0); doc.setFontSize(11);
             doc.text("Faculty ID:", 20, 75); doc.setFont("helvetica", "normal"); doc.text("2024-FAC-0012", 60, 75);
             doc.setFont("helvetica", "bold"); doc.text("Faculty Name:", 20, 83); doc.setFont("helvetica", "normal"); doc.text("Prof. Juan Dela Cruz, PhD", 60, 83);
             doc.setFont("helvetica", "bold"); doc.text("Department:", 20, 91); doc.setFont("helvetica", "normal"); doc.text("College of Computer Science", 60, 91);
             doc.setFont("helvetica", "bold"); doc.text("Review Period:", 20, 99); doc.setFont("helvetica", "normal"); doc.text("First Semester | 2025-2026", 60, 99);
             doc.line(20, 108, 190, 108);
-
             doc.setFont("helvetica", "bold"); doc.text("Overall Rating:", 20, 118);
             doc.setFont("helvetica", "normal"); doc.text("4.85 / 5.0", 60, 118);
             doc.setFont("helvetica", "bold"); doc.text("Student Feedback:", 20, 128);
-
-            // Feedback Entries
             doc.autoTable({
                 startY: 133, margin: { left: 20, right: 20 }, theme: 'plain',
                 styles: { cellPadding: 4, fontSize: 9, font: 'helvetica', lineColor: [220, 220, 220], lineWidth: 0.1 },
@@ -239,10 +366,8 @@
                     ["Constructive feedback is given on every assignment."]
                 ],
             });
-
             generatedPDFBlob = doc.output('bloburl');
             doc.save('Faculty_Evaluation_Report_2025.pdf');
-
             dlNotif.classList.add('hidden'); fileReady.classList.remove('hidden'); viewBtn.classList.remove('hidden');
         }, 2000);
     }

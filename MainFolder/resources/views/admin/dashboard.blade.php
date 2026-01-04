@@ -192,7 +192,7 @@
 </footer>
 
 <script>
-    // --- EVALUATION TOGGLE LOGIC (Frontend Only) ---
+    // EVALUATION TOGGLE LOGIC
     let isEvalOpen = true;
 
     function toggleEvaluation() {
@@ -204,7 +204,7 @@
         const statusLabel = document.getElementById('statusLabel');
 
         if (isEvalOpen) {
-            // UI pag Open
+           
             btn.innerText = "CLOSE EVALUATION";
             btn.classList.replace('bg-green-600', 'bg-[#800000]');
             statusIndicator.classList.replace('bg-red-50', 'bg-green-50');
@@ -213,7 +213,7 @@
             statusText.classList.replace('text-red-600', 'text-green-600');
             statusLabel.classList.replace('text-red-800', 'text-green-800');
         } else {
-            // UI pag Closed
+         
             btn.innerText = "OPEN EVALUATION";
             btn.classList.replace('bg-[#800000]', 'bg-green-600');
             statusIndicator.classList.replace('bg-green-50', 'bg-red-50');
