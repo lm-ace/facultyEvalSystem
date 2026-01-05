@@ -25,6 +25,7 @@
 <main class="pt-24 pb-16 bg-gray-50 min-h-screen">
     <div class="container mx-auto px-6 max-w-6xl">
         
+    {{--IN LINE 30: Make a logic in here that the name of the user will appear in the Welcome, 'Name'--}}
         <div class="bg-white p-8 rounded-2xl shadow-sm border-l-8 border-[#800000] mb-8">
             <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome, Professor Juan Dela Cruz, PhD!</h2>
             <div class="space-y-4 text-gray-600 leading-relaxed text-sm md:text-base">

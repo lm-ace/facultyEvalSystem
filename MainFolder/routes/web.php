@@ -57,3 +57,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::get('/admin/sections/{section_code}', function ($section_code) {
     return view('admin.section-detail', ['section' => $section_code]);
 })->name('admin.section.detail');
+
+
+//temporary route for student module, kindly make a logical route to connect with the 
+Route::get('/student', function() {
+    return view('student.index');
+})->name('student'); 
+
+
+Route::get('/faculty/dashboard', function () {
+    return view('faculty.dashboard');
+})->name('faculty.dashboard');
