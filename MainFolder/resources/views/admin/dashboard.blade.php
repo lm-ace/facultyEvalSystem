@@ -110,7 +110,7 @@
                     </div>
 
                     <button type="button" onclick="showSecurityModal()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl hover:bg-[#660000] transition shadow-lg active:scale-95 text-xs uppercase tracking-widest">
-                        TOGGLE EVALUATION STATUS
+                         EVALUATION STATUS
                     </button>
                 </div>
             </div>
@@ -236,12 +236,12 @@
 
     function hideSecurityModal() {
         const modal = document.getElementById('securityModal');
-        document.getElementById('adminPassword').value = ''; // Reset on close
+        document.getElementById('adminPassword').value = ''; 
         modal.classList.add('hidden'); modal.classList.remove('flex');
     }
 
     function confirmToggle() {
-        // Here you can add actual validation logic
+
         const pass = document.getElementById('adminPassword').value;
         if(pass === "") { alert("Please enter password"); return; }
         

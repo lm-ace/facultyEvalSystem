@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    // Define dynamic labels based on the role
+    $identifierLabel = 'Username';
+    $placeholder = 'Enter your username';
+
+    if($role == 'student') {
+        $identifierLabel = 'Student Number';
+        $placeholder = 'e.g. 2021-00001-MN-0';
+    } elseif($role == 'faculty') {
+        $identifierLabel = 'Faculty ID';
+        $placeholder = 'Enter Faculty ID';
+    }
+@endphp
+
 <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#660000]/85 backdrop-blur-md shadow-lg transition-all duration-300">
     <div class="flex items-center space-x-3">
         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8"> 
@@ -41,10 +55,11 @@
             @csrf 
             
             <div>
-                <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
-                <input type="email" name="email" required 
+                <label class="text-xs font-bold text-gray-400 uppercase">{{ $identifierLabel }}</label>
+                <input type="text" name="login_id" required 
                     class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" 
-                    placeholder="Enter your email">
+                    placeholder="{{ $placeholder }}"
+                    value="{{ old('login_id') }}">
             </div>
             
             <div>
@@ -90,12 +105,10 @@
         
         if (passwordField.type === 'password') {
             passwordField.type = 'text';
-            // Change icon to eye-slash
             eyeIcon.classList.remove('fa-eye');
             eyeIcon.classList.add('fa-eye-slash');
         } else {
             passwordField.type = 'password';
-            // Change icon back to eye
             eyeIcon.classList.remove('fa-eye-slash');
             eyeIcon.classList.add('fa-eye');
         }
