@@ -35,6 +35,7 @@ Route::get('/faculty/dashboard', function () {
     return view('faculty.dashboard');
 })->name('faculty.dashboard');
 
+
 Route::post('/login/process/{role}', function (Request $request, $role) {
   
 

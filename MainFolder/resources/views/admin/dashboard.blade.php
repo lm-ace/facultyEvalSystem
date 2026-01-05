@@ -109,8 +109,8 @@
                         <span id="statusText" class="text-green-600 font-bold text-[10px] uppercase">Evaluation is OPEN</span>
                     </div>
 
-                    <button id="toggleEvalBtn" onclick="toggleEvaluation()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl hover:bg-[#660000] transition shadow-lg active:scale-95 text-xs uppercase tracking-widest">
-                        CLOSE EVALUATION
+                    <button type="button" onclick="showSecurityModal()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl hover:bg-[#660000] transition shadow-lg active:scale-95 text-xs uppercase tracking-widest">
+                         EVALUATION STATUS
                     </button>
                 </div>
             </div>
@@ -120,7 +120,7 @@
                     <h4 class="font-bold text-sm uppercase tracking-wider">Live Evaluation Feed</h4>
                     <span class="bg-green-500 text-white text-[9px] px-3 py-1 rounded-full font-bold animate-pulse">MONITORING</span>
                 </div>
-                <div class="p-0">
+                <div class="p-0 overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead class="text-[10px] text-gray-400 uppercase font-black border-b bg-gray-50">
                             <tr>
@@ -145,21 +145,6 @@
                                     <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-bold border border-blue-100">COMPLETED</span>
                                 </td>
                             </tr>
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-800 font-bold">Santos, Maria Clara</div>
-                                    <div class="text-gray-400 text-[8px] font-normal italic">2022-00567-MN-0</div>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600">
-                                    <div class="flex items-center">
-                                        <i class="fa-solid fa-check-double text-green-500 mr-2"></i>
-                                        <span> <strong>7/7</strong> Faculty Members</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-bold border border-blue-100">COMPLETED</span>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -168,8 +153,33 @@
     </div>
 </main>
 
-<div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
+<div id="securityModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-8 border-t-8 border-[#800000] transform transition-all scale-95 duration-300">
+        <div class="text-center mb-6">
+            <div class="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-[#800000]">
+                <i class="fa-solid fa-lock text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800">Security Check</h3>
+            <p class="text-gray-500 text-xs mt-2">Please enter your admin password to toggle the evaluation status.</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="relative">
+                <input id="adminPassword" type="password" 
+                    class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none text-sm pr-12" 
+                    placeholder="Admin Password">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#800000]">
+                    <i id="eyeIcon" class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            <button onclick="confirmToggle()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition">Confirm Action</button>
+            <button onclick="hideSecurityModal()" class="w-full py-3 text-gray-400 font-bold hover:bg-gray-50 rounded-xl transition">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 border-t-8 border-[#800000] transform transition-all scale-95 duration-300">
         <div class="bg-[#800000]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
             <i class="fa-solid fa-shield-halved text-[#800000] text-3xl"></i>
         </div>
@@ -178,8 +188,8 @@
             <p class="text-gray-500 text-xs leading-relaxed">Confirm if you want to end your current administrative session.</p>
         </div>
         <div class="flex flex-col space-y-3">
-            <button onclick="executeLogout()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98]">Confirm Logout</button>
-            <button onclick="hideLogoutModal()" class="w-full py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98]">Cancel</button>
+            <button onclick="executeLogout()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition">Confirm Logout</button>
+            <button onclick="hideLogoutModal()" class="w-full py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition">Cancel</button>
         </div>
     </div>
 </div>
@@ -192,35 +202,68 @@
 </footer>
 
 <script>
-    // --- EVALUATION TOGGLE LOGIC (Frontend Only) ---
+    // AUTO-RESET LOGIC (Clears password when going back)
+    window.addEventListener('pageshow', function (event) {
+        const passwordField = document.getElementById('adminPassword');
+        if (passwordField) {
+            passwordField.value = ''; // Reset input
+            passwordField.type = 'password'; // Reset to hidden
+            document.getElementById('eyeIcon').classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+
+    // PASSWORD TOGGLE (EYE OPENER)
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById('adminPassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    // EVALUATION TOGGLE LOGIC
     let isEvalOpen = true;
 
-    function toggleEvaluation() {
-        isEvalOpen = !isEvalOpen;
-        
-        const btn = document.getElementById('toggleEvalBtn');
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const statusLabel = document.getElementById('statusLabel');
+    function showSecurityModal() {
+        const modal = document.getElementById('securityModal');
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+    }
 
+    function hideSecurityModal() {
+        const modal = document.getElementById('securityModal');
+        document.getElementById('adminPassword').value = ''; 
+        modal.classList.add('hidden'); modal.classList.remove('flex');
+    }
+
+    function confirmToggle() {
+
+        const pass = document.getElementById('adminPassword').value;
+        if(pass === "") { alert("Please enter password"); return; }
+        
+        isEvalOpen = !isEvalOpen;
+        updateUI();
+        hideSecurityModal();
+    }
+
+    function updateUI() {
+        const btnText = isEvalOpen ? "CLOSE EVALUATION" : "OPEN EVALUATION";
+        const statusText = isEvalOpen ? "Evaluation is OPEN" : "Evaluation is CLOSED";
+        
+        document.getElementById('statusText').innerText = statusText;
+        
+        // Dynamic styling for indicator
+        const indicator = document.getElementById('statusIndicator');
         if (isEvalOpen) {
-            // UI pag Open
-            btn.innerText = "CLOSE EVALUATION";
-            btn.classList.replace('bg-green-600', 'bg-[#800000]');
-            statusIndicator.classList.replace('bg-red-50', 'bg-green-50');
-            statusIndicator.classList.replace('border-red-100', 'border-green-100');
-            statusText.innerText = "Evaluation is OPEN";
-            statusText.classList.replace('text-red-600', 'text-green-600');
-            statusLabel.classList.replace('text-red-800', 'text-green-800');
+            indicator.className = "p-4 bg-green-50 rounded-2xl border border-green-100 text-center transition-all duration-300";
+            document.getElementById('statusText').className = "text-green-600 font-bold text-[10px] uppercase";
         } else {
-            // UI pag Closed
-            btn.innerText = "OPEN EVALUATION";
-            btn.classList.replace('bg-[#800000]', 'bg-green-600');
-            statusIndicator.classList.replace('bg-green-50', 'bg-red-50');
-            statusIndicator.classList.replace('border-green-100', 'border-red-100');
-            statusText.innerText = "Evaluation is CLOSED";
-            statusText.classList.replace('text-green-600', 'text-red-600');
-            statusLabel.classList.replace('text-green-800', 'text-red-800');
+            indicator.className = "p-4 bg-red-50 rounded-2xl border border-red-100 text-center transition-all duration-300";
+            document.getElementById('statusText').className = "text-red-600 font-bold text-[10px] uppercase";
         }
     }
 
@@ -228,12 +271,10 @@
     function showLogoutModal() {
         const modal = document.getElementById('logoutModal');
         modal.classList.remove('hidden'); modal.classList.add('flex');
-        setTimeout(() => { modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); }, 10);
     }
     function hideLogoutModal() {
         const modal = document.getElementById('logoutModal');
-        modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+        modal.classList.add('hidden'); modal.classList.remove('flex');
     }
     function executeLogout() { window.location.href = "/"; }
 </script>

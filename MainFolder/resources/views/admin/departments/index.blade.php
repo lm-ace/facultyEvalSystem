@@ -197,29 +197,30 @@
     }
 
     function showSections(prog, year) {
-        title.innerText = "Select Section";
-        sub.innerText = prog + " | " + year;
-        backBtn.onclick = () => showYearLevels(prog);
-        content.innerHTML = '<div class="grid grid-cols-2 gap-3">';
+    title.innerText = "Select Section";
+    sub.innerText = prog + " | " + year;
+    backBtn.onclick = () => showYearLevels(prog);
+    
+    content.innerHTML = '<div class="flex flex-col space-y-2 px-6 max-w-sm mx-auto">'; 
+    
+    sections.forEach(sec => {
+        const isFunctional = (sec === '3'); // Section 3 lang ang active
         
-        sections.forEach(sec => {
-            const isFunctional = (sec === '3'); // ONLY SECTION 3 IS FUNCTIONAL
-            
-            if(isFunctional) {
-                content.innerHTML += `
-                    <a href="/admin/sections/BSIT-3-3" 
-                       class="p-5 bg-white text-[#1a202c] rounded-xl transition-all font-bold text-center block shadow-sm border-2 border-[#FFB800] hover:bg-[#FFB800] hover:text-[#800000] active:scale-[0.98] tracking-tight">
-                        Section ${sec}
-                    </a>`;
-            } else {
-                content.innerHTML += `
-                    <div class="p-5 bg-gray-100 text-gray-400 rounded-xl font-bold text-center block border border-gray-200 opacity-40 grayscale cursor-not-allowed">
-                        Section ${sec} <i class="fa-solid fa-lock text-[8px] ml-1"></i>
-                    </div>`;
-            }
-        });
-        content.innerHTML += '</div>';
-    }
+        if(isFunctional) {
+            content.innerHTML += `
+                <a href="/admin/sections/BSIT-3-3" 
+                   class="w-full py-3 px-4 bg-white text-gray-800 rounded-xl transition-all font-bold text-center block shadow-sm border-2 border-[#FFB800] hover:bg-yellow-50 active:scale-[0.97] text-sm tracking-tight">
+                    Section ${sec}
+                </a>`;
+        } else {
+            content.innerHTML += `
+                <div class="w-full py-3 px-4 bg-gray-50 text-gray-400 rounded-xl font-bold text-center block border border-gray-100 opacity-50 text-sm flex items-center justify-center">
+                    Section ${sec} <i class="fa-solid fa-lock text-[10px] ml-2 opacity-40"></i>
+                </div>`;
+        }
+    });
+    content.innerHTML += '</div>';
+}
 
     function closeDrillDown() { 
         modal.classList.add('hidden'); modal.classList.remove('flex'); 
