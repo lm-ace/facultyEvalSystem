@@ -170,21 +170,18 @@
             const doc = new jsPDF();
             const logoImg = document.getElementById('pdfLogo');
 
-            // Header Bar
             doc.setFillColor(128, 0, 0);
             doc.rect(20, 10, 170, 8, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(10);
             doc.text("Polytechnic University of the Philippines - Main Campus", 105, 15.5, { align: 'center' });
 
-            // Branding
             if (logoImg) doc.addImage(logoImg, 'PNG', 20, 25, 15, 15);
             doc.setTextColor(128, 0, 0);
             doc.setFontSize(14); doc.setFont("helvetica", "bold");
             doc.text("EduRate", 38, 31);
             doc.setFontSize(10); doc.text("Faculty Evaluation System", 38, 37);
 
-            // Details
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(16); doc.text("Section Evaluation Report", 105, 58, { align: 'center' });
             doc.setFontSize(11);

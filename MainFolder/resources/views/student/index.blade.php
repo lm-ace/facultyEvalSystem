@@ -101,7 +101,7 @@
 <div x-data="{ hover: false }" 
      @mouseenter="hover = true" 
      @mouseleave="hover = false"
-     onclick="showEvaluationModal('{{ $faculty['name'] }}', '{{ $faculty['sub'] }}')" 
+     onclick="showEvaluationModal(`{{ $faculty['name'] }}`, `{{ $faculty['sub'] }}`)"
      class="relative bg-white rounded-[1.5rem] shadow-md transition-all duration-500 cursor-pointer overflow-hidden flex flex-col border border-gray-100 h-full"
      :class="hover ? '-translate-y-3 shadow-2xl ring-4 ring-[#800000]/10' : 'translate-y-0'">
     
