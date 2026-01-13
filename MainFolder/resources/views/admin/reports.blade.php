@@ -4,7 +4,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <img id="pdfLogo" src="{{ asset('images/logo.png') }}" class="hidden">
 
 <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
@@ -58,7 +57,6 @@
             </div>
         </div>
 
-        <!-- Filter Section -->
         <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
                 <h3 class="font-bold text-gray-800 text-sm flex items-center uppercase tracking-widest">
@@ -109,7 +107,6 @@
             </div>
         </div>
 
-        <!-- Faculty Performance Summary -->
         <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-8">
             <div class="bg-[#800000] px-6 py-4 flex justify-between items-center text-white">
                 <h3 class="font-bold text-sm uppercase tracking-wider">Faculty Performance Summary</h3>
@@ -129,7 +126,6 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <!-- Faculty 1 -->
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
                                 <div class="font-bold text-gray-800">Prof. Ricardo Dalisay, PhD</div>
@@ -173,7 +169,6 @@
                             </td>
                         </tr>
                         
-                        <!-- Faculty 2 -->
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
                                 <div class="font-bold text-gray-800">Prof. Maria Santos, MA</div>
@@ -217,7 +212,6 @@
                             </td>
                         </tr>
                         
-                        <!-- Faculty 3 -->
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
                                 <div class="font-bold text-gray-800">Prof. Juan Dela Cruz</div>
@@ -265,62 +259,9 @@
             </div>
         </div>
 
-        <!-- Graph Reports / Visual Presentations -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- Department Performance Chart -->
-            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-                <div class="flex justify-between items-center mb-6">
-                    <h4 class="font-bold text-gray-800 text-sm flex items-center uppercase tracking-widest">
-                        <i class="fa-solid fa-chart-column mr-3 text-[#800000]"></i> Department Performance
-                    </h4>
-                    <select id="chartFilter" onchange="updateCharts()" class="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700">
-                        <option>By Overall Rating</option>
-                        <option>By Response Rate</option>
-                        <option>By Semester</option>
-                    </select>
-                </div>
-                <div class="h-64">
-                    <canvas id="departmentChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Rating Distribution -->
-            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-                <div class="flex justify-between items-center mb-6">
-                    <h4 class="font-bold text-gray-800 text-sm flex items-center uppercase tracking-widest">
-                        <i class="fa-solid fa-chart-pie mr-3 text-[#800000]"></i> Rating Distribution
-                    </h4>
-                    <span class="text-[10px] font-bold text-gray-400">Current Semester</span>
-                </div>
-                <div class="h-64">
-                    <canvas id="ratingChart"></canvas>
-                </div>
-            </div>
         </div>
-
-        <!-- Response Rate Over Time -->
-        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-            <div class="flex justify-between items-center mb-6">
-                <h4 class="font-bold text-gray-800 text-sm flex items-center uppercase tracking-widest">
-                    <i class="fa-solid fa-chart-line mr-3 text-[#800000]"></i> Response Rate Over Time
-                </h4>
-                <div class="flex space-x-2">
-                    <button onclick="downloadChart('responseChart')" class="text-[#800000] hover:text-[#660000] transition">
-                        <i class="fa-solid fa-download text-sm"></i>
-                    </button>
-                    <button onclick="printChart('responseChart')" class="text-[#800000] hover:text-[#660000] transition">
-                        <i class="fa-solid fa-print text-sm"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="h-72">
-                <canvas id="responseChart"></canvas>
-            </div>
-        </div>
-    </div>
 </main>
 
-<!-- Faculty Report Modal -->
 <div id="facultyReportModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000] max-h-[90vh] overflow-y-auto">
         <div class="text-center mb-6">
@@ -329,7 +270,6 @@
         </div>
         
         <div class="space-y-6">
-            <!-- Performance Summary -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-gray-50 p-4 rounded-2xl text-center">
                     <p class="text-[10px] font-bold text-gray-400 uppercase">Overall Rating</p>
@@ -349,7 +289,6 @@
                 </div>
             </div>
             
-            <!-- Detailed Breakdown -->
             <div>
                 <h4 class="font-bold text-gray-800 text-sm mb-4 flex items-center uppercase tracking-widest">
                     <i class="fa-solid fa-chart-simple mr-2"></i> Criteria Breakdown
@@ -385,7 +324,6 @@
                 </div>
             </div>
             
-            <!-- Comments Summary -->
             <div>
                 <h4 class="font-bold text-gray-800 text-sm mb-4 flex items-center uppercase tracking-widest">
                     <i class="fa-solid fa-comment-dots mr-2"></i> Student Feedback
@@ -449,153 +387,6 @@
 
     // Store current faculty data for PDF generation
     let currentFacultyData = null;
-
-    // Initialize Charts
-    let departmentChart, ratingChart, responseChart;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        // Department Performance Chart
-        const deptCtx = document.getElementById('departmentChart').getContext('2d');
-        departmentChart = new Chart(deptCtx, {
-            type: 'bar',
-            data: {
-                labels: ['CCIS', 'CBA', 'CE', 'CAL', 'CS', 'CTHTM'],
-                datasets: [{
-                    label: 'Average Rating',
-                    data: [4.85, 4.20, 3.45, 4.60, 4.30, 4.75],
-                    backgroundColor: [
-                        'rgba(128, 0, 0, 0.7)',
-                        'rgba(128, 0, 0, 0.6)',
-                        'rgba(128, 0, 0, 0.5)',
-                        'rgba(128, 0, 0, 0.6)',
-                        'rgba(128, 0, 0, 0.5)',
-                        'rgba(128, 0, 0, 0.65)'
-                    ],
-                    borderColor: [
-                        'rgba(128, 0, 0, 1)',
-                        'rgba(128, 0, 0, 1)',
-                        'rgba(128, 0, 0, 1)',
-                        'rgba(128, 0, 0, 1)',
-                        'rgba(128, 0, 0, 1)',
-                        'rgba(128, 0, 0, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5,
-                        ticks: {
-                            font: {
-                                size: 10
-                            }
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: {
-                                size: 10
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            font: {
-                                size: 10
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Rating Distribution Chart
-        const ratingCtx = document.getElementById('ratingChart').getContext('2d');
-        ratingChart = new Chart(ratingCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Excellent (4.0-5.0)', 'Very Good (3.5-3.9)', 'Good (3.0-3.4)', 'Needs Improvement (<3.0)'],
-                datasets: [{
-                    data: [25, 12, 6, 2],
-                    backgroundColor: [
-                        'rgba(0, 128, 0, 0.7)',
-                        'rgba(0, 0, 255, 0.7)',
-                        'rgba(255, 165, 0, 0.7)',
-                        'rgba(255, 0, 0, 0.7)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: {
-                                size: 9
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Response Rate Chart
-        const responseCtx = document.getElementById('responseChart').getContext('2d');
-        responseChart = new Chart(responseCtx, {
-            type: 'line',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
-                datasets: [{
-                    label: 'Response Rate %',
-                    data: [15, 35, 50, 65, 78, 85, 92],
-                    borderColor: 'rgb(128, 0, 0)',
-                    backgroundColor: 'rgba(128, 0, 0, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                            font: {
-                                size: 10
-                            }
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: {
-                                size: 10
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            font: {
-                                size: 10
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    });
 
     // Modal Functions
     function showLogoutModal() {
@@ -863,43 +654,6 @@
         }
         
         doc.save(`Comprehensive_Faculty_Report_${formattedDate.replace(/[/]/g, '-')}.pdf`);
-    }
-
-    function updateCharts() {
-        const filter = document.getElementById('chartFilter').value;
-        console.log('Updating charts with filter:', filter);
-    }
-
-    function downloadChart(chartId) {
-        const canvas = document.getElementById(chartId);
-        const image = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.download = `${chartId}_chart.png`;
-        link.href = image;
-        link.click();
-    }
-
-    function printChart(chartId) {
-        const canvas = document.getElementById(chartId);
-        const image = canvas.toDataURL('image/png');
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Print Chart</title>
-                    <style>
-                        body { display: flex; justify-content: center; align-items: center; height: 100vh; }
-                        img { max-width: 100%; max-height: 100%; }
-                    </style>
-                </head>
-                <body>
-                    <img src="${image}" alt="${chartId} Chart">
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
     }
 </script>
 @endsection
