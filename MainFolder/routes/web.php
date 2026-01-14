@@ -2,7 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Hash; 
+use App\Models\User;                 
+use App\Http\Controllers\Student\DashboardController;
 
+//PUBLIC PAGES
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -19,10 +24,7 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
+//AUTH ROUTES
 Route::get('/login', function () {
     return view('auth.role-selection');
 })->name('login');
@@ -31,23 +33,52 @@ Route::get('/login/{role}', function ($role) {
     return view('auth.login-form', ['role' => $role]);
 })->name('login.role');
 
+//LOGGING IN 
+Route::post('/login/process/{role}', function (Request $request, $role) {
+    
+    // 1. Validate form data
+    $request->validate([
+        'username' => 'required',
+        'password' => 'required'
+    ]);
+
+    // 2. Find user in the database
+    $user = User::where('username', $request->username)
+                ->where('role', $role) 
+                ->first();
+
+    // 3. Check if user exists AND password is correct
+    if ($user && Hash::check($request->password, $user->password_hash)) {
+        
+        // SUCCESS
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        // Redirect to correct dashboard based on role
+        if ($role === 'student') {
+            return redirect()->route('student.index');
+        } elseif ($role === 'faculty') {
+            return redirect()->route('faculty.dashboard');
+        } elseif ($role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+    }
+
+    // 4. If login failed, go back with error
+    return back()->withErrors([
+        'username' => 'Invalid username or password.',
+    ]);
+
+})->name('login.process');
+
+
+//FACULTY ROUTES
 Route::get('/faculty/dashboard', function () {
     return view('faculty.dashboard');
 })->name('faculty.dashboard');
 
 
-Route::post('/login/process/{role}', function (Request $request, $role) {
-  
-
-    if ($role === 'faculty') {
-        return redirect()->route('faculty.dashboard');
-    } elseif ($role === 'admin') {
-        return redirect('/admin/dashboard'); 
-    } else {
-        return redirect('/'); 
-    }
-})->name('login.process');
-
+//ADMIN ROUTES
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () { return view('admin.dashboard'); })->name('dashboard');
     Route::get('/departments', function () { return view('admin.departments.index'); })->name('departments');
@@ -60,12 +91,13 @@ Route::get('/admin/sections/{section_code}', function ($section_code) {
 })->name('admin.section.detail');
 
 
-//temporary route for student module, kindly make a logical route to connect with the 
-Route::get('/student', function() {
-    return view('student.index');
-})->name('student'); 
+//STUDENT ROUTES
+Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
+    
+    // Dashboard / Index
+    Route::get('/', [DashboardController::class, 'index'])->name('index'); 
+    
+    // Submission Logic
+    Route::post('/evaluate', [DashboardController::class, 'store'])->name('evaluate.store');
 
-
-Route::get('/faculty/dashboard', function () {
-    return view('faculty.dashboard');
-})->name('faculty.dashboard');
+});
