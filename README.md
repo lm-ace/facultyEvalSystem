@@ -8,4 +8,4 @@ DB_HOST=mainline.proxy.rlwy.net
 DB_PORT=42607
 DB_DATABASE=railway
 DB_USERNAME=root
-DB_PASSWORD=your_password_here
+DB_PASSWORD=AnEAAIfZYZxYdXbEmBpNugynjmRieYvS
