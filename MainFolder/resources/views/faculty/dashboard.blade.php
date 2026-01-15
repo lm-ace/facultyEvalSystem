@@ -6,7 +6,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
 <style>
-    [x-cloak] { display: none !important; }
+    [x-cloak] {
+        display: none !important;
+    }
 </style>
 
 <img id="pdfLogo" src="{{ asset('images/logo.png') }}" class="hidden">
@@ -15,7 +17,7 @@
     {{-- NAVIGATION --}}
     <nav class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-10 py-2 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
         <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8"> 
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8">
             <div>
                 <h1 class="font-bold leading-none text-base">EduRate</h1>
                 <p class="text-[9px] tracking-tighter uppercase opacity-80">Faculty Evaluation System</p>
@@ -32,25 +34,25 @@
             </button>
 
             {{-- Dropdown Menu --}}
-            <div x-show="open" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                 x-transition:leave="transition ease-in duration-75"
-                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                 x-cloak
-                 class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl py-2 z-[110] border border-gray-100 overflow-hidden text-gray-700">
-                
+            <div x-show="open"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                x-cloak
+                class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl py-2 z-[110] border border-gray-100 overflow-hidden text-gray-700">
+
                 <button type="button" onclick="showChangePasswordModal()" class="w-full text-left px-5 py-3 text-sm hover:bg-gray-50 flex items-center transition group">
-                    <i class="fa-solid fa-key mr-3 text-gray-400 group-hover:text-[#800000]"></i> 
-                    <span class="font-medium">Change Password</span> 
+                    <i class="fa-solid fa-key mr-3 text-gray-400 group-hover:text-[#800000]"></i>
+                    <span class="font-medium">Change Password</span>
                 </button>
-                
+
                 <hr class="border-gray-50">
 
                 <button type="button" onclick="showLogoutModal()" class="w-full text-left px-5 py-3 text-sm text-[#E31E24] font-bold hover:bg-red-50 flex items-center transition group">
-                    <i class="fa-solid fa-right-from-bracket mr-3 transform rotate-180 text-[#E31E24]"></i> 
+                    <i class="fa-solid fa-right-from-bracket mr-3 transform rotate-180 text-[#E31E24]"></i>
                     <span>Log Out</span>
                 </button>
             </div>
@@ -59,10 +61,10 @@
 
     <main class="pt-24 pb-16 bg-gray-50 min-h-screen">
         <div class="container mx-auto px-6 max-w-6xl">
-            
+
             {{-- WELCOME SECTION --}}
             <div class="bg-white p-8 rounded-2xl shadow-sm border-l-8 border-[#800000] mb-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome, Professor Juan Dela Cruz, PhD!</h2>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome, {{$fullName}}!</h2>
                 <div class="space-y-4 text-gray-600 leading-relaxed text-sm md:text-base">
                     <p>This faculty evaluation dashboard provides an overview of evaluation results for the current review period.</p>
                     <p class="bg-[#800000]/5 p-3 rounded-lg border border-[#800000]/10 font-medium italic">
@@ -76,8 +78,18 @@
                 <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                     <div>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Overall Rating</p>
-                        <h3 class="text-5xl font-black text-[#800000] mt-2">4.85<span class="text-xl text-gray-400 font-normal"> / 5.0</span></h3>
-                        <p class="text-green-600 font-bold text-sm mt-1 uppercase">Outstanding performance</p>
+                        <h3 class="text-5xl font-black text-[#800000] mt-2">{{$averageRating}}<span class="text-xl text-gray-400 font-normal"> / 5.0</span></h3>
+                        <p class="text-green-600 font-bold text-sm mt-1 uppercase">
+                            @if($averageRating >= 4.5) 
+                                Outstanding Performance
+                            @elseif($averageRating >= 3.5)
+                                Very Good 
+                            @elseif($averageRating >= 2.5)
+                                Good 
+                            @else 
+                                Needs Improvement
+                            @endif
+                        </p>
                     </div>
                     <div class="bg-[#800000]/10 p-5 rounded-2xl text-[#800000] group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-star text-4xl"></i>
@@ -87,7 +99,7 @@
                 <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                     <div>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Total Responses</p>
-                        <h3 class="text-5xl font-black text-gray-800 mt-2">145</h3>
+                        <h3 class="text-5xl font-black text-gray-800 mt-2">{{ $totalEvaluations }}</h3>
                         <p class="text-gray-500 text-sm mt-1 uppercase font-medium">Students participated</p>
                     </div>
                     <div class="bg-blue-50 p-5 rounded-2xl text-blue-600 group-hover:scale-110 transition-transform">
@@ -119,38 +131,45 @@
                 </div>
 
                 <div class="p-8">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10 pb-10 border-b border-gray-100">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 border-b border-gray-100">
                         <div class="space-y-1">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Faculty ID</p>
-                            <p class="text-lg font-bold text-[#800000]">2024-FAC-0012</p> 
+                            <p class="text-lg font-bold text-[#800000]">{{$facID}}</p>
                         </div>
                         <div class="space-y-1">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Faculty Name</p>
-                            <p class="text-lg font-bold text-gray-800">Prof. Juan Dela Cruz, PhD</p>
+                            <p class="text-lg font-bold text-gray-800">{{$fullName}}</p>
                         </div>
                         <div class="space-y-1">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Department</p>
-                            <p class="text-lg font-bold text-gray-800">College of Computer and Information Sciences</p>
+                            <p class="text-lg font-bold text-gray-800">{{$deptCode}}</p>
                         </div>
                         <div class="space-y-1">
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Review Period</p>
-                            <p class="text-lg font-bold text-gray-800">First Semester | 2025-2026</p>
+                            <p class="text-lg font-bold text-gray-800">{{$reviewPeriodDisplay}}</p>
                         </div>
                     </div>
-
+                    
+                    {{--Planning to delete this--}}
                     {{-- PROGRESS BARS --}}
+                    {{--
                     <div class="mb-10">
                         <div class="space-y-6">
                             <div>
                                 <div class="flex justify-between text-sm mb-2 font-medium"><span>Communication</span><span>4.9 / 5.0</span></div>
-                                <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-[#FFB800] h-2 rounded-full" style="width: 98%"></div></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-[#FFB800] h-2 rounded-full" style="width: 98%"></div>
+                                </div>
                             </div>
                             <div>
                                 <div class="flex justify-between text-sm mb-2 font-medium"><span>Content</span><span>4.7 / 5.0</span></div>
-                                <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-[#FFB800] h-2 rounded-full" style="width: 94%"></div></div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="bg-[#FFB800] h-2 rounded-full" style="width: 94%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    --}}
                 </div>
             </div>
         </div>
@@ -174,7 +193,7 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
-        
+
         <form onsubmit="handlePasswordUpdate(event)" class="space-y-4">
             <div>
                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">Current Password</label>
@@ -204,7 +223,7 @@
                 </div>
                 <p id="matchError" class="hidden text-red-500 text-[10px] font-bold mt-1 ml-1 uppercase">Passwords do not match!</p>
             </div>
-            
+
             <div class="pt-4 flex flex-col space-y-3">
                 <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98]">Update Password</button>
                 <button type="button" onclick="hideChangePasswordModal()" class="w-full py-3 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition">Cancel</button>
@@ -241,6 +260,19 @@
         </div>
     </div>
 </div>
+<script>
+         const facultyData = {
+        id: "{{ $faculty->faculty_code }}",
+        name: "{{ $fullName }}",
+        department: "{{ $faculty->department->name ?? 'N/A' }}",
+        reviewPeriod: "{{ $reviewPeriodDisplay }}",
+        averageRating: "{{ $averageRating }}",
+        feedbacks: {!! json_encode($feedbacks) !!}
+    };
+
+</script>
+
+
 
 <script>
     let generatedPDFBlob = null;
@@ -270,20 +302,20 @@
     function showChangePasswordModal() {
         document.getElementById('matchError').classList.add('hidden');
         const modal = document.getElementById('passwordModal');
-        modal.classList.remove('hidden'); 
+        modal.classList.remove('hidden');
         modal.classList.add('flex');
-        setTimeout(() => { 
-            modal.querySelector('div').classList.remove('scale-95'); 
-            modal.querySelector('div').classList.add('scale-100'); 
+        setTimeout(() => {
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
         }, 10);
     }
 
     function hideChangePasswordModal() {
         const modal = document.getElementById('passwordModal');
         modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => { 
-            modal.classList.add('hidden'); 
-            modal.classList.remove('flex'); 
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }, 200);
     }
 
@@ -301,15 +333,15 @@
 
         errorMsg.classList.add('hidden');
         document.getElementById('confirmPwd').classList.remove('border-red-500');
-        
+
         hideChangePasswordModal();
         setTimeout(() => {
             const sModal = document.getElementById('successModal');
-            sModal.classList.remove('hidden'); 
+            sModal.classList.remove('hidden');
             sModal.classList.add('flex');
-            setTimeout(() => { 
-                sModal.querySelector('div').classList.remove('scale-95'); 
-                sModal.querySelector('div').classList.add('scale-100'); 
+            setTimeout(() => {
+                sModal.querySelector('div').classList.remove('scale-95');
+                sModal.querySelector('div').classList.add('scale-100');
             }, 10);
         }, 300);
     }
@@ -317,37 +349,39 @@
     function hideSuccessModal() {
         const modal = document.getElementById('successModal');
         modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => { 
-            modal.classList.add('hidden'); 
-            modal.classList.remove('flex'); 
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }, 200);
     }
 
     function showLogoutModal() {
         const modal = document.getElementById('logoutModal');
-        modal.classList.remove('hidden'); 
+        modal.classList.remove('hidden');
         modal.classList.add('flex');
-        setTimeout(() => { 
-            modal.querySelector('div').classList.remove('scale-95'); 
-            modal.querySelector('div').classList.add('scale-100'); 
+        setTimeout(() => {
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
         }, 10);
     }
 
     function hideLogoutModal() {
         const modal = document.getElementById('logoutModal');
         modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => { 
-            modal.classList.add('hidden'); 
-            modal.classList.remove('flex'); 
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }, 200);
     }
 
-    function executeLogout() { 
-        window.location.href = "{{ route('home') }}"; 
+    function executeLogout() {
+        window.location.href = "{{ route('home') }}";
     }
 
     function startDownload() {
-        const { jsPDF } = window.jspdf;
+        const {
+            jsPDF
+        } = window.jspdf;
         const statusContainer = document.getElementById('statusContainer');
         const dlNotif = document.getElementById('downloadNotif');
         const fileReady = document.getElementById('fileReady');
@@ -356,96 +390,103 @@
         const logoImg = document.getElementById('pdfLogo');
 
         statusContainer.classList.remove('hidden');
-        dlBtn.disabled = true; 
+        dlBtn.disabled = true;
         dlBtn.classList.add('opacity-50');
 
         setTimeout(() => {
             const doc = new jsPDF();
-            doc.setFillColor(128, 0, 0); 
+            doc.setFillColor(128, 0, 0);
             doc.rect(20, 10, 170, 8, 'F');
-            doc.setTextColor(255, 255, 255); 
-            doc.setFontSize(10); 
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
-            doc.text("Polytechnic University of the Philippines - Main Campus", 105, 15.5, { align: 'center' });
-            
-            if (logoImg) { 
-                doc.addImage(logoImg, 'PNG', 20, 25, 15, 15); 
+            doc.text("Polytechnic University of the Philippines - Main Campus", 105, 15.5, {
+                align: 'center'
+            });
+
+            if (logoImg) {
+                doc.addImage(logoImg, 'PNG', 20, 25, 15, 15);
             }
-            
-            doc.setTextColor(128, 0, 0); 
-            doc.setFontSize(14); 
+
+            doc.setTextColor(128, 0, 0);
+            doc.setFontSize(14);
             doc.setFont("helvetica", "bold");
-            doc.text("EduRate", 38, 31); 
-            doc.setFontSize(10); 
+            doc.text("EduRate", 38, 31);
+            doc.setFontSize(10);
             doc.text("Faculty Evaluation System", 38, 37);
-            
-            doc.setDrawColor(200, 200, 200); 
+
+            doc.setDrawColor(200, 200, 200);
             doc.line(20, 45, 190, 45);
-            
-            doc.setFontSize(16); 
-            doc.text("EduRate Faculty Evaluation Report", 105, 58, { align: 'center' });
-            
-            doc.setTextColor(0, 0, 0); 
+
+            doc.setFontSize(16);
+            doc.text("EduRate Faculty Evaluation Report", 105, 58, {
+                align: 'center'
+            });
+
+            doc.setTextColor(0, 0, 0);
             doc.setFontSize(11);
-            doc.text("Faculty ID:", 20, 75); 
-            doc.setFont("helvetica", "normal"); 
-            doc.text("2024-FAC-0012", 60, 75);
-            
-            doc.setFont("helvetica", "bold"); 
-            doc.text("Faculty Name:", 20, 83); 
-            doc.setFont("helvetica", "normal"); 
-            doc.text("Prof. Juan Dela Cruz, PhD", 60, 83);
-            
-            doc.setFont("helvetica", "bold"); 
-            doc.text("Department:", 20, 91); 
-            doc.setFont("helvetica", "normal"); 
-            doc.text("College of Computer Science", 60, 91);
-            
+            doc.text("Faculty ID:", 20, 75);
+            doc.setFont("helvetica", "normal");
+            doc.text(facultyData.id, 60, 75);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Faculty Name:", 20, 83);
+            doc.setFont("helvetica", "normal");
+            doc.text(facultyData.name, 60, 83);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Department:", 20, 91);
+            doc.setFont("helvetica", "normal");
+            doc.text(facultyData.department, 60, 91);
+
             doc.setFont("helvetica", "bold"); 
             doc.text("Review Period:", 20, 99); 
             doc.setFont("helvetica", "normal"); 
-            doc.text("First Semester | 2025-2026", 60, 99);
-            
-            doc.line(20, 108, 190, 108);
-            
-            doc.setFont("helvetica", "bold"); 
+            doc.text(facultyData.reviewPeriod, 60, 99);
+
+            doc.setFont("helvetica", "bold");
             doc.text("Overall Rating:", 20, 118);
-            doc.setFont("helvetica", "normal"); 
-            doc.text("4.85 / 5.0", 60, 118);
+            doc.setFont("helvetica", "normal");
+            doc.text(facultyData.averageRating + " / 5.0", 60, 118);
             
-            doc.setFont("helvetica", "bold"); 
+
+            doc.line(20, 108, 190, 108);
+
+            
+
+            doc.setFont("helvetica", "bold");
             doc.text("Student Feedback:", 20, 128);
-            
+
             doc.autoTable({
-                startY: 133, 
-                margin: { left: 20, right: 20 }, 
-                theme: 'plain',
-                styles: { 
-                    cellPadding: 4, 
-                    fontSize: 9, 
-                    font: 'helvetica', 
-                    lineColor: [220, 220, 220], 
-                    lineWidth: 0.1 
+                startY: 133,
+                margin: {
+                    left: 20,
+                    right: 20
                 },
-                body: [
-                    ["The professor provides very clear examples and is approachable."],
-                    ["Excellent teaching style, learned a lot during lab sessions."],
-                    ["Constructive feedback is given on every assignment."]
-                ],
+                theme: 'plain',
+                styles: {
+                    cellPadding: 4,
+                    fontSize: 9,
+                    font: 'helvetica',
+                    lineColor: [220, 220, 220],
+                    lineWidth: 0.1
+                },
+                body: (facultyData.feedbacks || []).map(f => [f])
             });
-            
+
             generatedPDFBlob = doc.output('bloburl');
-            doc.save('Faculty_Evaluation_Report_2025.pdf');
-            dlNotif.classList.add('hidden'); 
-            fileReady.classList.remove('hidden'); 
+            doc.save(`Faculty_Evaluation_Report_${facultyData.name.replace(/\s+/g,'_')}.pdf`);
+            
+            dlNotif.classList.add('hidden');
+            fileReady.classList.remove('hidden');
             viewBtn.classList.remove('hidden');
         }, 2000);
     }
 
-    function viewPDF() { 
-        if (generatedPDFBlob) { 
-            window.open(generatedPDFBlob, '_blank'); 
-        } 
+    function viewPDF() {
+        if (generatedPDFBlob) {
+            window.open(generatedPDFBlob, '_blank');
+        }
     }
 </script>
 @endsection
