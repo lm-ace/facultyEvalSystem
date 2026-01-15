@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
@@ -82,7 +83,7 @@ Route::get('/faculty/dashboard', function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () { return view('admin.dashboard'); })->name('dashboard');
     Route::get('/departments', function () { return view('admin.departments.index'); })->name('departments');
-    Route::get('/criteria', function () { return view('admin.criteria'); })->name('criteria');
+    Route::get('/criteria', [AdminController::class, 'criteria'])->name('criteria');
     Route::get('/reports', function () { return view('admin.reports'); })->name('reports');
 });
 
