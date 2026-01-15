@@ -9,13 +9,13 @@
     {{-- NAVIGATION --}}
     <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
         <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8"> 
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8">
             <div>
                 <h1 class="font-bold leading-none text-base">EduRate</h1>
                 <p class="text-[9px] tracking-tighter uppercase opacity-80">Faculty Evaluation System</p>
             </div>
         </div>
-            
+
         <div class="relative" x-data="{ open: false }">
             <button @click="open = !open" class="flex items-center focus:outline-none">
                 <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#800000] border-2 border-white/20">
@@ -24,22 +24,22 @@
                 <i class="fa-solid fa-caret-down text-[10px] ml-2 text-white/80 transition-transform" :class="open ? 'rotate-180' : ''"></i>
             </button>
 
-            <div x-show="open" 
-                 @click.away="open = false" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
-                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                 class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-100 overflow-hidden text-gray-700">
-                
+            <div x-show="open"
+                @click.away="open = false"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-100 overflow-hidden text-gray-700">
+
                 <button onclick="showChangePasswordModal()" class="w-full text-left px-5 py-3 text-sm hover:bg-gray-50 flex items-center transition group">
-                    <i class="fa-solid fa-key mr-3 text-gray-400 group-hover:text-[#800000]"></i> 
-                    <span class="font-medium">Change Password</span> 
+                    <i class="fa-solid fa-key mr-3 text-gray-400 group-hover:text-[#800000]"></i>
+                    <span class="font-medium">Change Password</span>
                 </button>
-                
+
                 <hr class="border-gray-50">
 
                 <button onclick="showLogoutModal()" class="w-full text-left px-5 py-3 text-sm text-[#E31E24] font-bold hover:bg-red-50 flex items-center transition group">
-                    <i class="fa-solid fa-right-from-bracket mr-3 transform rotate-180 text-[#E31E24]"></i> 
+                    <i class="fa-solid fa-right-from-bracket mr-3 transform rotate-180 text-[#E31E24]"></i>
                     <span>Log Out</span>
                 </button>
             </div>
@@ -48,7 +48,7 @@
 
     <main class="pt-24 pb-16 bg-gray-50 min-h-screen">
         <div class="container mx-auto px-6 max-w-6xl">
-            
+
             {{-- WELCOME MESSAGE --}}
             <div class="relative bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border-l-[10px] border-[#800000] mb-8 overflow-hidden">
                 <div class="relative z-10 pr-0 md:pr-96">
@@ -74,7 +74,7 @@
 
             {{-- FACULTY GRID AREA --}}
             <div x-show="showEvaluation" x-cloak x-transition:enter="transition ease-out duration-700" class="space-y-10">
-                
+
                 <div class="relative bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                     <div class="flex justify-between items-center mb-2">
                         <h1 class="text-xs font-black text-gray-400 uppercase tracking-widest">Your Progress</h1>
@@ -87,59 +87,59 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @php
-                        $faculties = [
-                            ['name' => 'Prof. Danilo Villamor', 'sub' => 'COMP 101 | INTRO TO COMPUTING', 'img' => 'faculty1.jpg'],
-                            ['name' => 'Dr. Danica Santos', 'sub' => 'COMP 102 | WEB DEVELOPMENT', 'img' => 'faculty2.jpg'],
-                            ['name' => 'Prof. April Dela Cruz', 'sub' => 'COMP 103 | MULTIMEDIA', 'img' => 'faculty3.jpg'],
-                            ['name' => 'Prof. Michael Johnson', 'sub' => 'ENGL 102 | TECHNICAL WRITING', 'img' => 'faculty1.jpg'],
-                            ['name' => 'Prof. Sarah Lee', 'sub' => 'PHYS 201 | GENERAL PHYSICS', 'img' => 'faculty2.jpg'],
-                            ['name' => 'Prof. Robert Chen', 'sub' => 'HIST 105 | WORLD HISTORY', 'img' => 'faculty3.jpg'],
-                            ['name' => 'Prof. Maria Garcia', 'sub' => 'PSYC 101 | PSYCHOLOGY', 'img' => 'faculty1.jpg'],
-                        ];
+                    $faculties = [
+                    ['name' => 'Prof. Danilo Villamor', 'sub' => 'COMP 101 | INTRO TO COMPUTING', 'img' => 'faculty1.jpg'],
+                    ['name' => 'Dr. Danica Santos', 'sub' => 'COMP 102 | WEB DEVELOPMENT', 'img' => 'faculty2.jpg'],
+                    ['name' => 'Prof. April Dela Cruz', 'sub' => 'COMP 103 | MULTIMEDIA', 'img' => 'faculty3.jpg'],
+                    ['name' => 'Prof. Michael Johnson', 'sub' => 'ENGL 102 | TECHNICAL WRITING', 'img' => 'faculty1.jpg'],
+                    ['name' => 'Prof. Sarah Lee', 'sub' => 'PHYS 201 | GENERAL PHYSICS', 'img' => 'faculty2.jpg'],
+                    ['name' => 'Prof. Robert Chen', 'sub' => 'HIST 105 | WORLD HISTORY', 'img' => 'faculty3.jpg'],
+                    ['name' => 'Prof. Maria Garcia', 'sub' => 'PSYC 101 | PSYCHOLOGY', 'img' => 'faculty1.jpg'],
+                    ];
                     @endphp
-@foreach($faculties as $faculty)
-<div x-data="{ hover: false }" 
-     @mouseenter="hover = true" 
-     @mouseleave="hover = false"
-     onclick="showEvaluationModal(`{{ $faculty['name'] }}`, `{{ $faculty['sub'] }}`)"
-     class="relative bg-white rounded-[1.5rem] shadow-md transition-all duration-500 cursor-pointer overflow-hidden flex flex-col border border-gray-100 h-full"
-     :class="hover ? '-translate-y-3 shadow-2xl ring-4 ring-[#800000]/10' : 'translate-y-0'">
-    
-    <div x-show="hover" 
-         x-transition:enter="transition opacity duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition opacity duration-200"
-         class="absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-center"
-         style="background-color: rgba(128, 0, 0, 0.5); backdrop-filter: blur(2px);">
-        
-        <div class="transform transition-all duration-300" 
-             :class="hover ? 'scale-100 translate-y-0' : 'scale-90 translate-y-4'">
-            <button class="px-7 py-3 bg-white text-[#800000] font-black rounded-xl shadow-2xl uppercase text-[11px] tracking-widest flex items-center gap-3 active:scale-95 transition-transform">
-                <i class="fa-solid fa-pen-nib"></i>
-                Start Evaluating
-            </button>
-    
-        </div>
-    </div>
+                    @foreach($faculties as $faculty)
+                    <div x-data="{ hover: false }"
+                        @mouseenter="hover = true"
+                        @mouseleave="hover = false"
+                        onclick="showEvaluationModal(`{{ $faculty['name'] }}`, `{{ $faculty['sub'] }}`)"
+                        class="relative bg-white rounded-[1.5rem] shadow-md transition-all duration-500 cursor-pointer overflow-hidden flex flex-col border border-gray-100 h-full"
+                        :class="hover ? '-translate-y-3 shadow-2xl ring-4 ring-[#800000]/10' : 'translate-y-0'">
 
-    <div class="h-64 overflow-hidden bg-gray-100">
-        <img src="{{ asset('images/' . $faculty['img']) }}" 
-             class="w-full h-full object-cover object-top">
-    </div>
+                        <div x-show="hover"
+                            x-transition:enter="transition opacity duration-300"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition opacity duration-200"
+                            class="absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-center"
+                            style="background-color: rgba(128, 0, 0, 0.5); backdrop-filter: blur(2px);">
 
-    {{-- INFO BAR --}}
-    <div class="bg-[#800000] p-4 flex items-center gap-4 relative z-10">
-        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-            <img src="{{ asset('images/logo.png') }}" class="w-7 h-7 object-contain"> 
-        </div>
-        <div class="overflow-hidden">
-            <h3 class="text-white font-bold text-base truncate">{{ $faculty['name'] }}</h3> 
-            <p class="text-white/70 text-[10px] uppercase tracking-wider truncate font-medium">{{ $faculty['sub'] }}</p> 
-        </div>
-    </div>
-</div>
-@endforeach
+                            <div class="transform transition-all duration-300"
+                                :class="hover ? 'scale-100 translate-y-0' : 'scale-90 translate-y-4'">
+                                <button class="px-7 py-3 bg-white text-[#800000] font-black rounded-xl shadow-2xl uppercase text-[11px] tracking-widest flex items-center gap-3 active:scale-95 transition-transform">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                    Start Evaluating
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div class="h-64 overflow-hidden bg-gray-100">
+                            <img src="{{ asset('images/' . $faculty['img']) }}"
+                                class="w-full h-full object-cover object-top">
+                        </div>
+
+                        {{-- INFO BAR --}}
+                        <div class="bg-[#800000] p-4 flex items-center gap-4 relative z-10">
+                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                                <img src="{{ asset('images/logo.png') }}" class="w-7 h-7 object-contain">
+                            </div>
+                            <div class="overflow-hidden">
+                                <h3 class="text-white font-bold text-base truncate">{{ $faculty['name'] }}</h3>
+                                <p class="text-white/70 text-[10px] uppercase tracking-wider truncate font-medium">{{ $faculty['sub'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
 </div>
 
 {{-- EVALUATION MODAL --}}
-<div id="evaluationModal" 
+<div id="evaluationModal"
     x-data="{ 
         ratings: {}, 
         get averageRating() {
@@ -159,7 +159,7 @@
     }"
     class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
     <div class="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] overflow-hidden">
-        
+
         <div class="p-8 bg-[#800000] text-white flex justify-between items-center shrink-0">
             <div class="flex items-center gap-5">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-14 w-auto object-contain">
@@ -206,14 +206,14 @@
                 </div>
             </div>
 
-            @php 
-                $sections = [
-                    ['title' => 'SECTION 1: INSTRUCTIONAL COMPETENCE', 'icon' => 'fa-book-open', 'questions' => ["Demonstrates mastery of the subject.", "Explains concepts clearly and makes them easy to understand.", "Used relevant examples or real-world applications to illustrate lessons.", "Encourages student participation and questions during discussion.", "Uses effective teaching aids (PPT, visual aids, online resources) to enhance learning."]],
-                    ['title' => 'SECTION 2: CLASSROOM MANAGEMENT', 'icon' => 'fa-users-gear', 'questions' => ["Starts and ends classes on time.", "Maintains an orderly and conductive learning environment.", "Manages class time effectively.", "Is approachable and available for consultation.", "Implements class policies fairly and consistently."]],
-                    ['title' => 'SECTION 3: ASSESSMENT AND FEEDBACK', 'icon' => 'fa-clipboard-check', 'questions' => ["Provides clear guidelines for assignments.", "Returns quizzes and projects in a timely manner.", "Gives constructive feedback.", "Computes grades fairly.", "Assessments align with learning objectives."]],
-                    ['title' => 'SECTION 4: PROFESSIONALISM', 'icon' => 'fa-user-tie', 'questions' => ["Shows respect for students.", "Demonstrates enthusiasm in teaching.", "Accepts constructive criticism.", "Adheres to school policies.", "Maintains professional appearance."]]
-                ];
-                $q_idx = 1;
+            @php
+            $sections = [
+            ['title' => 'SECTION 1: INSTRUCTIONAL COMPETENCE', 'icon' => 'fa-book-open', 'questions' => ["Demonstrates mastery of the subject.", "Explains concepts clearly and makes them easy to understand.", "Used relevant examples or real-world applications to illustrate lessons.", "Encourages student participation and questions during discussion.", "Uses effective teaching aids (PPT, visual aids, online resources) to enhance learning."]],
+            ['title' => 'SECTION 2: CLASSROOM MANAGEMENT', 'icon' => 'fa-users-gear', 'questions' => ["Starts and ends classes on time.", "Maintains an orderly and conductive learning environment.", "Manages class time effectively.", "Is approachable and available for consultation.", "Implements class policies fairly and consistently."]],
+            ['title' => 'SECTION 3: ASSESSMENT AND FEEDBACK', 'icon' => 'fa-clipboard-check', 'questions' => ["Provides clear guidelines for assignments.", "Returns quizzes and projects in a timely manner.", "Gives constructive feedback.", "Computes grades fairly.", "Assessments align with learning objectives."]],
+            ['title' => 'SECTION 4: PROFESSIONALISM', 'icon' => 'fa-user-tie', 'questions' => ["Shows respect for students.", "Demonstrates enthusiasm in teaching.", "Accepts constructive criticism.", "Adheres to school policies.", "Maintains professional appearance."]]
+            ];
+            $q_idx = 1;
             @endphp
 
             @foreach($sections as $section)
@@ -235,10 +235,10 @@
                         <tr class="border-b last:border-0 hover:bg-gray-50/50 transition">
                             <td class="py-6 px-8 font-medium">{{ $q }}</td>
                             @for($i=1; $i<=5; $i++)
-                            <td class="text-center">
+                                <td class="text-center">
                                 <input type="radio" x-model="ratings['q{{ $q_idx }}']" name="q{{ $q_idx }}" value="{{ $i }}" class="w-5 h-5 accent-[#800000] cursor-pointer">
-                            </td>
-                            @endfor
+                                </td>
+                                @endfor
                         </tr>
                         @php $q_idx++; @endphp
                         @endforeach
@@ -275,10 +275,10 @@
             <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Rate this system <span class="font-normal">(optional)</span></p>
             <div class="flex justify-center gap-3 text-3xl text-gray-200" x-data="{ rating: 0 }">
                 @for($i=1; $i<=5; $i++)
-                <i class="fa-solid fa-star cursor-pointer transition-all duration-300 hover:scale-110" 
+                    <i class="fa-solid fa-star cursor-pointer transition-all duration-300 hover:scale-110"
                     :class="rating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-200'"
                     @click="rating = {{ $i }}"></i>
-                @endfor
+                    @endfor
             </div>
         </div>
         <div class="w-full mb-8 text-left">
@@ -330,44 +330,47 @@
 </div>
 
 {{-- CHANGE PASSWORD MODAL --}}
-<div id="changePasswordModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden" x-data="{ showOld: false, showNew: false, showConfirm: false }">
-        <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-lock text-xl"></i></div>
-            <div>
-                <h2 class="text-xl font-black tracking-tight">Security Update</h2>
-                <p class="text-[10px] opacity-70 uppercase font-bold">Change your portal password</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-5">
-            <div class="space-y-2">
-                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
-                <div class="relative">
-                    <input :type="showOld ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
-                    <button @click="showOld = !showOld" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+<form method="POST" action="{{ route('student.changePassword') }}" id="changePasswordForm">
+    @csrf
+    <div id="changePasswordModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden" x-data="{ showOld: false, showNew: false, showConfirm: false }">
+            <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-lock text-xl"></i></div>
+                <div>
+                    <h2 class="text-xl font-black tracking-tight">Security Update</h2>
+                    <p class="text-[10px] opacity-70 uppercase font-bold">Change your portal password</p>
                 </div>
             </div>
-            <div class="space-y-2">
-                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
-                <div class="relative">
-                    <input :type="showNew ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
-                    <button @click="showNew = !showNew" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+            <div class="p-8 space-y-5">
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
+                    <div class="relative">
+                        <input name="current_password" :type="showOld ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button @click="showOld = !showOld" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
+                    <div class="relative">
+                        <input name="new_password" :type="showNew ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button @click="showNew = !showNew" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Confirm New Password</label>
+                    <div class="relative">
+                        <input name="new_password_confirmation" :type="showConfirm ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button @click="showConfirm = !showConfirm" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="space-y-2">
-                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Confirm New Password</label>
-                <div class="relative">
-                    <input :type="showConfirm ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
-                    <button @click="showConfirm = !showConfirm" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i></button>
-                </div>
+            <div class="p-8 pt-0 flex gap-3">
+                <button type="button" onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
+                <button type="submit" class="flex-[2] py-4 bg-[#800000] text-white font-black rounded-2xl shadow-xl hover:bg-[#660000] transition uppercase text-xs tracking-widest">Update Password</button>
             </div>
-        </div>
-        <div class="p-8 pt-0 flex gap-3">
-            <button onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
-            <button onclick="hideChangePasswordModal()" class="flex-[2] py-4 bg-[#800000] text-white font-black rounded-2xl shadow-xl hover:bg-[#660000] transition uppercase text-xs tracking-widest">Update Password</button>
         </div>
     </div>
-</div>
+</form>
 
 <footer class="bg-[#660000] text-white py-12">
     <div class="container mx-auto px-10 text-center text-xs">
@@ -377,14 +380,14 @@
 </footer>
 
 <script>
-    function showEvaluationModal(n, s) { 
-        document.getElementById('evalFacultyName').innerText = n; 
+    function showEvaluationModal(n, s) {
+        document.getElementById('evalFacultyName').innerText = n;
         document.getElementById('evalFacultySub').innerText = s;
-        document.getElementById('evaluationModal').classList.replace('hidden', 'flex'); 
+        document.getElementById('evaluationModal').classList.replace('hidden', 'flex');
     }
-    
-    function hideEvaluationModal() { 
-        document.getElementById('evaluationModal').classList.replace('flex', 'hidden'); 
+
+    function hideEvaluationModal() {
+        document.getElementById('evaluationModal').classList.replace('flex', 'hidden');
     }
 
     function showSuccessModal() {
@@ -405,15 +408,61 @@
     }
 
     function processFinalSubmission() {
-        hideConfirmSubmitModal(); 
-        showSuccessModal();     
+        hideConfirmSubmitModal();
+        showSuccessModal();
     }
 
-    function showLogoutModal() { document.getElementById('logoutModal').classList.replace('hidden', 'flex'); }
-    function hideLogoutModal() { document.getElementById('logoutModal').classList.replace('flex', 'hidden'); }
-    function showChangePasswordModal() { document.getElementById('changePasswordModal').classList.replace('hidden', 'flex'); }
-    function hideChangePasswordModal() { document.getElementById('changePasswordModal').classList.replace('hidden', 'flex'); }
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('flex', 'hidden');
+    }
+
+    function showChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
+    }
+
+    const passForm = document.getElementById('changePasswordModal');
+
+    if (passForm) {
+        passForm.addEventListener('submit', function(e) {
+
+                const current = document.querySelector('[name="current_password"]').value;
+                const newPass = document.querySelector('[name="new_password"]').value;
+                const confirm = document.querySelector('[name="new_password_confirmation"]').value;
+
+                console.log('Validation running...');
+
+                if (!current || !newPass || !confirm) {
+                    e.preventDefault();
+                    alert('Please fill in all password fields.')
+                    return;
+                }
+
+                if (newPass !== confirm) {
+                    e.preventDefault();
+                    alert('New Password and Confirmation Password do not match.');
+                    return;
+                }
+            });
+        } else {
+            console.error("ERROR: Could not find element"); 
+        }
+
+    function executeLogout() {
+        window.location.href = "{{ route('student.logout') }}";
+    }
 </script>
 
-<style> [x-cloak] { display: none !important; } </style>
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
 @endsection
