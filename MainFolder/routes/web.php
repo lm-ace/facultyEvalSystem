@@ -4,8 +4,11 @@ use App\Http\Controllers\FacultyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Http\Controllers\Student\DashboardController;
 
-// Public routes
+//PUBLIC PAGES
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -22,7 +25,7 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
-// Authentication routes
+//AUTH ROUTES
 Route::get('/login', function () {
     return view('auth.role-selection');
 })->name('login');
@@ -31,32 +34,51 @@ Route::get('/login/{role}', function ($role) {
     return view('auth.login-form', ['role' => $role]);
 })->name('login.role');
 
+//LOGGING IN 
 Route::post('/login/process/{role}', function (Request $request, $role) {
-    // TODO: Add actual authentication logic here
-    $credentials = $request->only('username', 'password');
 
-    if ($role === 'faculty') {
-        // For testing, find any faculty user
-        $user = \App\Models\User::where('role', 'faculty')
-            ->where('username', $credentials['username'] ?? 'testfaculty')
-            ->first();
+    // 1. Validate form data
+    $request->validate([
+        'username' => 'required',
+        'password' => 'required'
+    ]);
 
-        if ($user) {
-            Auth::login($user);
+    // 2. Find user in the database
+    $user = User::where('username', $request->username)
+        ->where('role', $role)
+        ->first();
+
+    // 3. Check if user exists AND password is correct
+    if ($user && Hash::check($request->password, $user->password_hash)) {
+
+        // SUCCESS
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        // Redirect to correct dashboard based on role
+        if ($role === 'student') {
+            return redirect()->route('student.index');
+        } elseif ($role === 'faculty') {
             return redirect()->route('faculty.dashboard');
+        } elseif ($role === 'admin') {
+            return redirect()->route('admin.dashboard');
         }
     }
 
-    return back()->withErrors(['login' => 'Invalid credentials']);
+    // 4. If login failed, go back with error
+    return back()->withErrors([
+        'username' => 'Invalid username or password.',
+    ]);
 })->name('login.process');
 
-// Temporary test login route (remove in production)
-Route::get('/login-test/{id}', function ($id) {
-    Auth::loginUsingId($id);
-    return redirect()->route('faculty.dashboard');
-})->name('login.test');
 
-// Admin routes
+//FACULTY ROUTES
+Route::get('/faculty/dashboard', function () {
+    return view('faculty.dashboard');
+})->name('faculty.dashboard');
+
+
+//ADMIN ROUTES
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -79,24 +101,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('section.detail');
 });
 
-// Student routes
-Route::get('/student', function () {
-    return view('student.index');
-})->name('student');
-
 //FACULTY ROUTES
 Route::get('/faculty/{id}/dashboard', [FacultyController::class, 'show'])
-->name('faculty.dashboard'); 
+    ->name('faculty.dashboard');
 
 
-    // Logout route (must be POST for security)
-    Route::post('/logout', function () {
-        Auth::logout();
-        return redirect()->route('home');
-    })->name('logout');
+// Logout route (must be POST for security)
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect()->route('home');
+})->name('logout');
 
-    // Also allow GET for testing (remove in production)
-    Route::get('/logout', function () {
-        Auth::logout();
-        return redirect()->route('home');
-    });
+// Also allow GET for testing (remove in production)
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect()->route('home');
+});
+
+Route::get('/admin/sections/{section_code}', function ($section_code) {
+    return view('admin.section-detail', ['section' => $section_code]);
+})->name('admin.section.detail');
+
+
+//STUDENT ROUTES
+Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
+
+    // Dashboard / Index
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
+
+    // Submission Logic
+    Route::post('/evaluate', [DashboardController::class, 'store'])->name('evaluate.store');
+});

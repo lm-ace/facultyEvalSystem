@@ -56,7 +56,7 @@
             
             <div>
                 <label class="text-xs font-bold text-gray-400 uppercase">{{ $identifierLabel }}</label>
-                <input type="text" name="login_id" required 
+                <input type="text" name="username" required
                     class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" 
                     placeholder="{{ $placeholder }}"
                     value="{{ old('login_id') }}">

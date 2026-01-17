@@ -14,6 +14,9 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
+    /**
+     * @var list<string>
+     */
     protected $fillable = [
         'role',         // student|faculty|admin
         'username',
@@ -23,7 +26,24 @@ class User extends Authenticatable
         'last_login',
     ];
 
-    protected $hidden = ['password_hash'];
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password_hash',
+        'remember_token',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     public function student(): HasOne
     {
