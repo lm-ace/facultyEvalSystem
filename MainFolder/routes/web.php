@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\FacultyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
-use Illuminate\Support\Facades\Hash; 
-use App\Models\User;                 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use App\Http\Controllers\Student\DashboardController;
 
 //PUBLIC PAGES
@@ -35,7 +36,7 @@ Route::get('/login/{role}', function ($role) {
 
 //LOGGING IN 
 Route::post('/login/process/{role}', function (Request $request, $role) {
-    
+
     // 1. Validate form data
     $request->validate([
         'username' => 'required',
@@ -44,12 +45,12 @@ Route::post('/login/process/{role}', function (Request $request, $role) {
 
     // 2. Find user in the database
     $user = User::where('username', $request->username)
-                ->where('role', $role) 
-                ->first();
+        ->where('role', $role)
+        ->first();
 
     // 3. Check if user exists AND password is correct
     if ($user && Hash::check($request->password, $user->password_hash)) {
-        
+
         // SUCCESS
         Auth::login($user);
         $request->session()->regenerate();
@@ -68,7 +69,6 @@ Route::post('/login/process/{role}', function (Request $request, $role) {
     return back()->withErrors([
         'username' => 'Invalid username or password.',
     ]);
-
 })->name('login.process');
 
 
@@ -80,10 +80,42 @@ Route::get('/faculty/dashboard', function () {
 
 //ADMIN ROUTES
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () { return view('admin.dashboard'); })->name('dashboard');
-    Route::get('/departments', function () { return view('admin.departments.index'); })->name('departments');
-    Route::get('/criteria', function () { return view('admin.criteria'); })->name('criteria');
-    Route::get('/reports', function () { return view('admin.reports'); })->name('reports');
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    Route::get('/departments', function () {
+        return view('admin.departments.index');
+    })->name('departments');
+
+    Route::get('/criteria', function () {
+        return view('admin.criteria');
+    })->name('criteria');
+
+    Route::get('/reports', function () {
+        return view('admin.reports');
+    })->name('reports');
+
+    Route::get('/sections/{section_code}', function ($section_code) {
+        return view('admin.section-detail', ['section' => $section_code]);
+    })->name('section.detail');
+});
+
+//FACULTY ROUTES
+Route::get('/faculty/{id}/dashboard', [FacultyController::class, 'show'])
+    ->name('faculty.dashboard');
+
+
+// Logout route (must be POST for security)
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect()->route('home');
+})->name('logout');
+
+// Also allow GET for testing (remove in production)
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect()->route('home');
 });
 
 Route::get('/admin/sections/{section_code}', function ($section_code) {
@@ -93,11 +125,10 @@ Route::get('/admin/sections/{section_code}', function ($section_code) {
 
 //STUDENT ROUTES
 Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
-    
+
     // Dashboard / Index
-    Route::get('/', [DashboardController::class, 'index'])->name('index'); 
-    
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
+
     // Submission Logic
     Route::post('/evaluate', [DashboardController::class, 'store'])->name('evaluate.store');
-
 });
