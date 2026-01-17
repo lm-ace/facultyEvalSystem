@@ -32,7 +32,7 @@
     </div>
 </nav>
 
-<div class="relative min-h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('facultyEvalSystem\MainFolder\public\images\lagoon.jpg');">
+<div class="relative min-h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('{{ asset('images/lagoon.jpg') }}');">
     <div class="absolute inset-0 bg-[#4D0000]/70"></div>
 
     <div class="relative z-10 w-full max-w-md bg-white rounded-xl shadow-2xl p-8 mx-4">

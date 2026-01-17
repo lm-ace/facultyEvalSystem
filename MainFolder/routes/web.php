@@ -71,13 +71,6 @@ Route::post('/login/process/{role}', function (Request $request, $role) {
     ]);
 })->name('login.process');
 
-
-//FACULTY ROUTES
-Route::get('/faculty/dashboard', function () {
-    return view('faculty.dashboard');
-})->name('faculty.dashboard');
-
-
 //ADMIN ROUTES
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
@@ -104,7 +97,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 //FACULTY ROUTES
 Route::get('/faculty/{id}/dashboard', [FacultyController::class, 'show'])
     ->name('faculty.dashboard');
-
 
 // Logout route (must be POST for security)
 Route::post('/logout', function () {
