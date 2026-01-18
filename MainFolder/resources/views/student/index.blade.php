@@ -4,7 +4,14 @@
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<div x-data="{ showEvaluation: false }">
+<div x-data="{ 
+    showEvaluation: localStorage.getItem('showEvaluation') === 'true' ||  {{ $submissionValidation ?? false ? 'true': 'false'}},
+    init(){
+        this.$watch('showEvaluation', value => {
+            localStorage.setItem('showEvaluation', value);
+        });
+    }
+ }">
 
     {{-- NAVIGATION --}}
     <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
@@ -72,18 +79,20 @@
                 </div>
             </div>
 
+            {{-- CHANGED: Wrapped progress and faculty grid in x-show to hide/show on button click --}}
+            <div x-show="showEvaluation" x-cloak x-transition:enter="transition ease-out duration-700" class="space-y-8">
+
+            {{-- PROGRESS SECTION - KEPT FROM HEAD (database integration) --}}
             <div class="relative bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-2">
-                    <div>
-                        <h1 class="text-xs font-black text-gray-400 uppercase tracking-widest">Your Progress</h1>
-                        <p class="text-[10px] text-gray-500 mt-0.5">
-                            You have finished <span class="font-bold text-[#800000]">{{ $completedCount }}</span>
-                            out of <span class="font-bold text-gray-800">{{ $totalToEvaluate }}</span> instructors.
-                        </p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-2xl font-black text-[#800000] leading-none">{{ $percentage }}%</span>
-                    </div>
+                    <h1 class="text-xs font-black text-gray-400 uppercase tracking-widest">Your Progress</h1>
+                    <p class="text-[10px] text-gray-500 mt-0.5">
+                        You have finished <span class="font-bold text-[#800000]">{{ $completedCount }}</span>
+                        out of <span class="font-bold text-gray-800">{{ $totalToEvaluate }}</span> instructors.
+                    </p>
+                </div>
+                <div class="text-right">
+                    <span class="text-2xl font-black text-[#800000] leading-none">{{ $percentage }}%</span>
                 </div>
 
                 {{-- Dynamic Progress Bar --}}
@@ -111,7 +120,8 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+            {{-- FACULTY GRID - KEPT FROM HEAD (database loop with $enrolledSubjects) --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {{-- LOOP THROUGH DATABASE SUBJECTS --}}
                 @foreach($enrolledSubjects as $subject)
                 <div x-data="{ hover: false }" 
@@ -165,11 +175,15 @@
                 </div>
                 @endforeach
             </div>
+            
+            {{-- CHANGED: Closing div for x-show wrapper --}}
+            </div>
+
         </div>
     </main>
 </div>
 
-{{-- EVALUATION MODAL --}}
+{{-- EVALUATION MODAL - KEPT FROM HEAD (with form and database submission) --}}
 <div id="evaluationModal"
     x-data="{ 
         ratings: {}, 
@@ -184,10 +198,12 @@
 
     <div class="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] overflow-hidden">
 
+        {{-- FORM TAG - KEPT FROM HEAD (enables database submission) --}}
         <form id="evalForm" action="{{ route('student.evaluate.store') }}" method="POST" class="flex flex-col h-full overflow-hidden">
             @csrf
             <input type="hidden" name="offering_id" id="evalOfferingId">
 
+            {{-- MODAL HEADER - KEPT FROM HEAD (has close button and rating display) --}}
             <div class="p-8 bg-[#800000] text-white flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-5">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-14 w-auto object-contain">
@@ -264,7 +280,7 @@
                                 <td class="py-6 px-8 font-medium">{{ $q }}</td>
                                 @for($i=1; $i<=5; $i++)
                                     <td class="text-center">
-                                    {{-- FORM INPUT: name="ratings[ID]" --}}
+                                    {{-- FORM INPUT: name="ratings[ID]" - KEPT FROM HEAD (submits to database) --}}
                                     <input type="radio"
                                             name="ratings[{{ $global_q_id }}]"
                                             value="{{ $i }}"
@@ -365,44 +381,47 @@
 </div>
 
 {{-- CHANGE PASSWORD MODAL --}}
-<div id="changePasswordModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden" x-data="{ showOld: false, showNew: false, showConfirm: false }">
-        <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
-            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-lock text-xl"></i></div>
-            <div>
-                <h2 class="text-xl font-black tracking-tight">Security Update</h2>
-                <p class="text-[10px] opacity-70 uppercase font-bold">Change your portal password</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-5">
-            <div class="space-y-2">
-                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
-                <div class="relative">
-                    <input :type="showOld ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
-                    <button @click="showOld = !showOld" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+<form method="POST" action="{{ route('student.changePassword') }}" id="changePasswordForm">
+    @csrf
+    <div id="changePasswordModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden" x-data="{ showOld: false, showNew: false, showConfirm: false }">
+            <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-lock text-xl"></i></div>
+                <div>
+                    <h2 class="text-xl font-black tracking-tight">Security Update</h2>
+                    <p class="text-[10px] opacity-70 uppercase font-bold">Change your portal password</p>
                 </div>
             </div>
-            <div class="space-y-2">
-                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
-                <div class="relative">
-                    <input :type="showNew ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
-                    <button @click="showNew = !showNew" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+            <div class="p-8 space-y-5">
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
+                    <div class="relative">
+                        <input name="current_password" :type="showOld ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button type="button" @click="showOld = !showOld" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
+                    <div class="relative">
+                        <input name="new_password" :type="showNew ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button type="button" @click="showNew = !showNew" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Confirm New Password</label>
+                    <div class="relative">
+                        <input name="new_password_confirmation" :type="showConfirm ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="space-y-2">
-                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Confirm New Password</label>
-                <div class="relative">
-                    <input :type="showConfirm ? 'text' : 'password'" class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
-                    <button @click="showConfirm = !showConfirm" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i></button>
-                </div>
+            <div class="p-8 pt-0 flex gap-3">
+                <button type="button" onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
+                <button type="submit" class="flex-[2] py-4 bg-[#800000] text-white font-black rounded-2xl shadow-xl hover:bg-[#660000] transition uppercase text-xs tracking-widest">Update Password</button>
             </div>
-        </div>
-        <div class="p-8 pt-0 flex gap-3">
-            <button onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
-            <button onclick="hideChangePasswordModal()" class="flex-[2] py-4 bg-[#800000] text-white font-black rounded-2xl shadow-xl hover:bg-[#660000] transition uppercase text-xs tracking-widest">Update Password</button>
         </div>
     </div>
-</div>
+</form>
 
 <footer class="bg-[#660000] text-white py-12">
     <div class="container mx-auto px-10 text-center text-xs">
@@ -412,23 +431,15 @@
 </footer>
 
 <script>
-    // 1. UPDATED: Added 'id' parameter to capture the Offering ID
+    // CHANGED: Added 'id' parameter to capture the Offering ID (from HEAD)
     function showEvaluationModal(n, s, id) {
         document.getElementById('evalFacultyName').innerText = n;
         document.getElementById('evalFacultySub').innerText = s;
 
-        //Pass the ID to the hidden input in the form
+        // Pass the ID to the hidden input in the form
         document.getElementById('evalOfferingId').value = id;
 
         document.getElementById('evaluationModal').classList.replace('hidden', 'flex');
-    }
-
-    // 2. UPDATED: Now submits the form to the database
-    function processFinalSubmission() {
-        hideConfirmSubmitModal();
-
-        //Triggers the form submission to the Route
-        document.getElementById('evalForm').submit();
     }
 
     function hideEvaluationModal() {
@@ -452,6 +463,14 @@
         document.getElementById('confirmSubmitModal').classList.replace('flex', 'hidden');
     }
 
+    // CHANGED: Now submits the form to the database (from HEAD)
+    function processFinalSubmission() {
+        hideConfirmSubmitModal();
+
+        // Triggers the form submission to the Route
+        document.getElementById('evalForm').submit();
+    }
+
     function showLogoutModal() {
         document.getElementById('logoutModal').classList.replace('hidden', 'flex');
     }
@@ -464,8 +483,14 @@
         document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
     }
 
+    // FIXED: Changed from 'hidden' to 'flex' (was a bug)
     function hideChangePasswordModal() {
-        document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
+        document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
+    }
+
+    // ADDED: Logout function that uses global logout route
+    function executeLogout() {
+        window.location.href = "{{ route('logout') }}";
     }
 </script>
 
