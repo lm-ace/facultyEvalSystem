@@ -51,7 +51,17 @@
             <span class="font-bold uppercase tracking-wider">{{ ucfirst($role) }} Login</span>
         </div>
 
-        <form action="{{ route('login.process', $role) }}" method="POST" class="space-y-5">
+        {{--this code shows of theres an error --}}
+        @if ($errors->any())
+            <div class="mb-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-center text-red-800">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                    <span class="text-sm font-medium">{{ $errors->first() }}</span>
+                </div>
+            </div>
+        @endif
+
+        <form action="{{ route('login.process') }}" method="POST" class="space-y-5">
             @csrf 
             
             <div>
@@ -59,7 +69,7 @@
                 <input type="text" name="username" required
                     class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none" 
                     placeholder="{{ $placeholder }}"
-                    value="{{ old('login_id') }}">
+                    value="{{ old('username') }}">
             </div>
             
             <div>

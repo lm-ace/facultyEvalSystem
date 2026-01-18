@@ -10,9 +10,13 @@ use Illuminate\Http\Request;
 
 class facultyController extends Controller
 {
-    public function show($id){
+    public function show(){
       
-        $faculty = Faculty::findOrFail($id);
+        $faculty = auth()->user()->faculty; 
+
+        if(!$faculty){
+            abort(403, 'No faculty found');
+        }
 
         $fullName = $faculty->first_name; 
 
