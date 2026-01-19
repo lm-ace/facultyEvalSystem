@@ -21,18 +21,24 @@ class Faculty extends Model
         'department_id'
     ];
 
+    // Auto-load department and class offerings
+    protected $with = ['department'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+    
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
+    
     public function classOfferings(): HasMany
     {
         return $this->hasMany(ClassOffering::class);
     }
+    
     public function evaluations(): HasMany
     {
         return $this->hasMany(Evaluation::class);

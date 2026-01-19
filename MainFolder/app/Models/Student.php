@@ -21,9 +21,19 @@ class Student extends Model
         'last_name',
         'suffix',
         'year_level',
-        'block_section',
+        'section_id', // ✅ ADDED: This is required for the new database link
+        'block_section', // You can keep this for display, or remove it later if unused
         'contact_no',
     ];
+
+    // ✅ NEW: This fixes the "Call to undefined method" error
+    // It tells Laravel that a Student belongs to a specific ClassSection
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(ClassSection::class, 'section_id');
+    }
+
+    // --- Existing Relationships ---
 
     public function user(): BelongsTo
     {
