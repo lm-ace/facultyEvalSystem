@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->unique();
+            // Added ->nullable() to prevent the "cannot be null" error during seeding
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete()->unique();
             $table->string('faculty_code', 64)->unique();
             $table->string('first_name', 100);
             $table->string('middle_name', 100)->nullable();

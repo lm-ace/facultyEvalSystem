@@ -26,7 +26,7 @@ class Evaluation extends Model
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     public function faculty(): BelongsTo
@@ -48,4 +48,6 @@ class Evaluation extends Model
     {
         return $this->hasMany(EvaluationResponse::class);
     }
+
+    
 }

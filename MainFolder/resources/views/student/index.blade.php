@@ -79,10 +79,9 @@
                 </div>
             </div>
 
-            {{-- CHANGED: Wrapped progress and faculty grid in x-show to hide/show on button click --}}
             <div x-show="showEvaluation" x-cloak x-transition:enter="transition ease-out duration-700" class="space-y-8">
 
-            {{-- PROGRESS SECTION - KEPT FROM HEAD (database integration) --}}
+            {{-- PROGRESS SECTION --}}
             <div class="relative bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-2">
                     <h1 class="text-xs font-black text-gray-400 uppercase tracking-widest">Your Progress</h1>
@@ -95,14 +94,12 @@
                     <span class="text-2xl font-black text-[#800000] leading-none">{{ $percentage }}%</span>
                 </div>
 
-                {{-- Dynamic Progress Bar --}}
                 <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden mt-2">
                     <div class="bg-[#800000] h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_#80000055]"
                         style="width: {{ $percentage }}%">
                     </div>
                 </div>
 
-                {{-- Status Badge Logic --}}
                 <div class="mt-3 flex justify-end">
                     @if($totalToEvaluate == 0)
                     <span class="bg-gray-100 text-gray-500 text-[9px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider">
@@ -120,9 +117,8 @@
                 </div>
             </div>
 
-            {{-- FACULTY GRID - KEPT FROM HEAD (database loop with $enrolledSubjects) --}}
+            {{-- FACULTY GRID --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {{-- LOOP THROUGH DATABASE SUBJECTS --}}
                 @foreach($enrolledSubjects as $subject)
                 <div x-data="{ hover: false }" 
                      @mouseenter="hover = true" 
@@ -130,14 +126,12 @@
                      class="relative bg-white rounded-[1.5rem] shadow-md transition-all duration-500 overflow-hidden flex flex-col border border-gray-100 h-full"
                      :class="hover ? '-translate-y-3 shadow-2xl ring-4 ring-[#800000]/10' : 'translate-y-0'">
                     
-                    {{-- 1. IF NOT EVALUATED: SHOW START BUTTON --}}
                     @if(!$subject->is_evaluated)
                     <div x-show="hover" 
                          class="absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-center"
                          style="background-color: rgba(128, 0, 0, 0.5); backdrop-filter: blur(2px);">
                         
                         <div class="transform transition-all duration-300" :class="hover ? 'scale-100 translate-y-0' : 'scale-90 translate-y-4'">
-                            {{-- THIS PASSES THE REAL ID SO IT DOES NOT AUTO-COMPLETE --}}
                             <button onclick="showEvaluationModal('{{ $subject->first_name }} {{ $subject->last_name }}', '{{ $subject->subject_code }}', {{ $subject->offering_id }})"
                                 class="px-7 py-3 bg-white text-[#800000] font-black rounded-xl shadow-2xl uppercase text-[11px] tracking-widest flex items-center gap-3 active:scale-95 transition-transform">
                                 <i class="fa-solid fa-pen-nib"></i>
@@ -147,7 +141,6 @@
                     </div>
                     
                     @else
-                    {{-- 2. IF COMPLETED: SHOW GREEN CHECK --}}
                     <div class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm">
                         <span class="bg-white text-green-700 font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-widest shadow-lg">
                             <i class="fa-solid fa-check-circle mr-1"></i> Completed
@@ -155,14 +148,11 @@
                     </div>
                     @endif
 
-                    {{-- 3. DISPLAY IMAGE FROM DATABASE (Original Look) --}}
                     <div class="h-64 overflow-hidden bg-gray-100">
-                        {{-- Make sure your images are in public/images/ --}}
                         <img src="{{ asset('images/' . $subject->profile_picture) }}" 
                              class="w-full h-full object-cover object-top {{ $subject->is_evaluated ? 'grayscale' : '' }}">
                     </div>
 
-                    {{-- 4. INFO BAR --}}
                     <div class="bg-[#800000] p-4 flex items-center gap-4 relative z-10">
                         <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
                             <span class="font-bold text-[#800000] text-xs">{{ substr($subject->subject_code, 0, 3) }}</span>
@@ -176,14 +166,13 @@
                 @endforeach
             </div>
             
-            {{-- CHANGED: Closing div for x-show wrapper --}}
             </div>
 
         </div>
     </main>
 </div>
 
-{{-- EVALUATION MODAL - KEPT FROM HEAD (with form and database submission) --}}
+{{-- EVALUATION MODAL --}}
 <div id="evaluationModal"
     x-data="{ 
         ratings: {}, 
@@ -197,13 +186,10 @@
     class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
 
     <div class="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] overflow-hidden">
-
-        {{-- FORM TAG - KEPT FROM HEAD (enables database submission) --}}
         <form id="evalForm" action="{{ route('student.evaluate.store') }}" method="POST" class="flex flex-col h-full overflow-hidden">
             @csrf
             <input type="hidden" name="offering_id" id="evalOfferingId">
 
-            {{-- MODAL HEADER - KEPT FROM HEAD (has close button and rating display) --}}
             <div class="p-8 bg-[#800000] text-white flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-5">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-14 w-auto object-contain">
@@ -280,7 +266,6 @@
                                 <td class="py-6 px-8 font-medium">{{ $q }}</td>
                                 @for($i=1; $i<=5; $i++)
                                     <td class="text-center">
-                                    {{-- FORM INPUT: name="ratings[ID]" - KEPT FROM HEAD (submits to database) --}}
                                     <input type="radio"
                                             name="ratings[{{ $global_q_id }}]"
                                             value="{{ $i }}"
@@ -310,36 +295,6 @@
                 </button>
             </div>
         </form>
-    </div>
-</div>
-
-{{-- SUCCESS MODAL --}}
-<div id="successModal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/70 backdrop-blur-md p-4">
-    <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 flex flex-col items-center text-center overflow-hidden">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 mb-6">
-        <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-5 shadow-inner border border-green-100">
-            <i class="fa-solid fa-circle-check text-5xl"></i>
-        </div>
-        <h2 class="text-3xl font-black text-[#800000] mb-2 tracking-tight">Congratulations!</h2>
-        <p class="text-gray-500 text-sm mb-8 max-w-[280px]">You have successfully completed the faculty evaluation for this instructor.</p>
-        <div class="w-full bg-gray-50 p-6 rounded-[1.5rem] mb-6 border border-gray-100">
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Rate this system <span class="font-normal">(optional)</span></p>
-            <div class="flex justify-center gap-3 text-3xl text-gray-200" x-data="{ rating: 0 }">
-                @for($i=1; $i<=5; $i++)
-                    <i class="fa-solid fa-star cursor-pointer transition-all duration-300 hover:scale-110"
-                    :class="rating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-200'"
-                    @click="rating = {{ $i }}"></i>
-                    @endfor
-            </div>
-        </div>
-        <div class="w-full mb-8 text-left">
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-3">Additional Feedback <span class="font-normal">(optional)</span></p>
-            <textarea class="w-full p-4 border-2 border-gray-100 rounded-[1.5rem] h-24 text-sm focus:ring-0 focus:border-[#800000] outline-none bg-white transition shadow-sm" placeholder="Tell us how we can improve..."></textarea>
-        </div>
-        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button onclick="hideSuccessModal()" class="w-full py-4 bg-[#800000] text-white font-black rounded-xl shadow-lg hover:bg-[#660000] transition transform active:scale-95 uppercase text-[10px] tracking-widest">Submit Feedback</button>
-            <button onclick="hideSuccessModal()" class="w-full py-4 bg-white text-gray-700 font-bold rounded-xl border-2 border-gray-100 hover:bg-gray-50 transition transform active:scale-95 uppercase text-[10px] tracking-widest">Back to Dashboard</button>
-        </div>
     </div>
 </div>
 
@@ -423,6 +378,11 @@
     </div>
 </form>
 
+{{-- HIDDEN LOGOUT FORM (ADDED FOR FIX) --}}
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
 <footer class="bg-[#660000] text-white py-12">
     <div class="container mx-auto px-10 text-center text-xs">
         <p class="opacity-50">Polytechnic University of the Philippines - Main Campus</p>
@@ -431,28 +391,15 @@
 </footer>
 
 <script>
-    // CHANGED: Added 'id' parameter to capture the Offering ID (from HEAD)
     function showEvaluationModal(n, s, id) {
         document.getElementById('evalFacultyName').innerText = n;
         document.getElementById('evalFacultySub').innerText = s;
-
-        // Pass the ID to the hidden input in the form
         document.getElementById('evalOfferingId').value = id;
-
         document.getElementById('evaluationModal').classList.replace('hidden', 'flex');
     }
 
     function hideEvaluationModal() {
         document.getElementById('evaluationModal').classList.replace('flex', 'hidden');
-    }
-
-    function showSuccessModal() {
-        hideEvaluationModal();
-        document.getElementById('successModal').classList.replace('hidden', 'flex');
-    }
-
-    function hideSuccessModal() {
-        document.getElementById('successModal').classList.replace('flex', 'hidden');
     }
 
     function showConfirmSubmitModal() {
@@ -463,11 +410,8 @@
         document.getElementById('confirmSubmitModal').classList.replace('flex', 'hidden');
     }
 
-    // CHANGED: Now submits the form to the database (from HEAD)
     function processFinalSubmission() {
         hideConfirmSubmitModal();
-
-        // Triggers the form submission to the Route
         document.getElementById('evalForm').submit();
     }
 
@@ -483,14 +427,13 @@
         document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
     }
 
-    // FIXED: Changed from 'hidden' to 'flex' (was a bug)
     function hideChangePasswordModal() {
         document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
     }
 
-    // ADDED: Logout function that uses global logout route
+    // FIXED: Uses POST submission instead of GET
     function executeLogout() {
-        window.location.href = "{{ route('logout') }}";
+        document.getElementById('logout-form').submit();
     }
 </script>
 
