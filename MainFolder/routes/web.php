@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
@@ -61,9 +62,7 @@ Route::get('/sections/{section_code}', function ($section_code) {
     return view('admin.section-detail', ['section' => $section_code]);
 })->name('section.detail');
 
-Route::get('/criteria', function () {
-    return view('admin.criteria');
-})->name('criteria');
+Route::get('/criteria', [AdminController::class, 'criteria'])->name('criteria');
 
 // For views lang wala since wala pa controller 
 Route::post('/criteria', function () {})->name('criteria.store');

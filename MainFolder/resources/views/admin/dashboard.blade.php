@@ -59,8 +59,8 @@
             <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Faculty</p>
-                    <h3 class="text-4xl font-black text-[#800000] mt-1">45</h3>
-                    <p class="text-gray-400 text-[10px] mt-1">Across 14 Colleges</p>
+                    <h3 class="text-4xl font-black text-[#800000] mt-1">{{ $totalFaculty ?? 0 }}</h3>
+                    <p class="text-gray-400 text-[10px] mt-1">Active Personnel</p>
                 </div>
                 <div class="bg-red-50 p-5 rounded-2xl text-[#800000] group-hover:rotate-6 transition-transform">
                     <i class="fa-solid fa-user-tie text-4xl opacity-40"></i>
@@ -70,7 +70,7 @@
             <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Students</p>
-                    <h3 class="text-4xl font-black text-gray-800 mt-1">1,250</h3>
+                    <h3 class="text-4xl font-black text-gray-800 mt-1">{{ number_format($totalStudents ?? 0) }}</h3>
                     <p class="text-gray-400 text-[10px] mt-1">Registered Users</p>
                 </div>
                 <div class="bg-blue-50 p-5 rounded-2xl text-blue-600 group-hover:rotate-6 transition-transform">
@@ -81,7 +81,7 @@
             <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Evaluations</p>
-                    <h3 class="text-4xl font-black text-green-600 mt-1">890</h3>
+                    <h3 class="text-4xl font-black text-green-600 mt-1">{{ number_format($totalEvaluations ?? 0) }}</h3>
                     <p class="text-gray-400 text-[10px] mt-1">Current Period</p>
                 </div>
                 <div class="bg-green-50 p-5 rounded-2xl text-green-600 group-hover:rotate-6 transition-transform">
@@ -99,8 +99,7 @@
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Active Semester</label>
                         <select class="w-full mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700">
-                            <option>1st Semester | 2025-2026</option>
-                            <option>2nd Semester | 2024-2025</option>
+                            <option value="{{ $activeSemester ?? '' }}" selected>{{ $activeSemester ?? 'No Active Semester' }}</option>
                         </select>
                     </div>
 
@@ -130,21 +129,27 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 font-medium">
+                            @forelse($recentEvaluations ?? [] as $evaluation)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4">
-                                    <div class="text-gray-800 font-bold">Dela Cruz, J.</div>
-                                    <div class="text-gray-400 text-[8px] font-normal italic">2021-12345-MN-0</div>
+                                    <div class="text-gray-800 font-bold">{{ $evaluation->student_name }}</div>
+                                    <div class="text-gray-400 text-[8px] font-normal italic">{{ $evaluation->student_id }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-gray-600">
                                     <div class="flex items-center">
                                         <i class="fa-solid fa-check-double text-green-500 mr-2"></i>
-                                        <span> <strong>7/7</strong> Faculty Members</span>
+                                        <span> <strong>{{ $evaluation->completed_count }}/{{ $evaluation->total_count }}</strong> Subjects</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-bold border border-blue-100">COMPLETED</span>
+                                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-bold border border-blue-100">{{ $evaluation->status }}</span>
                                 </td>
                             </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-6 py-4 text-center text-gray-400 italic">No recent activity.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

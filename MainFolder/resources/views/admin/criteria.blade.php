@@ -56,20 +56,17 @@
                 </div>
 
                 @php
-                    // Helper to keep your specific icons per section
-                    // Maps Section Number to FontAwesome Icon Class
                     $icons = [
-                        1 => 'fa-book-open',        // Instructional Competence
-                        2 => 'fa-chalkboard-user',  // Classroom Management
-                        3 => 'fa-file-pen',         // Assessment
-                        4 => 'fa-user-tie'          // Professionalism
+                        1 => 'fa-book-open',
+                        2 => 'fa-chalkboard-user',
+                        3 => 'fa-file-pen',
+                        4 => 'fa-user-tie'
                     ];
                 @endphp
 
                 @forelse($sections as $section)
                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                     <div class="bg-[#800000] px-6 py-3 flex items-center text-white">
-                        {{-- Dynamic Icon based on Section Number, default to star if ID not found --}}
                         <i class="fa-solid {{ $icons[$section->section_number] ?? 'fa-star' }} mr-3"></i>
                         <h3 class="font-bold text-sm uppercase tracking-widest">
                             Section {{ $section->section_number }}: {{ $section->section_name }}
@@ -87,7 +84,6 @@
                             <tr data-question-id="{{ $item->id }}" data-category="{{ $section->section_name }}" class="hover:bg-gray-50 transition group">
                                 <td class="px-6 py-4 font-bold text-gray-800">{{ $item->question_text }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    {{-- Passed the specific Item ID and 'this' button --}}
                                     <button onclick="showEditQuestionModal({{ $item->id }}, this)" class="text-blue-600 hover:text-blue-800">
                                         <i class="fa-solid fa-pen-to-square text-lg"></i>
                                     </button>
@@ -138,12 +134,10 @@
                     <div class="space-y-3 mb-6">
                         <div class="flex justify-between items-center">
                             <span class="text-xs text-gray-500">Categories</span>
-                            {{-- Dynamic Count of Sections --}}
                             <span class="font-black text-[#800000] text-sm">{{ isset($sections) ? $sections->count() : 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-xs text-gray-500">Total Questions</span>
-                            {{-- Dynamic Count of Questions --}}
                             <span class="font-black text-gray-800 text-sm" id="totalQuestions">{{ $totalQuestions ?? 0 }}</span>
                         </div>
                     </div>
@@ -156,22 +150,18 @@
                             <span class="text-[10px] font-bold text-emerald-600"> 5.00 – 4.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Outstanding</span>
                         </div>
-
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-green-600"> 4.49 – 3.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Very Satisfactory</span>
                         </div>
-
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-amber-500"> 3.49 – 2.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
                         </div>
-
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Needs Improvement</span>
                         </div>
-
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-red-600"> 1.49 – 1.00</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Unsatisfactory</span>
@@ -279,13 +269,6 @@
         </div>
     </div>
 </div>
-
-<footer class="bg-[#660000] text-white py-12">
-    <div class="container mx-auto px-10 text-center text-xs">
-        <p class="opacity-50">Polytechnic University of the Philippines - Main Campus</p>
-        <p class="mt-4 opacity-40 tracking-widest uppercase font-bold">Copyright © {{ date('Y') }} | All Evaluation Data is Protected by Privacy Laws</p>
-    </div>
-</footer>
 
 <script>
     function showSuccess(msg) {
