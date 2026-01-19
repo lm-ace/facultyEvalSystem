@@ -470,7 +470,7 @@
         
         doc.setFontSize(11);
         doc.setTextColor(100, 100, 100);
-        doc.text(`Generated on: ${formattedDate}`, 105, 32, { align: 'center' });
+        doc.text(Generated on: ${formattedDate}, 105, 32, { align: 'center' });
         
         // Separator line
         doc.setDrawColor(128, 0, 0);
@@ -509,7 +509,7 @@
         doc.text("Overall Rating:", 20, 100);
         doc.setFontSize(18);
         doc.setTextColor(128, 0, 0);
-        doc.text(`${currentFacultyData.rating} / 5.0`, 70, 100);
+        doc.text(${currentFacultyData.rating} / 5.0, 70, 100);
         
         // Rating description
         doc.setFontSize(10);
@@ -551,11 +551,11 @@
             doc.setPage(i);
             doc.setFontSize(8);
             doc.setTextColor(128, 128, 128);
-            doc.text(`Page ${i} of ${pageCount}`, 105, 287, { align: 'center' });
+            doc.text(Page ${i} of ${pageCount}, 105, 287, { align: 'center' });
             doc.text("Polytechnic University of the Philippines - Confidential", 105, 292, { align: 'center' });
         }
         
-        doc.save(`Faculty_Report_${currentFacultyData.id}_${formattedDate.replace(/[/]/g, '-')}.pdf`);
+        doc.save(Faculty_Report_${currentFacultyData.id}_${formattedDate.replace(/[/]/g, '-')}.pdf);
     }
 
     function generateFullReport() {
@@ -582,7 +582,7 @@
         
         doc.setFontSize(11);
         doc.setTextColor(100, 100, 100);
-        doc.text(`Generated on: ${formattedDate}`, 105, 32, { align: 'center' });
+        doc.text(Generated on: ${formattedDate}, 105, 32, { align: 'center' });
         
         // Separator line
         doc.setDrawColor(128, 0, 0);
@@ -595,10 +595,10 @@
         doc.text("Comprehensive Faculty Evaluation Summary", 20, 55);
         
         doc.setFontSize(10);
-        doc.text(`Academic Year: 2025-2026 | 1st Semester`, 20, 65);
-        doc.text(`Total Faculty Evaluated: 45`, 20, 72);
-        doc.text(`Overall Average Rating: 4.35 / 5.0`, 20, 79);
-        doc.text(`Total Student Responses: 1,250`, 20, 86);
+        doc.text(Academic Year: 2025-2026 | 1st Semester, 20, 65);
+        doc.text(Total Faculty Evaluated: 45, 20, 72);
+        doc.text(Overall Average Rating: 4.35 / 5.0, 20, 79);
+        doc.text(Total Student Responses: 1,250, 20, 86);
         
         // Department Summary Table
         doc.autoTable({
@@ -649,11 +649,11 @@
             doc.setPage(i);
             doc.setFontSize(8);
             doc.setTextColor(128, 128, 128);
-            doc.text(`Page ${i} of ${pageCount}`, 105, 287, { align: 'center' });
+            doc.text(Page ${i} of ${pageCount}, 105, 287, { align: 'center' });
             doc.text("Polytechnic University of the Philippines - Confidential", 105, 292, { align: 'center' });
         }
         
-        doc.save(`Comprehensive_Faculty_Report_${formattedDate.replace(/[/]/g, '-')}.pdf`);
+        doc.save(Comprehensive_Faculty_Report_${formattedDate.replace(/[/]/g, '-')}.pdf);
     }
 </script>
 @endsection

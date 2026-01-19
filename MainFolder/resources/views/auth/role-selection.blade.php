@@ -3,13 +3,13 @@
 @section('content')
 <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#660000]/85 backdrop-blur-md shadow-lg transition-all duration-300">
     <div class="flex items-center space-x-3">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8"> 
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8">
         <div>
             <h1 class="font-bold leading-none text-base">EduRate</h1>
             <p class="text-[9px] tracking-tighter uppercase opacity-80">Faculty Evaluation System</p>
         </div>
     </div>
-    
+
     <div class="hidden space-x-1 md:flex items-center">
         <a href="{{ route('home') }}" class="px-4 py-1.5 rounded-lg text-sm font-medium transition hover:bg-white/10">Home</a>
         <a href="{{ route('about') }}" class="px-4 py-1.5 rounded-lg text-sm font-medium transition hover:bg-white/10">About</a>
@@ -27,6 +27,36 @@
             <h2 class="text-2xl font-bold text-gray-800">Hi, PUPian!</h2>
             <p class="text-gray-500 text-sm">Select your role to continue</p>
         </div>
+
+        <!-- Status Messages -->
+        @if (session('status'))
+        <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 flex items-start space-x-3 shadow-sm">
+            <div class="shrink-0">
+                <i class="fa-solid fa-circle-check text-green-600 mt-0.5 text-lg"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-green-800">Success!</h4>
+                <p class="text-xs text-green-700 mt-1">{{ session('status') }}</p>
+            </div>
+        </div>
+        @endif
+
+        <!-- Error Messages -->
+        @if ($errors->any())
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start space-x-3 shadow-sm">
+            <div class="shrink-0">
+                <i class="fa-solid fa-circle-exclamation text-red-600 mt-0.5 text-lg"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-red-800">Notice</h4>
+                <ul class="list-disc list-inside text-xs text-red-700 mt-1">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        @endif
 
         <div class="space-y-4">
             <a href="{{ route('login.role', 'student') }}" class="flex items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition border border-transparent hover:border-[#800000]/20 group">
