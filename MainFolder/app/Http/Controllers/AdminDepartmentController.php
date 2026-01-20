@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-
 class AdminDepartmentController extends Controller
 {
     public function index()
@@ -179,7 +178,7 @@ class AdminDepartmentController extends Controller
                 'role' => 'faculty',
                 'username' => $request->faculty_code,
                 'email' => $request->email,
-                'password' => Hash::make($request->password), // Changed column to 'password'
+                'password' => Hash::make($request->password),
                 'is_active' => true
             ]);
 
@@ -237,7 +236,7 @@ class AdminDepartmentController extends Controller
                 'role' => 'student',
                 'username' => $request->student_number,
                 'email' => $request->email,
-                'password' => Hash::make($request->password), // Changed column to 'password'
+                'password' => Hash::make($request->password),
                 'is_active' => true
             ]);
 
