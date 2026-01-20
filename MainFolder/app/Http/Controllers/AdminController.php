@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\Evaluation;
-use App\Models\Department;
+use App\Models\Department; 
 use App\Models\ReviewPeriod;
-use App\Models\Subject;  // Added
-use App\Models\ClassSection;  // Added (This represents your 'Classes')
+use App\Models\Subject;
+use App\Models\ClassSection;
 
 class AdminController extends Controller
 {
-    // --- 1. EXISTING DASHBOARD LOGIC ---
+    // --- 1. DASHBOARD LOGIC ---
     public function dashboard()
     {
         $totalFaculty = Faculty::count();
@@ -52,36 +52,44 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard');
     }
 
-    // --- 2. NEW DEPARTMENTS PAGE LOGIC ---
+    // --- 2. REPORTS PAGE LOGIC ---
+    public function reports()
+    {
+        $departments = Department::all(); 
+        $faculties = Faculty::with('department')->get(); 
+
+        return view('admin.reports', compact('departments', 'faculties'));
+    }
 
     public function departments()
     {
+        $departments = Department::all();
+
         // A. Fetch Subjects
         $subjects = Subject::all()->map(function($s) {
             return [
                 'id' => $s->id,
                 'code' => $s->subject_code,
                 'name' => $s->description,
-                'assignedProf' => '' // Logic for this can be added if needed
+                'assignedProf' => '' 
             ];
         });
 
-        // B. Fetch Sections (Classes) with their Subjects
+        // B. Fetch Sections (Requires 'subjects' relationship in ClassSection Model)
         $sections = ClassSection::with('subjects')->get()->map(function($s) {
             return [
                 'id' => $s->id,
-                'name' => $s->name,
+                'name' => $s->name, 
                 'subjects' => $s->subjects->pluck('subject_code')->toArray()
             ];
         });
 
-        // C. Fetch Faculty with assigned Sections
-        // Assuming Faculty belongsToMany Sections
+        // C. Fetch Faculty (Requires 'sections' relationship in Faculty Model)
         $faculty = Faculty::with('sections')->get()->map(function($f) {
             return [
                 'id' => $f->id,
-                'faculty_id' => $f->faculty_id_number ?? 'N/A',
-                'name' => $f->first_name . ' ' . $f->last_name, // Adjust based on your columns
+                'faculty_id' => $f->faculty_code ?? 'N/A',
+                'name' => $f->first_name . ' ' . $f->last_name,
                 'email' => $f->email,
                 'assignedSections' => $f->sections->pluck('name')->toArray()
             ];
@@ -92,16 +100,21 @@ class AdminController extends Controller
             return [
                 'id' => $std->id,
                 'student_number' => $std->student_number,
-                'name' => $std->first_name . ' ' . $std->last_name, // Adjust based on columns
+                'name' => $std->first_name . ' ' . $std->last_name,
                 'section' => $std->section ? $std->section->name : 'N/A',
                 'email' => $std->email
             ];
         });
 
-        return view('admin.departments', compact('subjects', 'sections', 'faculty', 'students'));
+        return view('admin.departments', compact('departments', 'subjects', 'sections', 'faculty', 'students'));
     }
 
-    // --- 3. AJAX API METHODS (For Saving/Deleting) ---
+    public function criteria()
+    {
+        return view('admin.criteria');
+    }
+
+    // --- 5. AJAX API METHODS ---
 
     // SUBJECTS
     public function storeSubject(Request $request) {
@@ -118,18 +131,15 @@ class AdminController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    // SECTIONS (Classes)
+    // SECTIONS
     public function storeSection(Request $request) {
-        $validated = $request->validate(['name' => 'required|unique:sections,name']);
+        $validated = $request->validate(['name' => 'required|unique:class_sections,name']); 
         $section = ClassSection::create($validated);
         return response()->json($section);
     }
     
     public function updateSectionSubjects(Request $request, $id) {
-        // Syncs subjects to a section (Many-to-Many)
         $section = ClassSection::findOrFail($id);
-        // Expects an array of subject IDs or Codes. 
-        // If your inputs send Codes, you might need to find IDs first.
         $subjects = Subject::whereIn('subject_code', $request->subjects)->pluck('id');
         $section->subjects()->sync($subjects);
         return response()->json(['status' => 'success']);
@@ -143,24 +153,21 @@ class AdminController extends Controller
     // FACULTY
     public function storeFaculty(Request $request) {
         $validated = $request->validate([
-            'faculty_id_number' => 'required|unique:faculties',
-            'name' => 'required', // or split first_name/last_name
-            'email' => 'required|email|unique:faculties',
+            'faculty_code' => 'required|unique:faculties,faculty_code',
+            'name' => 'required',
+            'email' => 'required|email|unique:faculties,email',
             'password' => 'required'
         ]);
         
-        // Handle name splitting if your DB uses first_name/last_name
         $nameParts = explode(' ', $validated['name'], 2);
         
         $faculty = Faculty::create([
-            'faculty_id_number' => $validated['faculty_id_number'],
+            'faculty_code' => $validated['faculty_code'],
             'first_name' => $nameParts[0],
             'last_name' => $nameParts[1] ?? '',
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
-        
-        // Simulate email sending here if needed
         
         return response()->json($faculty);
     }
@@ -168,7 +175,7 @@ class AdminController extends Controller
     public function updateFacultySections(Request $request, $id) {
         $faculty = Faculty::findOrFail($id);
         $sections = ClassSection::whereIn('name', $request->sections)->pluck('id');
-        $faculty->sections()->sync($sections); // Assumes belongsToMany relationship
+        $faculty->sections()->sync($sections);
         return response()->json(['status' => 'success']);
     }
 
@@ -183,7 +190,7 @@ class AdminController extends Controller
             'student_number' => 'required|unique:students',
             'name' => 'required',
             'email' => 'required|email|unique:students',
-            'section' => 'required', // This comes in as section NAME
+            'section' => 'required',
             'password' => 'required'
         ]);
 

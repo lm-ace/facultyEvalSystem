@@ -14,8 +14,7 @@ class Department extends Model
 
     protected $fillable = ['name', 'code'];
 
-
-                   
+    // Relationships
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
@@ -35,6 +34,4 @@ class Department extends Model
     {
         return $this->hasMany(ClassSection::class);
     }
-
-    
 }
