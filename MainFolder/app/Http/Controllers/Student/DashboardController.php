@@ -136,7 +136,7 @@ class DashboardController extends Controller
         return redirect()->route('student.index')->with('success', 'Evaluation submitted successfully!');
     }
 
-    public function changePasword(Request $request)
+    public function changePassword(Request $request)
     {
         $request->validate([
             'current_password' => 'required',
