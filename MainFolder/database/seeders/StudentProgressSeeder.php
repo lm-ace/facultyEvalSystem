@@ -12,7 +12,7 @@ class StudentProgressSeeder extends Seeder
     public function run(): void
     {
         // 1. Create Department & Course
-        $deptId = DB::table('departments')->insertGetId(['name'=>'CCIS', 'code'=>'CCIS']);
+        $deptId = DB::table('departments')->insertGetId(['name'=>'College of Computer and Information Sciences', 'code'=>'CCIS']);
         $courseId = DB::table('courses')->insertGetId(['department_id'=>$deptId, 'name'=>'BSIT', 'code'=>'BSIT']);
 
         // 2. Create Student User
