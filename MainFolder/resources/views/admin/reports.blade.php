@@ -72,11 +72,20 @@
                             <option value="all">All Departments</option>
                             @foreach($departments as $department)
                                 <option value="{{ $department->id }}" {{ request('department') == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }}
+                                    {{ $department->name }} ({{ $department->code }})
                                 </option>
                             @endforeach
                         </select>
                     </div>
+                    
+                    {{-- Removed Semester Filter as requested or if simpler, keeping it won't hurt --}}
+                    {{-- <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Semester</label>
+                        <select id="semesterFilter" class="mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700">
+                            <option value="1st Semester 2025-2026">1st Semester 2025-2026</option>
+                        </select>
+                    </div> --}}
+
                     <div>
                         <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-xl text-xs font-bold hover:bg-gray-700">Apply Filter</button>
                     </div>
@@ -97,7 +106,7 @@
                         <tr>
                             <th class="px-6 py-4">Faculty Member</th>
                             <th class="px-6 py-4">Department</th>
-                            <th class="px-6 py-4 text-center">Overall Rating (Max 5.0)</th>
+                            <th class="px-6 py-4 text-center">Overall Rating</th>
                             <th class="px-6 py-4 text-center">Responses</th>
                             <th class="px-6 py-4 text-center">Status</th>
                             <th class="px-6 py-4 text-center">Actions</th>
@@ -160,7 +169,7 @@
     </div>
 </main>
 
-{{-- Modal --}}
+{{-- Modal (Rank Removed) --}}
 <div id="facultyReportModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
         <div class="text-center mb-6">
@@ -184,8 +193,10 @@
         </div>
         
         <div class="flex space-x-3">
-            <button onclick="downloadIndividualPDF()" class="flex-1 py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition text-sm">Download PDF</button>
-            <button onclick="hideFacultyReportModal()" class="flex-1 py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition text-sm">Close</button>
+            <button onclick="downloadIndividualPDF()" class="flex-1 py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98] text-sm">
+                <i class="fa-solid fa-file-pdf mr-2"></i> Download PDF
+            </button>
+            <button onclick="hideFacultyReportModal()" class="flex-1 py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98] text-sm">Close</button>
         </div>
     </div>
 </div>

@@ -11,6 +11,8 @@ use App\Models\Department;
 use App\Models\ReviewPeriod;
 use App\Models\Subject;
 use App\Models\ClassSection;
+use App\Models\CriteriaItem;
+use App\Models\CriteriaSection;
 
 class AdminController extends Controller
 {
@@ -130,7 +132,9 @@ class AdminController extends Controller
 
     public function criteria()
     {
-        return view('admin.criteria');
+        $sections = CriteriaSection::with('items')->get(); // This creates the variable
+        $totalQuestions = CriteriaItem::count();
+        return view('admin.criteria', compact('sections', 'totalQuestions'));
     }
 
     // --- 5. AJAX API METHODS ---
