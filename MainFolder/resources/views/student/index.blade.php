@@ -456,7 +456,7 @@
                 Yes, Update Now
             </button>
             <button onclick="hidePasswordConfirm()" class="w-full py-3 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98]">
-                Wait, Go Back
+                Cancel
             </button>
         </div>
     </div>
