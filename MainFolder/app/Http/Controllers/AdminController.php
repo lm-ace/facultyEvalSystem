@@ -3,188 +3,243 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\Evaluation;
 use App\Models\Department;
-use App\Models\CriteriaSection;
-use App\Models\CriteriaItem;
-use App\Models\ClassOffering; 
-use App\Models\Course;
-use App\Models\Subject;       
-use App\Models\ClassSection;  
-use App\Models\ReviewPeriod;  
-use App\Models\Enrollment;    
+use App\Models\ReviewPeriod;
+use App\Models\Subject;
+use App\Models\ClassSection;
 
 class AdminController extends Controller
 {
+    // --- 1. DASHBOARD LOGIC ---
     public function dashboard()
     {
         $totalFaculty = Faculty::count();
         $totalStudents = Student::count();
+        $totalEvaluations = Evaluation::count();
+        $departmentCount = Department::count();
 
-        $activePeriod = ReviewPeriod::where('status', 'active')->first();
-        $activeSemester = $activePeriod ? $activePeriod->name : 'No Active Semester';
-        
-        $totalEvaluations = 0;
-        if ($activePeriod) {
-            $totalEvaluations = Evaluation::where('review_period_id', $activePeriod->id)->count();
-        }
+        $reviewPeriods = ReviewPeriod::orderBy('id', 'desc')->get();
 
-        $recentEvaluations = collect([]);
+        $activePeriod = ReviewPeriod::where('is_open', 1)->first();
+        $isEvalOpen = $activePeriod ? true : false;
 
-        if ($activePeriod) {
-            $recentEvaluations = Evaluation::with('student')
-                ->where('review_period_id', $activePeriod->id)
-                ->latest('submitted_at')
-                ->get()
-                ->unique('student_id')
-                ->take(5)
-                ->map(function ($eval) use ($activePeriod) {
-                    $student = $eval->student;
+        $recentEvaluations = Evaluation::with('student')->latest()->take(5)->get();
 
-                    $totalSubjects = Enrollment::where('student_id', $student->id)
-                        ->whereHas('classOffering', function($q) use ($activePeriod) {
-                            $q->where('semester_id', $activePeriod->id);
-                        })->count();
-
-                    $completed = Evaluation::where('student_id', $student->id)
-                        ->where('review_period_id', $activePeriod->id)
-                        ->count();
-
-                    $totalSubjects = $totalSubjects > 0 ? $totalSubjects : 1; 
-
-                    return (object) [
-                        'student_name'    => $student->first_name . ' ' . $student->last_name,
-                        'student_id'      => $student->student_number,
-                        'completed_count' => $completed,
-                        'total_count'     => $totalSubjects,
-                        'status'          => ($completed >= $totalSubjects) ? 'COMPLETED' : 'IN PROGRESS'
-                    ];
-                });
-        }
-
-        return view('admin.dashboard', [
-            'totalFaculty'      => $totalFaculty,
-            'totalStudents'     => $totalStudents,
-            'totalEvaluations'  => $totalEvaluations,
-            'activeSemester'    => $activeSemester,
-            'recentEvaluations' => $recentEvaluations
-        ]);
+        return view('admin.dashboard', compact(
+            'totalFaculty',
+            'totalStudents',
+            'totalEvaluations',
+            'departmentCount',
+            'reviewPeriods',
+            'isEvalOpen',
+            'recentEvaluations'
+        ));
     }
 
-    public function departments()
+    public function toggleStatus(Request $request)
     {
-        $institutions = Department::select('id', 'code', 'name')->get();
+        $activePeriod = ReviewPeriod::where('is_open', 1)->first();
 
-        $subjects = Subject::select('code', 'name')->get(); 
-        
-        $sections = ClassSection::with('classOfferings.subject')->get()->map(function($section) {
-             return [
-                 'name'     => $section->name,
-                 'subjects' => $section->classOfferings->map(function($offering) {
-                     return $offering->subject ? $offering->subject->code : 'Unknown';
-                 })->toArray()
-             ];
-        });
-
-        $faculty = Faculty::with('classOfferings.classSection')->get()->map(function($f) {
-            
-            $handledSections = $f->classOfferings
-                ->map(fn($offering) => $offering->classSection ? $offering->classSection->name : null)
-                ->filter()
-                ->unique()
-                ->values();
-
-            return [
-                'id'               => $f->faculty_code ?? 'N/A',
-                'name'             => $f->first_name . ' ' . $f->last_name,
-                'email'            => $f->email,
-                'assignedSections' => $handledSections
-            ];
-        });
-
-        $students = Student::with('enrollments.classOffering.classSection')->get()->map(function($s) {
-            $sectionName = 'Irregular';
-            $firstEnrollment = $s->enrollments->first();
-            
-            if ($firstEnrollment && $firstEnrollment->classOffering && $firstEnrollment->classOffering->classSection) {
-                $sectionName = $firstEnrollment->classOffering->classSection->name;
+        if ($activePeriod) {
+            $activePeriod->update(['is_open' => 0]);
+        } else {
+            $latestPeriod = ReviewPeriod::latest()->first();
+            if ($latestPeriod) {
+                $latestPeriod->update(['is_open' => 1]);
+            } else {
+                return back()->with('error', 'No review period found to open.');
             }
-
-            return [
-                'id'      => $s->student_number,
-                'name'    => $s->first_name . ' ' . $s->last_name,
-                'email'   => $s->user->email ?? 'N/A',
-                'section' => $sectionName 
-            ];
-        });
-
-        return view('admin.departments', compact('institutions', 'subjects', 'sections', 'faculty', 'students'));
+        }
+        return redirect()->route('admin.dashboard');
     }
 
-    public function criteria()
-    {
-        $sections = CriteriaSection::with(['items' => function($query) {
-            $query->orderBy('position', 'asc');
-        }])->orderBy('position', 'asc')->get();
-
-        $totalQuestions = CriteriaItem::count();
-
-        return view('admin.criteria', compact('sections', 'totalQuestions'));
-    }
-
+    // --- 2. REPORTS PAGE LOGIC ---
     public function reports(Request $request)
     {
         $departments = Department::all();
         $semesters   = ReviewPeriod::orderBy('created_at', 'desc')->get();
 
-        $query = Faculty::with(['department', 'evaluations', 'classOfferings.classSection']);
+        $query = Faculty::with(['department', 'evaluations']);
 
         if ($request->has('department') && $request->department != 'all') {
-            $query->whereHas('department', function($q) use ($request) {
-                $q->where('code', $request->department);
-            });
+            $query->where('department_id', $request->department);
         }
 
-        $facultyData = $query->get();
+        $faculties = $query->get();
 
-        $facultyReports = $facultyData->map(function($f) {
-            
-            $avgRating = $f->evaluations->avg('overall_rating') ?? 0;
-            $responses = $f->evaluations->count();
-            
-            $totalStudents = Enrollment::whereHas('classOffering', function($q) use ($f) {
-                $q->where('faculty_id', $f->id);
-            })->count();
+        // Calculate ratings for each faculty member
+        foreach ($faculties as $faculty) {
+            $avgRating = $faculty->evaluations->avg('overall_rating');
+            $faculty->overall_rating = $avgRating ?? 0;
+        }
 
-            $totalStudents = $totalStudents > 0 ? $totalStudents : 1;
+        return view('admin.reports', compact('departments', 'semesters', 'faculties'));
+    }
 
-            $status = 'PENDING';
-            if ($responses == 0)     $status = 'NO DATA';
-            elseif ($avgRating >= 4.50) $status = 'EXCELLENT';
-            elseif ($avgRating >= 3.50) $status = 'VERY GOOD';
-            elseif ($avgRating >= 2.50) $status = 'GOOD';
-            elseif ($avgRating >= 1.50) $status = 'FAIR';
-            else                        $status = 'POOR';
+    public function departments()
+    {
+        $departments = Department::all();
 
+        // A. Fetch Subjects
+        $subjects = Subject::all()->map(function ($s) {
             return [
-                'id'              => $f->faculty_code,
-                'name'            => $f->first_name . ' ' . $f->last_name,
-                'department_code' => $f->department ? $f->department->code : 'N/A',
-                'rating'          => number_format($avgRating, 2),
-                'responses'       => $responses,
-                'total_students'  => $totalStudents,
-                'status'          => $status
+                'id' => $s->id,
+                'code' => $s->subject_code,
+                'name' => $s->description,
+                'assignedProf' => ''
             ];
         });
 
-        return view('admin.reports', [
-            'departments'    => $departments,
-            'semesters'      => $semesters,
-            'facultyReports' => $facultyReports
+        // B. Fetch Sections (Requires 'subjects' relationship in ClassSection Model)
+        $sections = ClassSection::with('subjects')->get()->map(function ($s) {
+            return [
+                'id' => $s->id,
+                'name' => $s->name,
+                'subjects' => $s->subjects->pluck('subject_code')->toArray()
+            ];
+        });
+
+        // C. Fetch Faculty (Requires 'sections' relationship in Faculty Model)
+        $faculty = Faculty::with('sections')->get()->map(function ($f) {
+            return [
+                'id' => $f->id,
+                'faculty_id' => $f->faculty_code ?? 'N/A',
+                'name' => $f->first_name . ' ' . $f->last_name,
+                'email' => $f->email,
+                'assignedSections' => $f->sections->pluck('name')->toArray()
+            ];
+        });
+
+        // D. Fetch Students
+        $students = Student::with('section')->get()->map(function ($std) {
+            return [
+                'id' => $std->id,
+                'student_number' => $std->student_number,
+                'name' => $std->first_name . ' ' . $std->last_name,
+                'section' => $std->section ? $std->section->name : 'N/A',
+                'email' => $std->email
+            ];
+        });
+
+        return view('admin.departments', compact('departments', 'subjects', 'sections', 'faculty', 'students'));
+    }
+
+    public function criteria()
+    {
+        return view('admin.criteria');
+    }
+
+    // --- 5. AJAX API METHODS ---
+
+    // SUBJECTS
+    public function storeSubject(Request $request)
+    {
+        $validated = $request->validate([
+            'subject_code' => 'required|unique:subjects,subject_code',
+            'description' => 'required'
         ]);
+        $subject = Subject::create($validated);
+        return response()->json($subject);
+    }
+
+    public function destroySubject($id)
+    {
+        Subject::destroy($id);
+        return response()->json(['status' => 'success']);
+    }
+
+    // SECTIONS
+    public function storeSection(Request $request)
+    {
+        $validated = $request->validate(['name' => 'required|unique:class_sections,name']);
+        $section = ClassSection::create($validated);
+        return response()->json($section);
+    }
+
+    public function updateSectionSubjects(Request $request, $id)
+    {
+        $section = ClassSection::findOrFail($id);
+        $subjects = Subject::whereIn('subject_code', $request->subjects)->pluck('id');
+        $section->subjects()->sync($subjects);
+        return response()->json(['status' => 'success']);
+    }
+
+    public function destroySection($id)
+    {
+        ClassSection::destroy($id);
+        return response()->json(['status' => 'success']);
+    }
+
+    // FACULTY
+    public function storeFaculty(Request $request)
+    {
+        $validated = $request->validate([
+            'faculty_code' => 'required|unique:faculties,faculty_code',
+            'name' => 'required',
+            'email' => 'required|email|unique:faculties,email',
+            'password' => 'required'
+        ]);
+
+        $nameParts = explode(' ', $validated['name'], 2);
+
+        $faculty = Faculty::create([
+            'faculty_code' => $validated['faculty_code'],
+            'first_name' => $nameParts[0],
+            'last_name' => $nameParts[1] ?? '',
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return response()->json($faculty);
+    }
+
+    public function updateFacultySections(Request $request, $id)
+    {
+        $faculty = Faculty::findOrFail($id);
+        $sections = ClassSection::whereIn('name', $request->sections)->pluck('id');
+        $faculty->sections()->sync($sections);
+        return response()->json(['status' => 'success']);
+    }
+
+    public function destroyFaculty($id)
+    {
+        Faculty::destroy($id);
+        return response()->json(['status' => 'success']);
+    }
+
+    // STUDENTS
+    public function storeStudent(Request $request)
+    {
+        $validated = $request->validate([
+            'student_number' => 'required|unique:students',
+            'name' => 'required',
+            'email' => 'required|email|unique:students',
+            'section' => 'required',
+            'password' => 'required'
+        ]);
+
+        $section = ClassSection::where('name', $validated['section'])->firstOrFail();
+        $nameParts = explode(' ', $validated['name'], 2);
+
+        $student = Student::create([
+            'student_number' => $validated['student_number'],
+            'first_name' => $nameParts[0],
+            'last_name' => $nameParts[1] ?? '',
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'section_id' => $section->id
+        ]);
+
+        return response()->json($student);
+    }
+
+    public function destroyStudent($id)
+    {
+        Student::destroy($id);
+        return response()->json(['status' => 'success']);
     }
 }

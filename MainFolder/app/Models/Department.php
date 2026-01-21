@@ -14,6 +14,7 @@ class Department extends Model
 
     protected $fillable = ['name', 'code'];
 
+    // Relationships
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
@@ -22,5 +23,15 @@ class Department extends Model
     public function faculties(): HasMany
     {
         return $this->hasMany(Faculty::class);
+    }
+
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(Subject::class);
+    }
+
+    public function classSections(): HasMany
+    {
+        return $this->hasMany(ClassSection::class);
     }
 }

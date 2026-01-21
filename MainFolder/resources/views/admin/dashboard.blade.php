@@ -4,8 +4,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-
-<img id="pdfLogo" src="{{ asset('images/logo.png') }}" class="hidden">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
     <div class="flex items-center space-x-3">
@@ -45,7 +44,7 @@
     <div class="container mx-auto px-6 max-w-7xl">
         
         <div class="bg-white p-8 rounded-2xl shadow-sm border-l-8 border-[#800000] mb-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center md:text-left">Welcome, Administrator!</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center md:text-left">Welcome, {{ Auth::user()->name ?? 'Administrator' }}!</h2>
             <div class="space-y-4 text-gray-600 leading-relaxed text-sm md:text-base">
                 <p>This administrative dashboard provides high-level oversight of the faculty evaluation process. Manage institutional departments, update evaluation criteria, and generate comprehensive system-wide reports.</p>
                 <div class="p-3 bg-red-50 rounded-xl border border-red-100 flex items-center text-[#800000] font-bold text-xs">
@@ -56,11 +55,12 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
             <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Faculty</p>
-                    <h3 class="text-4xl font-black text-[#800000] mt-1">{{ $totalFaculty ?? 0 }}</h3>
-                    <p class="text-gray-400 text-[10px] mt-1">Active Personnel</p>
+                    <h3 class="text-4xl font-black text-[#800000] mt-1">{{ number_format($totalFaculty) }}</h3>
+                    <p class="text-gray-400 text-[10px] mt-1">Across {{ $departmentCount }} Departments</p>
                 </div>
                 <div class="bg-red-50 p-5 rounded-2xl text-[#800000] group-hover:rotate-6 transition-transform">
                     <i class="fa-solid fa-user-tie text-4xl opacity-40"></i>
@@ -70,7 +70,7 @@
             <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Students</p>
-                    <h3 class="text-4xl font-black text-gray-800 mt-1">{{ number_format($totalStudents ?? 0) }}</h3>
+                    <h3 class="text-4xl font-black text-gray-800 mt-1">{{ number_format($totalStudents) }}</h3>
                     <p class="text-gray-400 text-[10px] mt-1">Registered Users</p>
                 </div>
                 <div class="bg-blue-50 p-5 rounded-2xl text-blue-600 group-hover:rotate-6 transition-transform">
@@ -81,7 +81,7 @@
             <div class="bg-white p-8 rounded-2xl shadow-md flex items-center justify-between group hover:shadow-xl transition-all duration-300">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Evaluations</p>
-                    <h3 class="text-4xl font-black text-green-600 mt-1">{{ number_format($totalEvaluations ?? 0) }}</h3>
+                    <h3 class="text-4xl font-black text-green-600 mt-1">{{ number_format($totalEvaluations) }}</h3>
                     <p class="text-gray-400 text-[10px] mt-1">Current Period</p>
                 </div>
                 <div class="bg-green-50 p-5 rounded-2xl text-green-600 group-hover:rotate-6 transition-transform">
@@ -91,6 +91,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
             <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-md border border-gray-100 h-fit">
                 <h4 class="font-bold text-gray-800 text-sm mb-6 flex items-center uppercase tracking-widest">
                     <i class="fa-solid fa-calendar-day mr-3 text-[#800000]"></i> Review Period
@@ -99,13 +100,19 @@
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Active Semester</label>
                         <select class="w-full mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700">
-                            <option value="{{ $activeSemester ?? '' }}" selected>{{ $activeSemester ?? 'No Active Semester' }}</option>
+                            @foreach($reviewPeriods as $period)
+                                <option value="{{ $period->id }}" {{ $period->is_active ? 'selected' : '' }}>
+                                    {{ $period->term ?? 'Term' }} | {{ $period->year ?? 'Year' }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
-                    <div id="statusIndicator" class="p-4 bg-green-50 rounded-2xl border border-green-100 text-center transition-all duration-300">
-                        <p class="text-[9px] font-bold text-green-800 uppercase mb-1 tracking-widest" id="statusLabel">System Status</p>
-                        <span id="statusText" class="text-green-600 font-bold text-[10px] uppercase">Evaluation is OPEN</span>
+                    <div id="statusIndicator" class="p-4 {{ $isEvalOpen ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' }} rounded-2xl border text-center transition-all duration-300">
+                        <p class="text-[9px] font-bold {{ $isEvalOpen ? 'text-green-800' : 'text-red-800' }} uppercase mb-1 tracking-widest" id="statusLabel">System Status</p>
+                        <span id="statusText" class="{{ $isEvalOpen ? 'text-green-600' : 'text-red-600' }} font-bold text-[10px] uppercase">
+                            {{ $isEvalOpen ? 'Evaluation is OPEN' : 'Evaluation is CLOSED' }}
+                        </span>
                     </div>
 
                     <button type="button" onclick="showSecurityModal()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl hover:bg-[#660000] transition shadow-lg active:scale-95 text-xs uppercase tracking-widest">
@@ -124,30 +131,37 @@
                         <thead class="text-[10px] text-gray-400 uppercase font-black border-b bg-gray-50">
                             <tr>
                                 <th class="px-6 py-4">Student Name</th>
-                                <th class="px-6 py-4">Evaluation Progress</th>
+                                <th class="px-6 py-4">Submission Details</th>
                                 <th class="px-6 py-4 text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 font-medium">
-                            @forelse($recentEvaluations ?? [] as $evaluation)
+                            @forelse($recentEvaluations as $evaluation)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4">
-                                    <div class="text-gray-800 font-bold">{{ $evaluation->student_name }}</div>
-                                    <div class="text-gray-400 text-[8px] font-normal italic">{{ $evaluation->student_id }}</div>
+                                    <div class="text-gray-800 font-bold">
+                                        {{ $evaluation->student->last_name ?? 'Unknown' }}, {{ $evaluation->student->first_name ?? 'Student' }}
+                                    </div>
+                                    <div class="text-gray-400 text-[8px] font-normal italic">
+                                        {{ $evaluation->student->student_number ?? 'N/A' }}
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-gray-600">
                                     <div class="flex items-center">
-                                        <i class="fa-solid fa-check-double text-green-500 mr-2"></i>
-                                        <span> <strong>{{ $evaluation->completed_count }}/{{ $evaluation->total_count }}</strong> Subjects</span>
+                                        <i class="fa-solid fa-clock text-gray-400 mr-2"></i>
+                                        <span>{{ $evaluation->created_at->format('M d, Y h:i A') }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-bold border border-blue-100">{{ $evaluation->status }}</span>
+                                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-bold border border-blue-100">SUBMITTED</span>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3" class="px-6 py-4 text-center text-gray-400 italic">No recent activity.</td>
+                                <td colspan="3" class="px-6 py-8 text-center text-gray-400">
+                                    <i class="fa-solid fa-inbox text-2xl mb-2 opacity-50"></i>
+                                    <p>No evaluations submitted for this period yet.</p>
+                                </td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -168,18 +182,19 @@
             <p class="text-gray-500 text-xs mt-2">Please enter your admin password to toggle the evaluation status.</p>
         </div>
 
-        <div class="space-y-4">
+        <form action="{{ route('admin.toggle.status') }}" method="POST" class="space-y-4">
+            @csrf
             <div class="relative">
-                <input id="adminPassword" type="password" 
+                <input id="adminPassword" name="password" type="password" required
                     class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-[#800000] outline-none text-sm pr-12" 
                     placeholder="Admin Password">
                 <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#800000]">
                     <i id="eyeIcon" class="fa-solid fa-eye"></i>
                 </button>
             </div>
-            <button onclick="confirmToggle()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition">Confirm Action</button>
-            <button onclick="hideSecurityModal()" class="w-full py-3 text-gray-400 font-bold hover:bg-gray-50 rounded-xl transition">Cancel</button>
-        </div>
+            <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition">Confirm Action</button>
+            <button type="button" onclick="hideSecurityModal()" class="w-full py-3 text-gray-400 font-bold hover:bg-gray-50 rounded-xl transition">Cancel</button>
+        </form>
     </div>
 </div>
 
@@ -193,7 +208,10 @@
             <p class="text-gray-500 text-xs leading-relaxed">Confirm if you want to end your current administrative session.</p>
         </div>
         <div class="flex flex-col space-y-3">
-            <button onclick="executeLogout()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition">Confirm Logout</button>
+            <form action="{{ route('logout') }}" method="POST" class="w-full">
+                @csrf
+                <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition">Confirm Logout</button>
+            </form>
             <button onclick="hideLogoutModal()" class="w-full py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition">Cancel</button>
         </div>
     </div>
@@ -207,7 +225,7 @@
 </footer>
 
 <script>
-    // AUTO-RESET LOGIC (Clears password when going back)
+    // AUTO-RESET LOGIC (Clears password field on back button)
     window.addEventListener('pageshow', function (event) {
         const passwordField = document.getElementById('adminPassword');
         if (passwordField) {
@@ -231,9 +249,7 @@
         }
     }
 
-    // EVALUATION TOGGLE LOGIC
-    let isEvalOpen = true;
-
+    // MODAL FUNCTIONS
     function showSecurityModal() {
         const modal = document.getElementById('securityModal');
         modal.classList.remove('hidden'); modal.classList.add('flex');
@@ -245,42 +261,14 @@
         modal.classList.add('hidden'); modal.classList.remove('flex');
     }
 
-    function confirmToggle() {
-
-        const pass = document.getElementById('adminPassword').value;
-        if(pass === "") { alert("Please enter password"); return; }
-        
-        isEvalOpen = !isEvalOpen;
-        updateUI();
-        hideSecurityModal();
-    }
-
-    function updateUI() {
-        const btnText = isEvalOpen ? "CLOSE EVALUATION" : "OPEN EVALUATION";
-        const statusText = isEvalOpen ? "Evaluation is OPEN" : "Evaluation is CLOSED";
-        
-        document.getElementById('statusText').innerText = statusText;
-        
-        // Dynamic styling for indicator
-        const indicator = document.getElementById('statusIndicator');
-        if (isEvalOpen) {
-            indicator.className = "p-4 bg-green-50 rounded-2xl border border-green-100 text-center transition-all duration-300";
-            document.getElementById('statusText').className = "text-green-600 font-bold text-[10px] uppercase";
-        } else {
-            indicator.className = "p-4 bg-red-50 rounded-2xl border border-red-100 text-center transition-all duration-300";
-            document.getElementById('statusText').className = "text-red-600 font-bold text-[10px] uppercase";
-        }
-    }
-
-    // MODAL FUNCTIONS
     function showLogoutModal() {
         const modal = document.getElementById('logoutModal');
         modal.classList.remove('hidden'); modal.classList.add('flex');
     }
+
     function hideLogoutModal() {
         const modal = document.getElementById('logoutModal');
         modal.classList.add('hidden'); modal.classList.remove('flex');
     }
-    function executeLogout() { window.location.href = "/"; }
 </script>
 @endsection
