@@ -66,6 +66,7 @@
                 </h3>
                 
                 <form action="{{ route('admin.reports') }}" method="GET" class="flex flex-wrap gap-4 items-end">
+                    {{-- Department Filter --}}
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Department</label>
                         <select name="department" id="departmentFilter" class="mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700 min-w-[200px]">
@@ -78,13 +79,20 @@
                         </select>
                     </div>
                     
-                    {{-- Removed Semester Filter as requested or if simpler, keeping it won't hurt --}}
-                    {{-- <div>
+                    {{-- Semester Filter (Restored) --}}
+                    <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Semester</label>
-                        <select id="semesterFilter" class="mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700">
-                            <option value="1st Semester 2025-2026">1st Semester 2025-2026</option>
+                        <select name="semester" id="semesterFilter" class="mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700 min-w-[200px]">
+                            <option value="all">All Semesters</option>
+                            @if(isset($semesters))
+                                @foreach($semesters as $semester)
+                                    <option value="{{ $semester->id }}" {{ request('semester') == $semester->id ? 'selected' : '' }}>
+                                        {{ $semester->name }}
+                                    </option>
+                                @endforeach
+                            @endif
                         </select>
-                    </div> --}}
+                    </div>
 
                     <div>
                         <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-xl text-xs font-bold hover:bg-gray-700">Apply Filter</button>
@@ -106,7 +114,7 @@
                         <tr>
                             <th class="px-6 py-4">Faculty Member</th>
                             <th class="px-6 py-4">Department</th>
-                            <th class="px-6 py-4 text-center">Overall Rating</th>
+                            <th class="px-6 py-4 text-center">Overall Rating (Max 5.0)</th>
                             <th class="px-6 py-4 text-center">Responses</th>
                             <th class="px-6 py-4 text-center">Status</th>
                             <th class="px-6 py-4 text-center">Actions</th>
