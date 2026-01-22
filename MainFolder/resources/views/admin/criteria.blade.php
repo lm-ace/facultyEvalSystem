@@ -244,6 +244,7 @@
                     </div>
 
                     <hr class="border-gray-100 my-4">
+      
                     
 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Average Rating Is:</p>
 <div class="space-y-2">
@@ -252,17 +253,19 @@
         <span class="text-[9px] text-gray-400 font-medium uppercase">Outstanding</span>
     </div>
 
+
     <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
         <span class="text-[10px] font-bold text-green-600"> 4.49 – 3.50</span>
         <span class="text-[9px] text-gray-400 font-medium uppercase">Very Satisfactory</span>
     </div>
+
 
     <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
         <span class="text-[10px] font-bold text-amber-500"> 3.49 – 2.50</span>
         <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
     </div>
 
-    
+
     <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
         <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
         <span class="text-[9px] text-gray-400 font-medium uppercase">Needs Improvement</span>
