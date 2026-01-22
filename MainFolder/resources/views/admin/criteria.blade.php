@@ -262,6 +262,7 @@
         <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
     </div>
 
+    
     <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
         <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
         <span class="text-[9px] text-gray-400 font-medium uppercase">Needs Improvement</span>
