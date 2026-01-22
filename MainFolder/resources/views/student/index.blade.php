@@ -374,12 +374,7 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                @if (session('success'))
-                    <div class="p-3 bg-green-100 text-green-700 rounded-xl text-xs font-bold flex items-center gap-2">
-                        <i class="fa-solid fa-check-circle"></i>
-                        {{ session('success') }}
-                    </div>
-                @endif
+                {{-- NOTE: We removed the inline session('success') here because we are using the new Success Modal below --}}
 
                 {{-- Inputs --}}
                 <div class="space-y-2">
@@ -459,6 +454,27 @@
                 Cancel
             </button>
         </div>
+    </div>
+</div>
+
+{{-- SUCCESS MODAL --}}
+<div id="successModal" 
+     class="fixed inset-0 z-[150] {{ session('success') ? 'flex' : 'hidden' }} items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 mx-4 text-center transform transition-all scale-100 border-t-8 border-green-500">
+        
+        <div class="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <i class="fa-solid fa-check text-green-600 text-4xl"></i>
+        </div>
+
+        <h3 class="text-2xl font-black text-gray-800 mb-2">Success!</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-8">
+            {{ session('success') ?? 'Your password has been successfully updated.' }}
+        </p>
+
+        <button onclick="document.getElementById('successModal').classList.replace('flex', 'hidden')" 
+                class="w-full py-4 bg-green-500 text-white font-black rounded-2xl shadow-lg hover:bg-green-600 transition active:scale-[0.98] uppercase text-xs tracking-widest">
+            Ok
+        </button>
     </div>
 </div>
 

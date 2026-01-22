@@ -86,7 +86,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function(){
 // FACULTY ROUTES
 // ====================================================
 Route::middleware(['auth'])->prefix('faculty')->name('faculty.')->group(function () {
-    Route::get('/dashboard', [FacultyController::class, 'show'])->name('dashboard'); 
+    Route::get('/dashboard', [FacultyController::class, 'show'])->name('dashboard');
+    Route::post('/changePassword', [FacultyController::class, 'changePassword'])->name('changePassword');
 });
 
 // ====================================================
