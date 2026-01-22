@@ -159,19 +159,7 @@
     @csrf
     <div id="changePasswordModal" 
          class="fixed inset-0 z-[120] {{ $errors->any() ? 'flex' : 'hidden' }} items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-         x-data="{ 
-             showOld: false, 
-             showNew: false, 
-             showConfirm: false,
-             newPassword: '',
-             confirmPassword: '',
-             get passwordMatch() { 
-                 return this.newPassword === this.confirmPassword; 
-             },
-             get isValid() {
-                 return this.newPassword.length >= 8 && this.passwordMatch && this.newPassword !== '';
-             }
-         }">
+         x-data="{ showOld: false, showNew: false, showConfirm: false, newPassword: '', confirmPassword: '', get passwordMatch() { return this.newPassword === this.confirmPassword; }, get isValid() { return this.newPassword.length >= 8 && this.passwordMatch && this.newPassword !== '';}}">
          
         <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden">
             <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
