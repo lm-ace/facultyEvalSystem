@@ -13,7 +13,7 @@
             <p class="text-[9px] tracking-tighter uppercase opacity-80">Faculty Evaluation System</p>
         </div>
     </div>
-    
+
     <div class="flex items-center space-x-4">
         <span class="text-xs font-medium opacity-70 hidden sm:inline tracking-wider uppercase">System Administrator</span>
         <button type="button" onclick="showLogoutModal()" class="bg-white/10 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-white/20 transition flex items-center border border-white/20">
@@ -42,26 +42,26 @@
 <main class="pt-36 pb-16 bg-gray-50 min-h-screen">
     <div class="container mx-auto px-6 max-w-7xl">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
+
             <div class="lg:col-span-3 space-y-10">
                 <div class="flex justify-between items-end">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-[#800000] flex-1">
                         <h2 class="text-3xl font-bold text-gray-800 mb-2">Evaluation Criteria Management</h2>
                         <p class="text-gray-600 text-sm">Manage evaluation questions grouped by category. All questions use the standard 1-5 Likert scale.</p>
                     </div>
-                    
+
                     <button onclick="showAddQuestionModal()" class="ml-6 bg-[#FFB800] hover:bg-[#E6A600] text-[#800000] px-6 py-4 rounded-xl text-xs font-bold uppercase shadow-lg transition active:scale-95 flex items-center h-fit">
                         <i class="fa-solid fa-plus mr-2 text-lg"></i> Add New Question
                     </button>
                 </div>
 
                 @php
-                    $icons = [
-                        1 => 'fa-book-open',
-                        2 => 'fa-chalkboard-user',
-                        3 => 'fa-file-pen',
-                        4 => 'fa-user-tie'
-                    ];
+                $icons = [
+                1 => 'fa-book-open',
+                2 => 'fa-chalkboard-user',
+                3 => 'fa-file-pen',
+                4 => 'fa-user-tie'
+                ];
                 @endphp
 
                 @forelse($sections as $section)
@@ -143,25 +143,33 @@
                     </div>
 
                     <hr class="border-gray-100 my-4">
-                    
+
+
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Average Rating Is:</p>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-emerald-600"> 5.00 – 4.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Outstanding</span>
                         </div>
+
+
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-green-600"> 4.49 – 3.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Very Satisfactory</span>
                         </div>
+
+
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-amber-500"> 3.49 – 2.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
                         </div>
+
+
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Needs Improvement</span>
                         </div>
+
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-red-600"> 1.49 – 1.00</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Unsatisfactory</span>
@@ -170,6 +178,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
 </main>
 
@@ -183,9 +193,9 @@
                 <select id="addQuestionCategory" class="w-full mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold">
                     <option value="">Select Category</option>
                     @if(isset($sections))
-                        @foreach($sections as $section)
-                            <option value="{{ $section->id }}">{{ $section->section_name }}</option>
-                        @endforeach
+                    @foreach($sections as $section)
+                    <option value="{{ $section->id }}">{{ $section->section_name }}</option>
+                    @endforeach
                     @endif
                 </select>
             </div>
@@ -209,10 +219,10 @@
             <div>
                 <label class="text-[10px] font-bold text-gray-400 uppercase">Category</label>
                 <select id="editQuestionCategory" disabled class="w-full mt-1 px-4 py-2 bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed">
-                     @if(isset($sections))
-                        @foreach($sections as $section)
-                            <option value="{{ $section->section_name }}">{{ $section->section_name }}</option>
-                        @endforeach
+                    @if(isset($sections))
+                    @foreach($sections as $section)
+                    <option value="{{ $section->section_name }}">{{ $section->section_name }}</option>
+                    @endforeach
                     @endif
                 </select>
             </div>
@@ -275,15 +285,21 @@
         document.getElementById('successMessage').innerText = msg;
         document.getElementById('successModal').classList.replace('hidden', 'flex');
     }
+
     function hideSuccessModal() {
         document.getElementById('successModal').classList.replace('flex', 'hidden');
     }
 
-    function showAddQuestionModal() { document.getElementById('addQuestionModal').classList.replace('hidden', 'flex'); }
-    function hideAddQuestionModal() { document.getElementById('addQuestionModal').classList.replace('flex', 'hidden'); }
-    
-    function saveNewQuestion() { 
-        hideAddQuestionModal(); 
+    function showAddQuestionModal() {
+        document.getElementById('addQuestionModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideAddQuestionModal() {
+        document.getElementById('addQuestionModal').classList.replace('flex', 'hidden');
+    }
+
+    function saveNewQuestion() {
+        hideAddQuestionModal();
         showSuccess('New question added to criteria!');
     }
 
@@ -297,38 +313,53 @@
         document.getElementById('editQuestionCategory').value = cat;
         document.getElementById('editQuestionModal').classList.replace('hidden', 'flex');
     }
-    function hideEditQuestionModal() { document.getElementById('editQuestionModal').classList.replace('flex', 'hidden'); }
-    
+
+    function hideEditQuestionModal() {
+        document.getElementById('editQuestionModal').classList.replace('flex', 'hidden');
+    }
+
     function updateQuestion() {
         const id = document.getElementById('editQuestionId').value;
         const newText = document.getElementById('editQuestionText').value;
         const row = document.querySelector(`tr[data-question-id="${id}"]`);
-        
+
         if (row) row.querySelector('td.font-bold').textContent = newText;
-        
-        
+
+
         hideEditQuestionModal();
         showSuccess('Question updated successfully!');
     }
 
-    function showDeleteConfirm() { document.getElementById('confirmDeleteModal').classList.replace('hidden', 'flex'); }
-    function hideDeleteConfirm() { document.getElementById('confirmDeleteModal').classList.replace('flex', 'hidden'); }
-    
+    function showDeleteConfirm() {
+        document.getElementById('confirmDeleteModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideDeleteConfirm() {
+        document.getElementById('confirmDeleteModal').classList.replace('flex', 'hidden');
+    }
+
     function executeDelete() {
         const id = document.getElementById('editQuestionId').value;
         const row = document.querySelector(`tr[data-question-id="${id}"]`);
-        
+
         if (row) row.remove();
-        
+
         hideDeleteConfirm();
         hideEditQuestionModal();
         showSuccess('Question removed from the system.');
     }
 
-    function showLogoutModal() { document.getElementById('logoutModal').classList.replace('hidden', 'flex'); }
-    function hideLogoutModal() { document.getElementById('logoutModal').classList.replace('flex', 'hidden'); }
-    function executeLogout() { 
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('flex', 'hidden');
+    }
+
+    function executeLogout() {
         window.location.href = "{{ route('home') }}";
     }
+
 </script>
 @endsection
