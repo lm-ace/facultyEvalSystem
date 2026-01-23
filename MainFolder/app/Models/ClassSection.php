@@ -12,37 +12,53 @@ class ClassSection extends Model
 {
     use HasFactory;
 
-    protected $table = 'class_sections';
     protected $guarded = [];
 
-    protected $fillable = ['course_id', 'year_level', 'block'];
+    // Eager load course to generate names efficiently
+    protected $with = ['course'];
+
+    // Allows us to use $section->full_name in JSON
+    protected $appends = ['full_name'];
 
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
     }
 
+    // --- 1. ADD THIS MISSING RELATIONSHIP (Fixes the Error) ---
     public function classOfferings(): HasMany
     {
         return $this->hasMany(ClassOffering::class);
     }
 
+    // --- 2. ADD THIS TOO (Required for your Student List) ---
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
     }
 
-    /**
-     * The fixed subjects relationship.
-     * We explicitly list the keys to ensure Laravel finds the correct columns.
-     */
+    // Direct access to subjects via pivot
     public function subjects(): BelongsToMany
     {
         return $this->belongsToMany(
-            Subject::class,     // The related model
-            'class_offerings',  // The pivot table name
-            'class_section_id', // The foreign key for THIS model (ClassSection)
-            'subject_id'        // The foreign key for the RELATED model (Subject)
-        );
+            Subject::class, 
+            'class_offerings', 
+            'class_section_id', 
+            'subject_id'
+        )->withPivot('faculty_id'); // Optional: lets you access faculty_id directly if needed
     }
+
+    // Helper Attribute for "BSIT 1-A"
+    public function getFullNameAttribute()
+    {
+        // Example: BSIT 1 - A
+        $courseCode = $this->course ? $this->course->code : 'N/A';
+        return "{$courseCode} {$this->year_level} - {$this->block}";
+    }
+
+    public function students(): HasMany
+{
+    // This connects ClassSection directly to Students via the section_id column
+    return $this->hasMany(Student::class, 'section_id');
+}
 }

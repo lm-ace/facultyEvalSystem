@@ -14,37 +14,35 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
-    /**
-     * @var list<string>
-     */
     protected $fillable = [
-        'role',         // student|faculty|admin
+        'role',
         'username',
         'email',
-        'password_hash',
+        'password_hash', // ✅ Match your DB column
         'is_active',
         'last_login',
     ];
 
-    /**
-     * @var list<string>
-     */
     protected $hidden = [
-        'password_hash',
+        'password_hash', // ✅ Hide the correct column
         'remember_token',
     ];
 
-    /**
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            //'password_hash' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
+    // ✅ IMPORTANT: Tell Laravel to use 'password_hash' for authentication
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
+    // ... relations (student, faculty, admin, activityLogs) ...
     public function student(): HasOne
     {
         return $this->hasOne(Student::class);
@@ -54,14 +52,16 @@ class User extends Authenticatable
     {
         return $this->hasOne(Faculty::class);
     }
-
-    public function admin(): HasOne
+    
+    // helper to get name from child relationships
+    public function getNameAttribute()
     {
-        return $this->hasOne(Admin::class);
-    }
-
-    public function activityLogs(): HasMany
-    {
-        return $this->hasMany(ActivityLog::class, 'user_id');
+        if ($this->student) {
+            return $this->student->first_name . ' ' . $this->student->last_name;
+        }
+        if ($this->faculty) {
+            return $this->faculty->first_name . ' ' . $this->faculty->last_name;
+        }
+        return $this->username;
     }
 }

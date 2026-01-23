@@ -22,22 +22,6 @@
     </div>
 </nav>
 
-<div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
-        <div class="bg-[#800000]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i class="fa-solid fa-shield-halved text-[#800000] text-3xl"></i>
-        </div>
-        <div class="text-center mb-8">
-            <h3 class="text-2xl font-black text-gray-800 mb-2">Admin Logout</h3>
-            <p class="text-gray-500 text-xs leading-relaxed">Confirm if you want to end your current administrative session.</p>
-        </div>
-        <div class="flex flex-col space-y-3">
-            <button onclick="executeLogout()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98]">Confirm Logout</button>
-            <button onclick="hideLogoutModal()" class="w-full py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98]">Cancel</button>
-        </div>
-    </div>
-</div>
-
 <div class="fixed top-[48px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm px-10 py-3">
     <div class="max-w-7xl mx-auto flex items-center space-x-8 text-xs font-bold uppercase tracking-widest">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center text-gray-400 hover:text-[#800000] pb-1 transition-all">
@@ -71,44 +55,22 @@
                     </button>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="bg-[#800000] px-6 py-3 flex items-center text-white">
-                        <i class="fa-solid fa-book-open mr-3"></i>
-                        <h3 class="font-bold text-sm uppercase tracking-widest">Section 1: Instructional Competence</h3>
-                    </div>
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-gray-50 text-gray-400 uppercase font-black border-b">
-                            <tr>
-                                <th class="px-6 py-3 w-3/4">Question</th>
-                                <th class="px-6 py-3 w-1/4 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @php
-                                $section1 = [
-                                    "Demonstrates mastery of the subject.",
-                                    "Explains concepts clearly and makes them easy to understand.",
-                                    "Used relevant examples or real-world applications to illustrate lessons.",
-                                    "Encourages student participation and questions during discussion.",
-                                    "Uses effective teaching aids (PPT, visual aids, online resources) to enhance learning."
-                                ];
-                            @endphp
-                            @foreach($section1 as $index => $q)
-                            <tr data-question-id="{{ $index + 1 }}" data-category="Instructional Competence" class="hover:bg-gray-50 transition group">
-                                <td class="px-6 py-4 font-bold text-gray-800">{{ $q }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    <button onclick="showEditQuestionModal({{ $index + 1 }}, this)" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square text-lg"></i></button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @php
+                    $icons = [
+                        1 => 'fa-book-open',
+                        2 => 'fa-chalkboard-user',
+                        3 => 'fa-file-pen',
+                        4 => 'fa-user-tie'
+                    ];
+                @endphp
 
+                @forelse($sections as $section)
                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                     <div class="bg-[#800000] px-6 py-3 flex items-center text-white">
-                        <i class="fa-solid fa-chalkboard-user mr-3"></i>
-                        <h3 class="font-bold text-sm uppercase tracking-widest">Section 2: Classroom Management</h3>
+                        <i class="fa-solid {{ $icons[$section->section_number] ?? 'fa-star' }} mr-3"></i>
+                        <h3 class="font-bold text-sm uppercase tracking-widest">
+                            Section {{ $section->section_number }}: {{ $section->section_name }}
+                        </h3>
                     </div>
                     <table class="w-full text-left text-xs">
                         <thead class="bg-gray-50 text-gray-400 uppercase font-black border-b">
@@ -118,94 +80,31 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @php
-                                $section2 = [
-                                    "Starts and ends classes on time.",
-                                    "Maintains an orderly and conductive learning environment.",
-                                    "Manages class time effectively (not spending too much time on irrelevant topics).",
-                                    "Is approachable and available for consultation during specified hours.",
-                                    "Implements class policies fairly and consistently."
-                                ];
-                            @endphp
-                            @foreach($section2 as $index => $q)
-                            <tr data-question-id="{{ $index + 6 }}" data-category="Classroom Management" class="hover:bg-gray-50 transition group">
-                                <td class="px-6 py-4 font-bold text-gray-800">{{ $q }}</td>
+                            @forelse($section->items as $item)
+                            <tr data-question-id="{{ $item->id }}" data-category="{{ $section->section_name }}" class="hover:bg-gray-50 transition group">
+                                <td class="px-6 py-4 font-bold text-gray-800">{{ $item->question_text }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    <button onclick="showEditQuestionModal({{ $index + 6 }}, this)" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square text-lg"></i></button>
+                                    <button onclick="showEditQuestionModal({{ $item->id }}, this)" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-pen-to-square text-lg"></i>
+                                    </button>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="2" class="px-6 py-4 text-center text-gray-400 italic">
+                                    No questions added to this section yet.
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+                @empty
+                <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
+                    <p class="text-gray-500">No criteria sections found in the database.</p>
+                </div>
+                @endforelse
 
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="bg-[#800000] px-6 py-3 flex items-center text-white">
-                        <i class="fa-solid fa-file-pen mr-3"></i>
-                        <h3 class="font-bold text-sm uppercase tracking-widest">Section 3: Assessment and Feedback</h3>
-                    </div>
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-gray-50 text-gray-400 uppercase font-black border-b">
-                            <tr>
-                                <th class="px-6 py-3 w-3/4">Question</th>
-                                <th class="px-6 py-3 w-1/4 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @php
-                                $section3 = [
-                                    "Provides clear guidelines and criteria for assignments and projects.",
-                                    "Returns quizzes, exams, and projects in a timely manner.",
-                                    "Gives constructive feedback to help improve student performance.",
-                                    "Computes grades fairly based on the presented syllabus.",
-                                    "Assessments align with the learning objectives and content discussed."
-                                ];
-                            @endphp
-                            @foreach($section3 as $index => $q)
-                            <tr data-question-id="{{ $index + 11 }}" data-category="Assessment and Feedback" class="hover:bg-gray-50 transition group">
-                                <td class="px-6 py-4 font-bold text-gray-800">{{ $q }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    <button onclick="showEditQuestionModal({{ $index + 11 }}, this)" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square text-lg"></i></button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="bg-[#800000] px-6 py-3 flex items-center text-white">
-                        <i class="fa-solid fa-user-tie mr-3"></i>
-                        <h3 class="font-bold text-sm uppercase tracking-widest">Section 4: Professionalism</h3>
-                    </div>
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-gray-50 text-gray-400 uppercase font-black border-b">
-                            <tr>
-                                <th class="px-6 py-3 w-3/4">Question</th>
-                                <th class="px-6 py-3 w-1/4 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @php
-                                $section4 = [
-                                    "Shows respect for students regardless of gender, religion, or background.",
-                                    "Demonstrates enthusiasm in teaching the subject.",
-                                    "Accepts constructive criticism and suggestions from students.",
-                                    "Adheres to school policies regarding attendance and syllabus implementation.",
-                                    "Maintains professional appearance and demeanor."
-                                ];
-                            @endphp
-                            @foreach($section4 as $index => $q)
-                            <tr data-question-id="{{ $index + 16 }}" data-category="Professionalism" class="hover:bg-gray-50 transition group">
-                                <td class="px-6 py-4 font-bold text-gray-800">{{ $q }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    <button onclick="showEditQuestionModal({{ $index + 16 }}, this)" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square text-lg"></i></button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
             </div>
 
             <div class="lg:col-span-1 space-y-6 lg:mt-[136px]">
@@ -235,43 +134,37 @@
                     <div class="space-y-3 mb-6">
                         <div class="flex justify-between items-center">
                             <span class="text-xs text-gray-500">Categories</span>
-                            <span class="font-black text-[#800000] text-sm">4</span>
+                            <span class="font-black text-[#800000] text-sm">{{ isset($sections) ? $sections->count() : 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-xs text-gray-500">Total Questions</span>
-                            <span class="font-black text-gray-800 text-sm" id="totalQuestions">20</span>
+                            <span class="font-black text-gray-800 text-sm" id="totalQuestions">{{ $totalQuestions ?? 0 }}</span>
                         </div>
                     </div>
 
                     <hr class="border-gray-100 my-4">
                     
-<p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Average Rating Is:</p>
-<div class="space-y-2">
-    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-        <span class="text-[10px] font-bold text-emerald-600"> 5.00 – 4.50</span>
-        <span class="text-[9px] text-gray-400 font-medium uppercase">Outstanding</span>
-    </div>
-
-    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-        <span class="text-[10px] font-bold text-green-600"> 4.49 – 3.50</span>
-        <span class="text-[9px] text-gray-400 font-medium uppercase">Very Satisfactory</span>
-    </div>
-
-    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-        <span class="text-[10px] font-bold text-amber-500"> 3.49 – 2.50</span>
-        <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
-    </div>
-
-    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-        <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
-        <span class="text-[9px] text-gray-400 font-medium uppercase">Needs Improvement</span>
-    </div>
-
-    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-        <span class="text-[10px] font-bold text-red-600"> 1.49 – 1.00</span>
-        <span class="text-[9px] text-gray-400 font-medium uppercase">Unsatisfactory</span>
-    </div>
-</div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Average Rating Is:</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-bold text-emerald-600"> 5.00 – 4.50</span>
+                            <span class="text-[9px] text-gray-400 font-medium uppercase">Outstanding</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-bold text-green-600"> 4.49 – 3.50</span>
+                            <span class="text-[9px] text-gray-400 font-medium uppercase">Very Satisfactory</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-bold text-amber-500"> 3.49 – 2.50</span>
+                            <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
+                            <span class="text-[9px] text-gray-400 font-medium uppercase">Needs Improvement</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                            <span class="text-[10px] font-bold text-red-600"> 1.49 – 1.00</span>
+                            <span class="text-[9px] text-gray-400 font-medium uppercase">Unsatisfactory</span>
                         </div>
                     </div>
                 </div>
@@ -279,6 +172,7 @@
         </div>
     </div>
 </main>
+
 
 <div id="addQuestionModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm">
     <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 mx-4 border-t-8 border-[#800000]">
@@ -288,10 +182,11 @@
                 <label class="text-[10px] font-bold text-gray-400 uppercase">Category</label>
                 <select id="addQuestionCategory" class="w-full mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold">
                     <option value="">Select Category</option>
-                    <option value="Instructional Competence">Instructional Competence</option>
-                    <option value="Classroom Management">Classroom Management</option>
-                    <option value="Assessment and Feedback">Assessment and Feedback</option>
-                    <option value="Professionalism">Professionalism</option>
+                    @if(isset($sections))
+                        @foreach($sections as $section)
+                            <option value="{{ $section->id }}">{{ $section->section_name }}</option>
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div>
@@ -314,10 +209,11 @@
             <div>
                 <label class="text-[10px] font-bold text-gray-400 uppercase">Category</label>
                 <select id="editQuestionCategory" disabled class="w-full mt-1 px-4 py-2 bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed">
-                    <option value="Instructional Competence">Instructional Competence</option>
-                    <option value="Classroom Management">Classroom Management</option>
-                    <option value="Assessment and Feedback">Assessment and Feedback</option>
-                    <option value="Professionalism">Professionalism</option>
+                     @if(isset($sections))
+                        @foreach($sections as $section)
+                            <option value="{{ $section->section_name }}">{{ $section->section_name }}</option>
+                        @endforeach
+                    @endif
                 </select>
             </div>
             <div>
@@ -360,24 +256,21 @@
 
 <div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm">
     <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 border-t-8 border-[#800000]">
-        <h3 class="text-2xl font-black text-gray-800 mb-2 text-center">Logout Session</h3>
-        <p class="text-gray-500 text-xs text-center mb-8">Are you sure you want to end your administrator session?</p>
+        <div class="bg-[#800000]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-shield-halved text-[#800000] text-3xl"></i>
+        </div>
+        <div class="text-center mb-8">
+            <h3 class="text-2xl font-black text-gray-800 mb-2">Admin Logout</h3>
+            <p class="text-gray-500 text-xs leading-relaxed">Confirm if you want to end your current administrative session.</p>
+        </div>
         <div class="flex flex-col space-y-3">
-            <button onclick="executeLogout()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl transition hover:bg-[#660000]">Confirm Logout</button>
-            <button onclick="hideLogoutModal()" class="w-full py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl transition hover:bg-gray-50">Stay Logged In</button>
+            <button onclick="executeLogout()" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98]">Confirm Logout</button>
+            <button onclick="hideLogoutModal()" class="w-full py-3 border-2 border-gray-100 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98]">Cancel</button>
         </div>
     </div>
 </div>
 
-<footer class="bg-[#660000] text-white py-12">
-    <div class="container mx-auto px-10 text-center text-xs">
-        <p class="opacity-50">Polytechnic University of the Philippines - Main Campus</p>
-        <p class="mt-4 opacity-40 tracking-widest uppercase font-bold">Copyright © {{ date('Y') }} | All Evaluation Data is Protected by Privacy Laws</p>
-    </div>
-</footer>
-
 <script>
-    // --- UI HELPERS ---
     function showSuccess(msg) {
         document.getElementById('successMessage').innerText = msg;
         document.getElementById('successModal').classList.replace('hidden', 'flex');
@@ -386,15 +279,14 @@
         document.getElementById('successModal').classList.replace('flex', 'hidden');
     }
 
-    // --- ADD QUESTION ---
     function showAddQuestionModal() { document.getElementById('addQuestionModal').classList.replace('hidden', 'flex'); }
     function hideAddQuestionModal() { document.getElementById('addQuestionModal').classList.replace('flex', 'hidden'); }
+    
     function saveNewQuestion() { 
         hideAddQuestionModal(); 
-        showSuccess('New question added to criteria!'); 
+        showSuccess('New question added to criteria!');
     }
 
-    // --- EDIT QUESTION ---
     function showEditQuestionModal(questionId, button) {
         const row = button.closest('tr');
         const text = row.querySelector('td.font-bold').textContent.trim();
@@ -411,19 +303,21 @@
         const id = document.getElementById('editQuestionId').value;
         const newText = document.getElementById('editQuestionText').value;
         const row = document.querySelector(`tr[data-question-id="${id}"]`);
+        
         if (row) row.querySelector('td.font-bold').textContent = newText;
+        
         
         hideEditQuestionModal();
         showSuccess('Question updated successfully!');
     }
 
-    // --- DELETE QUESTION ---
     function showDeleteConfirm() { document.getElementById('confirmDeleteModal').classList.replace('hidden', 'flex'); }
     function hideDeleteConfirm() { document.getElementById('confirmDeleteModal').classList.replace('flex', 'hidden'); }
     
     function executeDelete() {
         const id = document.getElementById('editQuestionId').value;
         const row = document.querySelector(`tr[data-question-id="${id}"]`);
+        
         if (row) row.remove();
         
         hideDeleteConfirm();
@@ -431,10 +325,10 @@
         showSuccess('Question removed from the system.');
     }
 
-    // --- LOGOUT ---
     function showLogoutModal() { document.getElementById('logoutModal').classList.replace('hidden', 'flex'); }
     function hideLogoutModal() { document.getElementById('logoutModal').classList.replace('flex', 'hidden'); }
-    function executeLogout() { window.location.href = "{{ route('home') }}"; }
-
+    function executeLogout() { 
+        window.location.href = "{{ route('home') }}";
+    }
 </script>
 @endsection
