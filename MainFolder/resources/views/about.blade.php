@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-6 md:p-10 rounded-xl shadow-lg">
+        <div class="bg-white p-6 md:p-10 rounded-xl shadow-lg mb-16">
             <h3 class="text-xl md:text-2xl font-bold text-[#800000] mb-6">Objectives</h3>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <li class="flex items-start space-x-3">
@@ -108,7 +108,58 @@
                 </li>
             </ul>
         </div>
-    </div>
+
+        <div class="text-center">
+            <div class="inline-block border-b-4 border-yellow-500 pb-2 mb-10">
+                <h3 class="text-2xl md:text-3xl font-bold text-[#800000]">System Developers</h3>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-8">
+                
+                <div class="w-full md:w-[30%] bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#800000] hover:scale-105 transition-transform duration-300 flex flex-col items-center group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                        <img src="{{ asset('images/lebron.jpg') }}" alt="Leo Miguel B. Aceitunas" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Leo Miguel B. Aceitunas</h4>
+                    <p class="text-[#800000] font-medium text-sm mt-1">System Project Manager</p>
+                </div>
+
+                <div class="w-full md:w-[30%] bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#800000] hover:scale-105 transition-transform duration-300 flex flex-col items-center group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                        <img src="{{ asset('images/mhaine.jpg') }}" alt="Jermaine M. Sebido" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Jermaine M. Sebido</h4>
+                    <p class="text-[#800000] font-medium text-sm mt-1">Full-stack Developer</p>
+                </div>
+
+                <div class="w-full md:w-[30%] bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#800000] hover:scale-105 transition-transform duration-300 flex flex-col items-center group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                        <img src="{{ asset('images/razi.JPG') }}" alt="Raziela T. Calapatia" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Raziela T. Calapatia</h4>
+                    <p class="text-[#800000] font-medium text-sm mt-1">Front-end Developer</p>
+                </div>
+
+                <div class="w-full md:w-[30%] bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#800000] hover:scale-105 transition-transform duration-300 flex flex-col items-center group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                        <img src="{{ asset('images/zell.jpg') }}" alt="Zellphie M. Dela" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Zellphie M. Dela</h4>
+                    <p class="text-[#800000] font-medium text-sm mt-1">Back-end Developer</p>
+                </div>
+
+                <div class="w-full md:w-[30%] bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#800000] hover:scale-105 transition-transform duration-300 flex flex-col items-center group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md bg-gray-100 flex items-center justify-center">
+                        <img src="{{ asset('images/Taroma.jpg') }}" alt="Yra Louisse A. Taroma" class="w-full h-full object-cover">
+                    </div>
+
+                    <h4 class="font-bold text-gray-800 text-lg">Yra Louisse A. Taroma</h4>
+                    <p class="text-[#800000] font-medium text-sm mt-1">Back-end Developer</p>
+                </div>
+
+            </div>
+        </div>
+        </div>
 </div>
 
 <footer class="bg-[#660000] text-white pt-12 md:pt-16 pb-6 relative z-20">
