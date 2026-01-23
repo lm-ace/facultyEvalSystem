@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash; 
 use App\Models\User;                 
 use App\Http\Controllers\Student\DashboardController;
+use App\Http\Controllers\Admin\CriteriaController;
 
 //PUBLIC PAGES
 Route::get('/', function () {
@@ -84,6 +85,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/departments', function () { return view('admin.departments.index'); })->name('departments');
     Route::get('/criteria', function () { return view('admin.criteria'); })->name('criteria');
     Route::get('/reports', function () { return view('admin.reports'); })->name('reports');
+    Route::get('/criteria', [CriteriaController::class, 'index'])->name('criteria');
+    Route::post('/criteria/category', [CriteriaController::class, 'storeSection'])->name('criteria.storeSection');
+    Route::post('/criteria/question', [CriteriaController::class, 'storeItem'])->name('criteria.storeItem');
+    Route::delete('/criteria/question/{id}', [CriteriaController::class, 'destroyItem'])->name('criteria.destroyItem');
+    Route::delete('/criteria/category/{id}', [CriteriaController::class, 'destroySection'])->name('criteria.destroySection');
 });
 
 Route::get('/admin/sections/{section_code}', function ($section_code) {
