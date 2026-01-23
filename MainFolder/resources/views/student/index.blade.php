@@ -354,48 +354,130 @@
 {{-- CHANGE PASSWORD MODAL --}}
 <form method="POST" action="{{ route('student.changePassword') }}" id="changePasswordForm">
     @csrf
-    <div id="changePasswordModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-        <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden" x-data="{ showOld: false, showNew: false, showConfirm: false }">
-            <div class="p-6 bg-[#800000] text-white flex items-center gap-4">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"><i class="fa-solid fa-lock text-lg"></i></div>
+    <div id="changePasswordModal" 
+         class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+         x-data="{ 
+             showOld: false, 
+             showNew: false, 
+             showConfirm: false,
+             newPassword: '',
+             confirmPassword: '',
+             get passwordMatch() { 
+                 return this.newPassword === this.confirmPassword; 
+             },
+             get isValid() {
+                 return this.newPassword.length >= 8 && this.passwordMatch && this.newPassword !== '';
+             }
+         }">
+         
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden">
+            <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-lock text-xl"></i>
+                </div>
                 <div>
                     <h2 class="text-lg font-black tracking-tight">Security Update</h2>
                     <p class="text-[9px] opacity-70 uppercase font-bold">Change password</p>
                 </div>
             </div>
-            <div class="p-6 space-y-4">
-                {{-- Inputs (Kept same structure but ensured responsiveness) --}}
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
-                    <div class="relative">
-                        <input name="current_password" :type="showOld ? 'text' : 'password'" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl outline-none focus:border-[#800000] transition pr-10 text-sm">
-                        <button type="button" @click="showOld = !showOld" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+
+            <div class="p-8 space-y-5">
+                {{-- Global Error/Success Messages --}}
+                @if (session('error'))
+                    <div class="p-3 bg-red-100 text-red-700 rounded-xl text-xs font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        {{ session('error') }}
                     </div>
+                @endif
+                @if (session('success'))
+                    <div class="p-3 bg-green-100 text-green-700 rounded-xl text-xs font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-check-circle"></i>
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                {{-- Inputs --}}
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
+                    <div class="relative">
+                        <input name="current_password" 
+                               :type="showOld ? 'text' : 'password'" 
+                               class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm @error('current_password') border-red-500 bg-red-50 @enderror">
+                        <button type="button" @click="showOld = !showOld" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]">
+                            <i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    @error('current_password') <span class="text-red-500 text-[10px] font-bold ml-2">{{ $message }}</span> @enderror
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
                     <div class="relative">
-                        <input name="new_password" :type="showNew ? 'text' : 'password'" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl outline-none focus:border-[#800000] transition pr-10 text-sm">
-                        <button type="button" @click="showNew = !showNew" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                        <input name="new_password" x-model="newPassword" :type="showNew ? 'text' : 'password'" 
+                               class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm @error('new_password') border-red-500 bg-red-50 @enderror">
+                        <button type="button" @click="showNew = !showNew" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]">
+                            <i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
                     </div>
+                    <p x-show="newPassword.length > 0 && newPassword.length < 8" class="text-orange-500 text-[10px] font-bold ml-2" x-cloak>Must be at least 8 characters</p>
+                    @error('new_password') <span class="text-red-500 text-[10px] font-bold ml-2">{{ $message }}</span> @enderror
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Confirm New</label>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Confirm New Password</label>
                     <div class="relative">
-                        <input name="new_password_confirmation" :type="showConfirm ? 'text' : 'password'" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl outline-none focus:border-[#800000] transition pr-10 text-sm">
-                        <button type="button" @click="showConfirm = !showConfirm" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]"><i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i></button>
+                        <input name="new_password_confirmation" x-model="confirmPassword" :type="showConfirm ? 'text' : 'password'" 
+                               class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]">
+                            <i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
                     </div>
+                    <p x-show="confirmPassword.length > 0 && !passwordMatch" class="text-red-500 text-[10px] font-bold ml-2" x-cloak>Passwords do not match</p>
                 </div>
             </div>
-            <div class="p-6 pt-0 flex gap-3">
-                <button type="button" onclick="hideChangePasswordModal()" class="flex-1 py-3 font-bold text-gray-400 hover:bg-gray-50 rounded-xl transition text-sm">Cancel</button>
-                <button type="submit" class="flex-[2] py-3 bg-[#800000] text-white font-black rounded-xl shadow-xl hover:bg-[#660000] transition uppercase text-[10px] tracking-widest">Update</button>
+
+            <div class="p-8 pt-0 flex gap-3">
+                <button type="button" onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
+                
+                <button type="button" 
+                        onclick="showPasswordConfirm()"
+                        :disabled="!isValid" 
+                        :class="isValid ? 'bg-[#800000] hover:bg-[#660000] shadow-xl' : 'bg-gray-300 cursor-not-allowed'"
+                        class="flex-[2] py-4 text-white font-black rounded-2xl transition uppercase text-xs tracking-widest">
+                    Update Password
+                </button>
             </div>
         </div>
     </div>
 </form>
 
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+{{-- PASSWORD CONFIRMATION MODAL (POP OUT) --}}
+<div id="confirmPasswordModal" class="fixed inset-0 z-[130] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 mx-4 border-t-8 border-[#800000]">
+        <div class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-shield-halved text-[#800000] text-3xl"></i>
+        </div>
+        <div class="text-center mb-8">
+            <h3 class="text-2xl font-black text-gray-800 mb-2">Security Check</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">
+                Are you sure you want to change your password? <br>
+                <span class="font-bold text-[#800000]">You will need to use your new credentials on your next login.</span>
+            </p>
+        </div>
+        <div class="flex flex-col space-y-3">
+            <button onclick="submitPasswordChange()" class="w-full py-4 bg-[#800000] text-white font-black rounded-2xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98] uppercase text-xs tracking-widest">
+                Yes, Update Now
+            </button>
+            <button onclick="hidePasswordConfirm()" class="w-full py-3 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98]">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
 
 <footer class="bg-[#660000] text-white py-8 md:py-12">
     <div class="container mx-auto px-6 text-center text-[10px] md:text-xs">
@@ -405,27 +487,68 @@
 </footer>
 
 <script>
-    // Existing functions kept same, logic is sound
     function showEvaluationModal(n, s, id) {
         document.getElementById('evalFacultyName').innerText = n;
         document.getElementById('evalFacultySub').innerText = s;
         document.getElementById('evalOfferingId').value = id;
         document.getElementById('evaluationModal').classList.replace('hidden', 'flex');
     }
-    function hideEvaluationModal() { document.getElementById('evaluationModal').classList.replace('flex', 'hidden'); }
-    function showConfirmSubmitModal() { document.getElementById('confirmSubmitModal').classList.replace('hidden', 'flex'); }
-    function hideConfirmSubmitModal() { document.getElementById('confirmSubmitModal').classList.replace('flex', 'hidden'); }
-    function processFinalSubmission() { hideConfirmSubmitModal(); document.getElementById('evalForm').submit(); }
-    function showLogoutModal() { document.getElementById('logoutModal').classList.replace('hidden', 'flex'); }
-    function hideLogoutModal() { document.getElementById('logoutModal').classList.replace('flex', 'hidden'); }
-    function showChangePasswordModal() { document.getElementById('changePasswordModal').classList.replace('hidden', 'flex'); }
-    function hideChangePasswordModal() { document.getElementById('changePasswordModal').classList.replace('flex', 'hidden'); }
-    function executeLogout() { document.getElementById('logout-form').submit(); }
+
+    function hideEvaluationModal() {
+        document.getElementById('evaluationModal').classList.replace('flex', 'hidden');
+    }
+
+    function showConfirmSubmitModal() {
+        document.getElementById('confirmSubmitModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideConfirmSubmitModal() {
+        document.getElementById('confirmSubmitModal').classList.replace('flex', 'hidden');
+    }
+
+    function processFinalSubmission() {
+        hideConfirmSubmitModal();
+        document.getElementById('evalForm').submit();
+    }
+
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('flex', 'hidden');
+    }
+
+    function executeLogout() {
+        document.getElementById('logout-form').submit();
+    }
+
+    function showChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
+    }
+
+    function showPasswordConfirm() {
+        document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
+        document.getElementById('confirmPasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function hidePasswordConfirm() {
+        document.getElementById('confirmPasswordModal').classList.replace('flex', 'hidden');
+        document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function submitPasswordChange() {
+        document.getElementById('confirmPasswordModal').classList.replace('flex', 'hidden');
+        document.getElementById('changePasswordForm').submit();
+    }
 </script>
 
 <style>
     [x-cloak] { display: none !important; }
-    /* Slide animation for mobile modal */
     @keyframes slide-up {
         from { transform: translateY(100%); }
         to { transform: translateY(0); }

@@ -34,6 +34,12 @@ class Faculty extends Model
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function subjects(): BelongsToMany
+    {
+        // This tells Laravel: "I am related to Subjects via the 'faculty_subject' table"
+        return $this->belongsToMany(Subject::class, 'faculty_subject');
+    }
     
     public function classOfferings(): HasMany
     {
