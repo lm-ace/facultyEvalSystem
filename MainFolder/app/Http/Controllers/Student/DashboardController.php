@@ -135,15 +135,15 @@ class DashboardController extends Controller
         return redirect()->route('student.index')->with('success', 'Evaluation submitted successfully!');
     }
 
-    public function changePasword(Request $request)
+    public function changePassword(Request $request)
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
+            'new_password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = Auth::user();
-
+        
         if (!Hash::check($request->current_password, $user->password_hash)) {
             return back()->withErrors(['current_password' => 'Current password is incorrect']);
         }

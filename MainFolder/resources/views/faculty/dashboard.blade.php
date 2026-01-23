@@ -1,14 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
 <style>
-    [x-cloak] {
-        display: none !important;
-    }
+    [x-cloak] { display: none !important; }
 </style>
 
 <img id="pdfLogo" src="{{ asset('images/logo.png') }}" class="hidden">
@@ -24,7 +23,6 @@
             </div>
         </div>
 
-        {{-- USER DROPDOWN --}}
         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
             <button @click="open = !open" type="button" class="flex items-center focus:outline-none group">
                 <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#800000] border-2 border-white/20 transition group-hover:border-white/50">
@@ -33,7 +31,6 @@
                 <i class="fa-solid fa-caret-down text-[10px] ml-2 text-white/80 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
             </button>
 
-            {{-- Dropdown Menu --}}
             <div x-show="open"
                 x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-y-2 scale-95"
@@ -80,14 +77,10 @@
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Overall Rating</p>
                         <h3 class="text-5xl font-black text-[#800000] mt-2">{{$averageRating}}<span class="text-xl text-gray-400 font-normal"> / 5.0</span></h3>
                         <p class="text-green-600 font-bold text-sm mt-1 uppercase">
-                            @if($averageRating >= 4.5) 
-                                Outstanding Performance
-                            @elseif($averageRating >= 3.5)
-                                Very Good 
-                            @elseif($averageRating >= 2.5)
-                                Good 
-                            @else 
-                                Needs Improvement
+                            @if($averageRating >= 4.5) Outstanding Performance
+                            @elseif($averageRating >= 3.5) Very Good 
+                            @elseif($averageRating >= 2.5) Good 
+                            @else Needs Improvement
                             @endif
                         </p>
                     </div>
@@ -149,27 +142,6 @@
                             <p class="text-lg font-bold text-gray-800">{{$reviewPeriodDisplay}}</p>
                         </div>
                     </div>
-                    
-                    {{--Planning to delete this--}}
-                    {{-- PROGRESS BARS --}}
-                    {{--
-                    <div class="mb-10">
-                        <div class="space-y-6">
-                            <div>
-                                <div class="flex justify-between text-sm mb-2 font-medium"><span>Communication</span><span>4.9 / 5.0</span></div>
-                                <div class="w-full bg-gray-100 rounded-full h-2">
-                                    <div class="bg-[#FFB800] h-2 rounded-full" style="width: 98%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-2 font-medium"><span>Content</span><span>4.7 / 5.0</span></div>
-                                <div class="w-full bg-gray-100 rounded-full h-2">
-                                    <div class="bg-[#FFB800] h-2 rounded-full" style="width: 94%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    --}}
                 </div>
             </div>
         </div>
@@ -183,68 +155,129 @@
     </footer>
 </div>
 
-{{-- MODALS --}}
-{{-- PASSWORD MODAL --}}
-<div id="passwordModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-black text-gray-800">Change Password</h3>
-            <button onclick="hideChangePasswordModal()" class="text-gray-400 hover:text-gray-600 transition">
-                <i class="fa-solid fa-xmark text-xl"></i>
+<form method="POST" action="{{ route('faculty.changePassword') }}" id="changePasswordForm">
+    @csrf
+    <div id="changePasswordModal" 
+         class="fixed inset-0 z-[120] {{ $errors->any() ? 'flex' : 'hidden' }} items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+         x-data="{ showOld: false, showNew: false, showConfirm: false, newPassword: '', confirmPassword: '', get passwordMatch() { return this.newPassword === this.confirmPassword; }, get isValid() { return this.newPassword.length >= 8 && this.passwordMatch && this.newPassword !== '';}}">
+         
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden">
+            <div class="p-8 bg-[#800000] text-white flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-lock text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black tracking-tight">Security Update</h2>
+                    <p class="text-[10px] opacity-70 uppercase font-bold">Change your portal password</p>
+                </div>
+            </div>
+
+            <div class="p-8 space-y-5">
+                {{-- Global Error Messages --}}
+                @if (session('error'))
+                    <div class="p-3 bg-red-100 text-red-700 rounded-xl text-xs font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
+                    <div class="relative">
+                        <input name="current_password" 
+                               :type="showOld ? 'text' : 'password'" 
+                               class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm @error('current_password') border-red-500 bg-red-50 @enderror">
+                        <button type="button" @click="showOld = !showOld" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]">
+                            <i class="fa-solid" :class="showOld ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    @error('current_password') <span class="text-red-500 text-[10px] font-bold ml-2">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">New Password</label>
+                    <div class="relative">
+                        <input name="new_password" x-model="newPassword" :type="showNew ? 'text' : 'password'" 
+                               class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm @error('new_password') border-red-500 bg-red-50 @enderror">
+                        <button type="button" @click="showNew = !showNew" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]">
+                            <i class="fa-solid" :class="showNew ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    <p x-show="newPassword.length > 0 && newPassword.length < 8" class="text-orange-500 text-[10px] font-bold ml-2" x-cloak>Must be at least 8 characters</p>
+                    @error('new_password') <span class="text-red-500 text-[10px] font-bold ml-2">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Confirm New Password</label>
+                    <div class="relative">
+                        <input name="new_password_confirmation" x-model="confirmPassword" :type="showConfirm ? 'text' : 'password'" 
+                               class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#800000] transition pr-12 text-sm">
+                        <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000]">
+                            <i class="fa-solid" :class="showConfirm ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    <p x-show="confirmPassword.length > 0 && !passwordMatch" class="text-red-500 text-[10px] font-bold ml-2" x-cloak>Passwords do not match</p>
+                </div>
+            </div>
+
+            <div class="p-8 pt-0 flex gap-3">
+                <button type="button" onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
+                <button type="button" 
+                        onclick="showPasswordConfirm()"
+                        :disabled="!isValid" 
+                        :class="isValid ? 'bg-[#800000] hover:bg-[#660000] shadow-xl' : 'bg-gray-300 cursor-not-allowed'"
+                        class="flex-[2] py-4 text-white font-black rounded-2xl transition uppercase text-xs tracking-widest">
+                    Update Password
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="confirmPasswordModal" class="fixed inset-0 z-[130] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 mx-4 border-t-8 border-[#800000]">
+        <div class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-shield-halved text-[#800000] text-3xl"></i>
+        </div>
+        <div class="text-center mb-8">
+            <h3 class="text-2xl font-black text-gray-800 mb-2">Security Check</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">
+                Are you sure you want to change your password? <br>
+                <span class="font-bold text-[#800000]">You will need to use your new credentials on your next login.</span>
+            </p>
+        </div>
+        <div class="flex flex-col space-y-3">
+            <button onclick="submitPasswordChange()" class="w-full py-4 bg-[#800000] text-white font-black rounded-2xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98] uppercase text-xs tracking-widest">
+                Yes, Update Now
+            </button>
+            <button onclick="hidePasswordConfirm()" class="w-full py-3 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition active:scale-[0.98]">
+                Cancel
             </button>
         </div>
-
-        <form onsubmit="handlePasswordUpdate(event)" class="space-y-4">
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">Current Password</label>
-                <div class="relative">
-                    <input type="password" id="currentPwd" required placeholder="••••••••" class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#800000] focus:ring-4 focus:ring-[#800000]/10 outline-none transition text-sm">
-                    <button type="button" onclick="togglePasswordVisibility('currentPwd', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">New Password</label>
-                <div class="relative">
-                    <input type="password" id="newPwd" required placeholder="••••••••" class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#800000] focus:ring-4 focus:ring-[#800000]/10 outline-none transition text-sm">
-                    <button type="button" onclick="togglePasswordVisibility('newPwd', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 px-1">Confirm New Password</label>
-                <div class="relative">
-                    <input type="password" id="confirmPwd" required placeholder="••••••••" class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:border-[#800000] focus:ring-4 focus:ring-[#800000]/10 outline-none transition text-sm">
-                    <button type="button" onclick="togglePasswordVisibility('confirmPwd', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                </div>
-                <p id="matchError" class="hidden text-red-500 text-[10px] font-bold mt-1 ml-1 uppercase">Passwords do not match!</p>
-            </div>
-
-            <div class="pt-4 flex flex-col space-y-3">
-                <button type="submit" class="w-full py-3 bg-[#800000] text-white font-bold rounded-xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98]">Update Password</button>
-                <button type="button" onclick="hideChangePasswordModal()" class="w-full py-3 text-gray-400 font-bold rounded-xl hover:bg-gray-50 transition">Cancel</button>
-            </div>
-        </form>
     </div>
 </div>
 
 {{-- SUCCESS MODAL --}}
-<div id="successModal" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-    <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 text-center transform transition-all scale-95 duration-300 border-t-8 border-green-500">
-        <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+<div id="successModal" 
+     class="fixed inset-0 z-[150] {{ session('success') ? 'flex' : 'hidden' }} items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 mx-4 text-center transform transition-all scale-100 border-t-8 border-green-500">
+        
+        <div class="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
             <i class="fa-solid fa-check text-green-600 text-4xl"></i>
         </div>
+
         <h3 class="text-2xl font-black text-gray-800 mb-2">Success!</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-8">Your password has been <strong>successfully changed</strong>.</p>
-        <button onclick="hideSuccessModal()" class="w-full py-3 bg-green-500 text-white font-bold rounded-xl shadow-lg hover:bg-green-600 transition active:scale-[0.98]">Great, thanks!</button>
+        <p class="text-gray-500 text-sm leading-relaxed mb-8">
+            {{ session('success') ?? 'Your password has been successfully updated.' }}
+        </p>
+
+        <button onclick="document.getElementById('successModal').classList.replace('flex', 'hidden')" 
+                class="w-full py-4 bg-green-500 text-white font-black rounded-2xl shadow-lg hover:bg-green-600 transition active:scale-[0.98] uppercase text-xs tracking-widest">
+            Ok
+        </button>
     </div>
 </div>
 
-{{-- LOGOUT MODAL --}}
 <div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
         <div class="bg-[#800000]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -260,8 +293,48 @@
         </div>
     </div>
 </div>
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
 <script>
-         const facultyData = {
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('flex', 'hidden');
+    }
+
+    function executeLogout() {
+        document.getElementById('logout-form').submit();
+    }
+
+    function showChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function hideChangePasswordModal() {
+        document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
+    }
+
+    function showPasswordConfirm() {
+        document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
+        document.getElementById('confirmPasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function hidePasswordConfirm() {
+        document.getElementById('confirmPasswordModal').classList.replace('flex', 'hidden');
+        document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
+    }
+
+    function submitPasswordChange() {
+        document.getElementById('confirmPasswordModal').classList.replace('flex', 'hidden');
+        document.getElementById('changePasswordForm').submit();
+    }
+
+    const facultyData = {
         id: "{{ $faculty->faculty_code }}",
         name: "{{ $fullName }}",
         department: "{{ $faculty->department->name ?? 'N/A' }}",
@@ -270,118 +343,10 @@
         feedbacks: {!! json_encode($feedbacks) !!}
     };
 
-</script>
-
-
-
-<script>
     let generatedPDFBlob = null;
 
-    function toggleDropdown() {
-        const dropdown = document.getElementById('userDropdown');
-        dropdown.classList.toggle('hidden');
-        window.onclick = function(event) {
-            if (!event.target.closest('#userMenuBtn') && !event.target.closest('#userDropdown')) {
-                dropdown.classList.add('hidden');
-            }
-        }
-    }
-
-    function togglePasswordVisibility(inputId, button) {
-        const input = document.getElementById(inputId);
-        const icon = button.querySelector('i');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.replace('fa-eye', 'fa-eye-slash');
-        } else {
-            input.type = 'password';
-            icon.classList.replace('fa-eye-slash', 'fa-eye');
-        }
-    }
-
-    function showChangePasswordModal() {
-        document.getElementById('matchError').classList.add('hidden');
-        const modal = document.getElementById('passwordModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => {
-            modal.querySelector('div').classList.remove('scale-95');
-            modal.querySelector('div').classList.add('scale-100');
-        }, 10);
-    }
-
-    function hideChangePasswordModal() {
-        const modal = document.getElementById('passwordModal');
-        modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }, 200);
-    }
-
-    function handlePasswordUpdate(event) {
-        event.preventDefault();
-        const newPwd = document.getElementById('newPwd').value;
-        const confirmPwd = document.getElementById('confirmPwd').value;
-        const errorMsg = document.getElementById('matchError');
-
-        if (newPwd !== confirmPwd) {
-            errorMsg.classList.remove('hidden');
-            document.getElementById('confirmPwd').classList.add('border-red-500');
-            return;
-        }
-
-        errorMsg.classList.add('hidden');
-        document.getElementById('confirmPwd').classList.remove('border-red-500');
-
-        hideChangePasswordModal();
-        setTimeout(() => {
-            const sModal = document.getElementById('successModal');
-            sModal.classList.remove('hidden');
-            sModal.classList.add('flex');
-            setTimeout(() => {
-                sModal.querySelector('div').classList.remove('scale-95');
-                sModal.querySelector('div').classList.add('scale-100');
-            }, 10);
-        }, 300);
-    }
-
-    function hideSuccessModal() {
-        const modal = document.getElementById('successModal');
-        modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }, 200);
-    }
-
-    function showLogoutModal() {
-        const modal = document.getElementById('logoutModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => {
-            modal.querySelector('div').classList.remove('scale-95');
-            modal.querySelector('div').classList.add('scale-100');
-        }, 10);
-    }
-
-    function hideLogoutModal() {
-        const modal = document.getElementById('logoutModal');
-        modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }, 200);
-    }
-
-    function executeLogout() {
-        window.location.href = "{{ route('home') }}";
-    }
-
     function startDownload() {
-        const {
-            jsPDF
-        } = window.jspdf;
+        const { jsPDF } = window.jspdf;
         const statusContainer = document.getElementById('statusContainer');
         const dlNotif = document.getElementById('downloadNotif');
         const fileReady = document.getElementById('fileReady');
@@ -449,20 +414,14 @@
             doc.setFont("helvetica", "normal");
             doc.text(facultyData.averageRating + " / 5.0", 60, 118);
             
-
             doc.line(20, 108, 190, 108);
-
-            
 
             doc.setFont("helvetica", "bold");
             doc.text("Student Feedback:", 20, 128);
 
             doc.autoTable({
                 startY: 133,
-                margin: {
-                    left: 20,
-                    right: 20
-                },
+                margin: { left: 20, right: 20 },
                 theme: 'plain',
                 styles: {
                     cellPadding: 4,
