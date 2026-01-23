@@ -101,6 +101,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 Route::middleware(['auth'])->prefix('faculty')->name('faculty.')->group(function () {
     Route::get('/dashboard', [FacultyController::class, 'show'])->name('dashboard');
+    Route::post('/changePassword', [FacultyController::class, 'changePassword'])->name('changePassword');
 });
 
 // ====================================================
@@ -111,5 +112,5 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::post('/evaluate', [DashboardController::class, 'store'])->name('evaluate.store');
     Route::post('/changePassword', [DashboardController::class, 'changePassword'])->name('changePassword');
-    Route::post('/logout', [DashboardController::class, 'logout'])->name('logout');
+    Route::post('/logout',[DashboardController::class, 'logout'])->name('logout');
 });

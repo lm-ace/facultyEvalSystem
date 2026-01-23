@@ -56,12 +56,12 @@
                 </div>
 
                 @php
-                $icons = [
-                1 => 'fa-book-open',
-                2 => 'fa-chalkboard-user',
-                3 => 'fa-file-pen',
-                4 => 'fa-user-tie'
-                ];
+                    $icons = [
+                        1 => 'fa-book-open',
+                        2 => 'fa-chalkboard-user',
+                        3 => 'fa-file-pen',
+                        4 => 'fa-user-tie'
+                    ];
                 @endphp
 
                 @forelse($sections as $section)
@@ -144,7 +144,6 @@
 
                     <hr class="border-gray-100 my-4">
 
-
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Average Rating Is:</p>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
@@ -152,18 +151,15 @@
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Outstanding</span>
                         </div>
 
-
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-green-600"> 4.49 – 3.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Very Satisfactory</span>
                         </div>
 
-
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-amber-500"> 3.49 – 2.50</span>
                             <span class="text-[9px] text-gray-400 font-medium uppercase">Satisfactory</span>
                         </div>
-
 
                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
                             <span class="text-[10px] font-bold text-orange-500"> 2.49 – 1.50</span>
@@ -179,8 +175,6 @@
             </div>
         </div>
     </div>
-    </div>
-    </div>
 </main>
 
 
@@ -193,9 +187,9 @@
                 <select id="addQuestionCategory" class="w-full mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold">
                     <option value="">Select Category</option>
                     @if(isset($sections))
-                    @foreach($sections as $section)
-                    <option value="{{ $section->id }}">{{ $section->section_name }}</option>
-                    @endforeach
+                        @foreach($sections as $section)
+                        <option value="{{ $section->id }}">{{ $section->section_name }}</option>
+                        @endforeach
                     @endif
                 </select>
             </div>
@@ -220,9 +214,9 @@
                 <label class="text-[10px] font-bold text-gray-400 uppercase">Category</label>
                 <select id="editQuestionCategory" disabled class="w-full mt-1 px-4 py-2 bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed">
                     @if(isset($sections))
-                    @foreach($sections as $section)
-                    <option value="{{ $section->section_name }}">{{ $section->section_name }}</option>
-                    @endforeach
+                        @foreach($sections as $section)
+                        <option value="{{ $section->section_name }}">{{ $section->section_name }}</option>
+                        @endforeach
                     @endif
                 </select>
             </div>
@@ -325,7 +319,6 @@
 
         if (row) row.querySelector('td.font-bold').textContent = newText;
 
-
         hideEditQuestionModal();
         showSuccess('Question updated successfully!');
     }
@@ -360,6 +353,5 @@
     function executeLogout() {
         window.location.href = "{{ route('home') }}";
     }
-
 </script>
 @endsection
