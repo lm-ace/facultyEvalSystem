@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminDepartmentController;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\CriteriaController; // <--- Import is here
+use App\Http\Controllers\Department\FacultyController as DepartmentFacultyController;
+use App\Http\Controllers\Department\ProgramController as DepartmentProgramController;
+use App\Http\Controllers\Department\SectionController;
+use App\Http\Controllers\Department\StudentController;
+use App\Http\Controllers\Department\SubjectController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\Student\DashboardController;
 
@@ -64,36 +71,45 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/departments/{id}', [AdminDepartmentController::class, 'updateDepartment'])->name('departments.update');
 
     // --- Course (Program) Management ---
-    Route::post('/courses', [AdminDepartmentController::class, 'storeCourse'])->name('courses.store');
-    Route::put('/courses/{id}', [AdminDepartmentController::class, 'updateCourse'])->name('courses.update');
-    Route::delete('/courses/{id}', [AdminDepartmentController::class, 'deleteCourse'])->name('courses.destroy');
+    Route::post('/programs', [DepartmentProgramController::class, 'store'])->name('programs.store');
+    Route::put('/programs/{id}', [DepartmentProgramController::class, 'update'])->name('programs.update');
+    Route::delete('/courses/{id}', [DepartmentProgramController::class, 'destroy'])->name('courses.destroy');
 
     // --- Subjects ---
-    Route::post('/subjects', [AdminDepartmentController::class, 'storeSubject'])->name('subjects.store');
-    Route::put('/subjects/{id}', [AdminDepartmentController::class, 'updateSubject'])->name('subjects.update');
-    Route::delete('/subjects/{id}', [AdminDepartmentController::class, 'deleteSubject'])->name('subjects.destroy');
+    Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
+    Route::put('/subjects/{id}', [SubjectController::class, 'update'])->name('subjects.update');
+    Route::delete('/subjects/{id}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
 
     // --- Sections CRUD ---
-    Route::post('/sections', [AdminDepartmentController::class, 'addSection'])->name('sections.store');
-    Route::put('/sections/{id}', [AdminDepartmentController::class, 'updateSection'])->name('sections.update');
-    Route::delete('/sections/{id}', [AdminDepartmentController::class, 'deleteSection'])->name('sections.destroy');
+    Route::post('/sections', [SectionController::class, 'store'])->name('sections.store');
+    Route::put('/sections/{id}', [SectionController::class, 'update'])->name('sections.update');
+    Route::delete('/sections/{id}', [SectionController::class, 'destroy'])->name('sections.destroy');
 
     // --- Faculty CRUD ---
-    Route::post('/faculty', [AdminDepartmentController::class, 'storeFaculty'])->name('faculty.store');
-    Route::put('/faculty/{id}', [AdminDepartmentController::class, 'updateFaculty'])->name('faculty.update');
-    Route::delete('/faculty/{id}', [AdminDepartmentController::class, 'deleteFaculty'])->name('faculty.destroy');
+    Route::post('/faculty', [DepartmentFacultyController::class, 'store'])->name('faculty.store');
+    Route::put('/faculty/{id}', [DepartmentFacultyController::class, 'update'])->name('faculty.update');
+    Route::delete('/faculty/{id}', [DepartmentFacultyController::class, 'destroy'])->name('faculty.destroy');
 
     // --- Students CRUD ---
-    Route::post('/students', [AdminDepartmentController::class, 'storeStudent'])->name('students.store');
-    Route::put('/students/{id}', [AdminDepartmentController::class, 'updateStudent'])->name('students.update');
-    Route::delete('/students/{id}', [AdminDepartmentController::class, 'destroyStudent'])->name('students.destroy');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::put('/students/{id}', [StudentController::class, 'update'])->name('students.update');
+    Route::delete('/students/{id}', [StudentController::class, 'destroy'])->name('students.destroy');
 
     // --- Criteria Management ---
-    Route::get('/criteria', [AdminController::class, 'criteria'])->name('criteria');
-    Route::post('/criteria', [AdminController::class, 'storeCriteria'])->name('criteria.store');
-    Route::put('/criteria/{id}', [AdminController::class, 'updateCriteria'])->name('criteria.update');
-    Route::delete('/criteria/{id}', [AdminController::class, 'destroyCriteria'])->name('criteria.destroy');
-});
+    // 1. Main View
+    Route::get('/criteria', [CriteriaController::class, 'index'])->name('criteria');
+
+    // 2. Categories (Sections)
+    Route::post('/criteria/section', [CriteriaController::class, 'storeSection'])->name('criteria.section.store');
+    Route::put('/criteria/section/{id}', [CriteriaController::class, 'updateSection'])->name('criteria.section.update');
+    Route::delete('/criteria/section/{id}', [CriteriaController::class, 'destroySection'])->name('criteria.section.destroy');
+
+    // 3. Questions (Items)
+    Route::post('/criteria/item', [CriteriaController::class, 'storeItem'])->name('criteria.item.store');
+    Route::put('/criteria/item/{id}', [CriteriaController::class, 'updateItem'])->name('criteria.item.update');
+    Route::delete('/criteria/item/{id}', [CriteriaController::class, 'destroyItem'])->name('criteria.item.destroy');
+
+}); // <--- THIS WAS LIKELY MISSING OR DELETED
 
 // ====================================================
 // FACULTY ROUTES

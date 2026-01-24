@@ -55,7 +55,9 @@
             {{-- WELCOME MESSAGE --}}
             <div class="relative bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border-l-8 md:border-l-[10px] border-[#800000] mb-8 overflow-hidden">
                 <div class="relative z-10 pr-0 md:pr-96">
-                    <h2 class="text-2xl md:text-4xl font-black text-gray-800 mb-4 md:mb-6 leading-tight">Welcome, Juan Dela Cruz!</h2>
+                    {{-- 1. UPDATED: Dynamic Welcome Message --}}
+                    <h2 class="text-2xl md:text-4xl font-black text-gray-800 mb-4 md:mb-6 leading-tight">Welcome, {{ $studentName }}!</h2>
+                    
                     <div class="space-y-3 md:space-y-4 text-gray-600 leading-relaxed text-sm md:text-base max-w-xl">
                         <p>This evaluation is a critical part of our institutional quality assurance. Your objective feedback helps us maintain high academic standards.</p>
                         <p>Please complete all sections based on your actual classroom experience this term.</p>
@@ -220,26 +222,28 @@
                     </div>
                 </div>
 
+                {{-- 2. UPDATED: Dynamic Criteria Loop --}}
                 @php
-                $sections = [
-                ['title' => 'INSTRUCTIONAL COMPETENCE', 'icon' => 'fa-book-open', 'questions' => ["Demonstrates mastery of the subject.", "Explains concepts clearly and makes them easy to understand.", "Used relevant examples or real-world applications.", "Encourages student participation.", "Uses effective teaching aids (PPT, visual aids)."]],
-                ['title' => 'CLASSROOM MANAGEMENT', 'icon' => 'fa-users-gear', 'questions' => ["Starts and ends classes on time.", "Maintains an orderly learning environment.", "Manages class time effectively.", "Is approachable for consultation.", "Implements policies fairly."]],
-                ['title' => 'ASSESSMENT AND FEEDBACK', 'icon' => 'fa-clipboard-check', 'questions' => ["Provides clear guidelines for assignments.", "Returns quizzes/projects timely.", "Gives constructive feedback.", "Computes grades fairly.", "Assessments align with objectives."]],
-                ['title' => 'PROFESSIONALISM', 'icon' => 'fa-user-tie', 'questions' => ["Shows respect for students.", "Demonstrates enthusiasm.", "Accepts constructive criticism.", "Adheres to school policies.", "Maintains professional appearance."]]
-                ];
-                $global_q_id = 1;
+                    // Map section numbers to icons (since DB usually doesn't store icon class names)
+                    $icons = [
+                        1 => 'fa-book-open',
+                        2 => 'fa-users-gear',
+                        3 => 'fa-clipboard-check',
+                        4 => 'fa-user-tie'
+                    ];
                 @endphp
 
-                @foreach($sections as $section)
+                @foreach($criteria as $section)
                 <div class="bg-white rounded-2xl md:rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+                    {{-- Section Header --}}
                     <div class="bg-[#800000] px-5 md:px-8 py-3 md:py-4 flex items-center gap-3 text-white uppercase font-black tracking-widest text-[10px] md:text-[11px]">
-                        <i class="fa-solid {{ $section['icon'] }}"></i>
-                        <span>{{ $section['title'] }}</span>
+                        {{-- Use mapped icon or default star --}}
+                        <i class="fa-solid {{ $icons[$section->section_number] ?? 'fa-star' }}"></i>
+                        <span>{{ $section->section_name }}</span>
                     </div>
 
-                    {{-- Responsive Table/List --}}
                     <div class="divide-y divide-gray-100">
-                        {{-- Desktop Header --}}
+                        {{-- Desktop Header (Only show once per section) --}}
                         <div class="hidden md:flex text-[10px] uppercase text-gray-400 bg-gray-50/50 font-black py-4 px-8">
                             <div class="flex-1">Performance Criteria</div>
                             <div class="flex w-[400px] justify-between text-center px-4">
@@ -247,24 +251,35 @@
                             </div>
                         </div>
 
-                        {{-- Questions --}}
-                        @foreach($section['questions'] as $q)
+                        {{-- Loop through Items (Questions) from Database --}}
+                        @foreach($section->items as $item)
                         <div class="p-4 md:px-8 md:py-4 hover:bg-gray-50/50 transition flex flex-col md:flex-row md:items-center gap-3 md:gap-0">
                             {{-- Question Text --}}
                             <div class="flex-1 text-sm text-gray-700 font-medium md:font-normal">
-                                <span class="md:hidden text-[10px] font-bold text-gray-400 mr-2">{{ $global_q_id }}.</span>{{ $q }}
+                                <span class="md:hidden text-[10px] font-bold text-gray-400 mr-2">{{ $loop->parent->iteration }}.{{ $loop->iteration }}</span>
+                                {{ $item->question_text }}
                             </div>
 
                             {{-- Radio Buttons --}}
                             <div class="flex justify-between md:w-[400px] md:px-4 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 md:border-none">
-                                @for($i=1; $i<=5; $i++) <label class="flex flex-col items-center gap-1 cursor-pointer group">
+                                @for($i=1; $i<=5; $i++) 
+                                <label class="flex flex-col items-center gap-1 cursor-pointer group">
                                     <span class="md:hidden text-[9px] font-bold text-gray-400 group-hover:text-[#800000]">{{$i}}</span>
-                                    <input type="radio" name="ratings[{{ $global_q_id }}]" value="{{ $i }}" x-model="ratings['{{ $global_q_id }}']" class="w-6 h-6 md:w-5 md:h-5 accent-[#800000] cursor-pointer" required>
-                                    </label>
-                                    @endfor
+                                    {{-- 
+                                        IMPORTANT: 
+                                        name="ratings[{{ $item->id }}]" ensures the key in the controller array is the Question ID from the DB 
+                                        x-model="ratings['{{ $item->id }}']" binds it to AlpineJS for the average calculation
+                                    --}}
+                                    <input type="radio" 
+                                           name="ratings[{{ $item->id }}]" 
+                                           value="{{ $i }}" 
+                                           x-model="ratings['{{ $item->id }}']" 
+                                           class="w-6 h-6 md:w-5 md:h-5 accent-[#800000] cursor-pointer" 
+                                           required>
+                                </label>
+                                @endfor
                             </div>
                         </div>
-                        @php $global_q_id++; @endphp
                         @endforeach
                     </div>
                 </div>
