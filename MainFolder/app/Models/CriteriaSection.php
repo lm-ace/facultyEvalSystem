@@ -12,13 +12,10 @@ class CriteriaSection extends Model
     use HasFactory;
 
     protected $table = 'criteria_sections';
+    
+    public $timestamps = false;
 
-    protected $fillable = ['template_id', 'section_number', 'section_name', 'position'];
-
-    public function template(): BelongsTo
-    {
-        return $this->belongsTo(CriteriaTemplate::class);
-    }
+    protected $fillable = ['section_number', 'section_name', 'position'];
 
     public function items(): HasMany
     {

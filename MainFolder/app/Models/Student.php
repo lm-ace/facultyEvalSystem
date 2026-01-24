@@ -5,53 +5,54 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
     use HasFactory;
 
-    protected $table = 'students';
-
     protected $fillable = [
         'user_id',
         'student_number',
+        // 'email', <--- Make sure this is REMOVED from fillable
         'first_name',
         'middle_name',
         'last_name',
         'suffix',
         'year_level',
-        'section_id', // ✅ ADDED: This is required for the new database link
-        'block_section', // You can keep this for display, or remove it later if unused
+        'section_id',
         'contact_no',
+        'block_section'
     ];
 
-    // ✅ NEW: This fixes the "Call to undefined method" error
-    // It tells Laravel that a Student belongs to a specific ClassSection
-    public function section(): BelongsTo
-    {
-        return $this->belongsTo(ClassSection::class, 'section_id');
-    }
+    // =========================================================
+    // 1. AUTO-LOAD THE USER (The Data Source)
+    // =========================================================
+    // This tells Laravel: "Always grab the User info when loading a Student"
+    protected $with = ['user'];
 
-    // --- Existing Relationships ---
+    // =========================================================
+    // 2. APPEND THE FIELD (The Label)
+    // =========================================================
+    // This tells Laravel: "Add a fake field called 'email' to the JSON output"
+    protected $appends = ['email'];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function enrollments(): HasMany
+    // =========================================================
+    // 3. DEFINE THE ACCESSOR (The Logic)
+    // =========================================================
+    // This defines what goes inside that fake 'email' field
+    public function getEmailAttribute()
     {
-       return $this->hasMany(Student::class, 'section_id');
+        // If the student has a User account, grab that email. Otherwise, return null.
+        return $this->user ? $this->user->email : null;
     }
 
-    public function evaluations(): HasMany
+    public function section()
     {
-        return $this->hasMany(Evaluation::class);
-    }
-
-    public function systemRatings(): HasMany
-    {
-        return $this->hasMany(SystemRating::class);
+        return $this->belongsTo(ClassSection::class, 'section_id');
     }
 }
