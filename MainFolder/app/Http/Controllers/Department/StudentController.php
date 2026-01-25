@@ -11,10 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\StudentCredentialMail;
 
 class StudentController extends Controller
 {
-  public function store(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'student_number' => 'required|unique:students,student_number',
@@ -34,14 +36,14 @@ class StudentController extends Controller
                 'role'          => 'student',
                 'username'      => $validated['student_number'],
                 'email'         => $validated['email'],
-                'password_hash' => Hash::make($generatedPassword),
+                'password_hash' => Hash::make($generatedPassword), // Naka-hash sa database
                 'is_active'     => true
             ]);
 
-            // 2. Fetch Section details for "block_section" (if you still use that column)
+            // 2. Fetch Section details for "block_section"
             $section = ClassSection::findOrFail($request->section_id);
 
-            // 3. Create Student
+            // 3. Create Student Profile
             $student = Student::create([
                 'user_id'        => $user->id,
                 'student_number' => $validated['student_number'],
@@ -52,21 +54,30 @@ class StudentController extends Controller
                 'email'          => $validated['email'],
                 'contact_no'     => $request->contact_no,
                 'year_level'     => $request->year_level ?? 1, 
-                'block_section'  => $section->block, // Optional depending on your DB
+                'block_section'  => $section->block, 
                 'section_id'     => $validated['section_id']
             ]);
 
-            // 4. Create Enrollment
+            // 4. Create Enrollment Record
             Enrollment::create([
                 'student_id'       => $student->id,
                 'class_section_id' => $validated['section_id'],
                 'enrolled_at'      => now(),
             ]);
 
+            Mail::to($validated['email'])->send(new StudentCredentialMail($student, $generatedPassword));
+
             DB::commit();
 
             return redirect()->route('admin.departments')
-                ->with('success', "Student registered! Password: $generatedPassword")
+                ->with('success', "Student registered! Password: $generatedPassword");
+            // Email credentials
+           
+
+            DB::commit();
+
+            return redirect()->route('admin.departments')
+                ->with('success', "Student registered! Credentials sent to email: " . $validated['email'])
                 ->with('open_dept_id', $request->department_id)
                 ->with('open_program_id', $request->course_id)
                 ->with('open_tab', 'students');
@@ -105,7 +116,7 @@ class StudentController extends Controller
                 'section_id'  => $newSectionId
             ]);
 
-            // 2. Update User Email
+            // 2. Update User Email (Login credentials)
             if ($student->user) {
                 $student->user->update(['email' => $validated['email']]);
             }
@@ -138,7 +149,6 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
         
         // Retrieve context for redirect before deleting
-        // We need to find the Course and Dept from the Student's Section
         $section = ClassSection::with('course')->find($student->section_id);
         $courseId = $section ? $section->course_id : null;
         $deptId = $section ? $section->course->department_id : null;
@@ -147,9 +157,10 @@ class StudentController extends Controller
 
         DB::beginTransaction();
         try {
-            // Delete student (Enrollments should cascade delete if setup in DB, otherwise delete manually)
+            // Delete student
             $student->delete();
             
+            // Delete associated User account
             if ($userId) {
                 User::where('id', $userId)->delete();
             }

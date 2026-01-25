@@ -16,6 +16,8 @@ use App\Http\Controllers\Department\StudentController;
 use App\Http\Controllers\Department\SubjectController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\Student\DashboardController;
+use App\Http\Controllers\ForgotPasswordController;
+
 
 // ====================================================
 // PUBLIC PAGES
@@ -45,6 +47,11 @@ Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::get('/login/{role}', [LoginController::class, 'showLoginForm'])->name('login.role');
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Forgot Password 
+Route::post('/forgot/send-otp', [ForgotPasswordController::class, 'sendOtp'])->name('forgot.sendOtp');
+Route::post('/forgot/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot.verifyOtp');
+Route::post('/forgot/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('forgot.resetPassword');
 
 // ====================================================
 // ADMIN ROUTES

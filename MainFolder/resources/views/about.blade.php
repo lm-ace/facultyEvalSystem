@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 <nav class="fixed top-0 left-0 right-0 z-50 px-4 md:px-10 py-2 text-white bg-[#660000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -83,7 +85,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-6 md:p-10 rounded-xl shadow-lg">
+        <div class="bg-white p-6 md:p-10 rounded-xl shadow-lg mb-16">
             <h3 class="text-xl md:text-2xl font-bold text-[#800000] mb-6">Objectives</h3>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <li class="flex items-start space-x-3">
@@ -107,6 +109,151 @@
                     <span class="text-gray-700 text-sm md:text-base">Support continuous professional development of faculty members</span>
                 </li>
             </ul>
+        </div>
+
+        <div class="text-center">
+            <div class="inline-block border-b-4 border-yellow-500 pb-2 mb-10">
+                <h3 class="text-2xl md:text-3xl font-bold text-[#800000]">System Developers</h3>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-8">
+                
+                <div class="dev-card w-full md:w-[30%] bg-white rounded-xl shadow-lg border-t-4 border-[#800000] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center group overflow-hidden">
+                    <div class="p-6 pb-2 flex flex-col items-center w-full z-10 bg-white">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                            <img src="{{ asset('images/lebron.jpg') }}" alt="Leo Miguel B. Aceitunas" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">Leo Miguel B. Aceitunas</h4>
+                        <p class="text-[#800000] font-medium text-sm mt-1">System Project Manager</p>
+                    </div>
+
+                    <div class="w-full bg-gray-50 border-t border-gray-100 py-4">
+                        <div class="flex items-center justify-center space-x-5">
+                            <a href="https://facebook.com" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Facebook">
+                                <i class="fa-brands fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="LinkedIn">
+                                <i class="fa-brands fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="GitHub">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                            <a href="mailto:email@pup.edu.ph" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Email">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dev-card w-full md:w-[30%] bg-white rounded-xl shadow-lg border-t-4 border-[#800000] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center group overflow-hidden">
+                    <div class="p-6 pb-2 flex flex-col items-center w-full z-10 bg-white">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                            <img src="{{ asset('images/mhaine.jpg') }}" alt="Jermaine M. Sebido" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">Jermaine M. Sebido</h4>
+                        <p class="text-[#800000] font-medium text-sm mt-1">Full-stack Developer</p>
+                    </div>
+
+                    <div class="w-full bg-gray-50 border-t border-gray-100 py-4">
+                        <div class="flex items-center justify-center space-x-5">
+                            <a href="https://facebook.com" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Facebook">
+                                <i class="fa-brands fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="LinkedIn">
+                                <i class="fa-brands fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="GitHub">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                            <a href="mailto:email@pup.edu.ph" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Email">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dev-card w-full md:w-[30%] bg-white rounded-xl shadow-lg border-t-4 border-[#800000] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center group overflow-hidden">
+                    <div class="p-6 pb-2 flex flex-col items-center w-full z-10 bg-white">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                            <img src="{{ asset('images/razi.JPG') }}" alt="Raziela T. Calapatia" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">Raziela T. Calapatia</h4>
+                        <p class="text-[#800000] font-medium text-sm mt-1">Front-end Developer</p>
+                    </div>
+
+                    <div class="w-full bg-gray-50 border-t border-gray-100 py-4">
+                        <div class="flex items-center justify-center space-x-5">
+                            <a href="https://facebook.com" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Facebook">
+                                <i class="fa-brands fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="LinkedIn">
+                                <i class="fa-brands fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="GitHub">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                            <a href="mailto:email@pup.edu.ph" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Email">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dev-card w-full md:w-[30%] bg-white rounded-xl shadow-lg border-t-4 border-[#800000] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center group overflow-hidden">
+                    <div class="p-6 pb-2 flex flex-col items-center w-full z-10 bg-white">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md">
+                            <img src="{{ asset('images/zell.jpg') }}" alt="Zellphie M. Dela" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">Zellphie M. Dela</h4>
+                        <p class="text-[#800000] font-medium text-sm mt-1">Back-end Developer</p>
+                    </div>
+
+                    <div class="w-full bg-gray-50 border-t border-gray-100 py-4">
+                        <div class="flex items-center justify-center space-x-5">
+                            <a href="https://facebook.com" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Facebook">
+                                <i class="fa-brands fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="LinkedIn">
+                                <i class="fa-brands fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="GitHub">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                            <a href="mailto:email@pup.edu.ph" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Email">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dev-card w-full md:w-[30%] bg-white rounded-xl shadow-lg border-t-4 border-[#800000] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center group overflow-hidden">
+                    <div class="p-6 pb-2 flex flex-col items-center w-full z-10 bg-white">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 group-hover:border-yellow-500 transition-colors duration-300 mb-4 shadow-md bg-gray-100 flex items-center justify-center">
+                            <img src="{{ asset('images/Taroma.jpg') }}" alt="Yra Louisse A. Taroma" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">Yra Louisse A. Taroma</h4>
+                        <p class="text-[#800000] font-medium text-sm mt-1">Back-end Developer</p>
+                    </div>
+
+                    <div class="w-full bg-gray-50 border-t border-gray-100 py-4">
+                        <div class="flex items-center justify-center space-x-5">
+                            <a href="https://facebook.com" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Facebook">
+                                <i class="fa-brands fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="LinkedIn">
+                                <i class="fa-brands fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" target="_blank" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="GitHub">
+                                <i class="fa-brands fa-github text-xl"></i>
+                            </a>
+                            <a href="mailto:email@pup.edu.ph" class="text-[#800000] hover:text-yellow-500 transform hover:scale-125 transition-all" title="Email">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
@@ -144,6 +291,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
 
@@ -153,5 +301,6 @@
             });
         }
     });
+
 </script>
 @endsection

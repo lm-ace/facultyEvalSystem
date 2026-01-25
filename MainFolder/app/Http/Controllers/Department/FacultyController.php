@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FacultyCredentialMail;
 
 class FacultyController extends Controller
 {
@@ -59,14 +61,17 @@ class FacultyController extends Controller
             // 4. Sync Subjects
             $faculty->subjects()->sync($request->input('subject_ids', []));
 
+            // Email credentials
+            Mail::to($validated['email'])->send(new FacultyCredentialMail($faculty, $generatedPassword));
+
             DB::commit();
 
-            // Redirect back with the password in the session flash message
             return redirect()->route('admin.departments')
-                ->with('success', "Faculty added! Generated Password: $generatedPassword")
+                ->with('success', "Faculty added! Credentials sent to email: " . $validated['email'])
                 ->with('open_dept_id', $request->department_id)
                 ->with('open_program_id', $request->course_id)
                 ->with('open_tab', 'faculty');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Error: ' . $e->getMessage());
@@ -90,7 +95,6 @@ class FacultyController extends Controller
         try {
             // 1. Update Picture
             if ($request->hasFile('profile_picture')) {
-                // Delete old if exists and not default
                 if ($faculty->profile_picture && $faculty->profile_picture !== 'default-avatar.png') {
                     Storage::disk('public')->delete($faculty->profile_picture);
                 }
@@ -134,20 +138,16 @@ class FacultyController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Unassign from Classes (Set to NULL/TBA)
             DB::table('class_offerings')
                 ->where('faculty_id', $id)
                 ->update(['faculty_id' => null]);
 
-            // 2. Detach Subjects
             $faculty->subjects()->detach();
 
-            // 3. Delete File
             if ($faculty->profile_picture && $faculty->profile_picture !== 'default-avatar.png') {
                 Storage::disk('public')->delete($faculty->profile_picture);
             }
 
-            // 4. Delete Records
             $faculty->delete();
             if ($userId) {
                 User::where('id', $userId)->delete();

@@ -100,7 +100,7 @@
 
                     <div class="mt-3 flex justify-end">
                         @if($totalToEvaluate == 0)
-                        <span class="bg-gray-100 text-gray-500 text-[9px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider">No subjects</span>
+                        <span class="bg-gray-100 text-gray-500 text-[9px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider">Evaluation is Closed</span>
                         @elseif($percentage >= 100)
                         <span class="bg-green-100 text-green-700 text-[9px] font-bold px-3 py-1 rounded-lg uppercase tracking-wider flex items-center gap-1">
                             <i class="fa-solid fa-check-circle"></i> Complete
