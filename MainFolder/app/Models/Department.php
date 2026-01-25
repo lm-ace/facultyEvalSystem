@@ -14,7 +14,6 @@ class Department extends Model
 
     protected $fillable = ['name', 'code'];
 
-    // Relationships
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);

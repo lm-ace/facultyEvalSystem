@@ -5,15 +5,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div x-data="{ 
-    showEvaluation: localStorage.getItem('showEvaluation') === 'true' || {{ $submissionValidation ?? false ? 'true': 'false'}},
-    init(){
-        this.$watch('showEvaluation', value => {
-            localStorage.setItem('showEvaluation', value);
-        });
-    }
+    showEvaluation: {{ $submissionValidation ?? false ? 'true' : 'false' }}
  }">
 
-    {{-- NAVIGATION --}}
     <nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-10 py-3 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
         <div class="flex items-center space-x-3">
             <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 md:h-10">
@@ -52,34 +46,59 @@
     <main class="pt-24 pb-20 bg-gray-50 min-h-screen">
         <div class="container mx-auto px-4 md:px-6 max-w-6xl">
 
-            {{-- WELCOME MESSAGE --}}
             <div class="relative bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border-l-8 md:border-l-[10px] border-[#800000] mb-8 overflow-hidden">
                 <div class="relative z-10 pr-0 md:pr-96">
-                    {{-- 1. UPDATED: Dynamic Welcome Message --}}
-                    <h2 class="text-2xl md:text-4xl font-black text-gray-800 mb-4 md:mb-6 leading-tight">Welcome, {{ $studentName }}!</h2>
                     
-                    <div class="space-y-3 md:space-y-4 text-gray-600 leading-relaxed text-sm md:text-base max-w-xl">
-                        <p>This evaluation is a critical part of our institutional quality assurance. Your objective feedback helps us maintain high academic standards.</p>
-                        <p>Please complete all sections based on your actual classroom experience this term.</p>
-                        <p class="font-bold text-gray-500 text-xs md:text-sm">Thank you for your participation.</p>
-                    </div>
+                    <h2 class="text-2xl md:text-4xl font-black text-gray-800 mb-2 md:mb-4 leading-tight">Welcome, {{ $studentName }}!</h2>
 
-                    <div class="mt-6 md:mt-8" x-show="!showEvaluation">
-                        <button @click="showEvaluation = true" class="w-full md:w-auto px-8 md:px-12 py-3 md:py-4 bg-[#800000] text-white font-bold rounded-xl md:rounded-2xl shadow-xl hover:bg-[#660000] transition-all transform active:scale-95 flex items-center justify-center gap-3 text-sm md:text-base">
-                            Proceed to Evaluation
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
+                    @if($isEvaluationOpen && $activePeriod)
+                        
+                        <div class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4 border border-green-200">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <span>{{ $activePeriod->semester }} | {{ $activePeriod->academic_year }}</span>
+                        </div>
+
+                        <div class="space-y-3 md:space-y-4 text-gray-600 leading-relaxed text-sm md:text-base max-w-xl">
+                            <p>This evaluation is a critical part of our institutional quality assurance. Your objective feedback helps us maintain high academic standards.</p>
+                            <p>Please complete all sections based on your actual classroom experience this term.</p>
+                            <p class="font-bold text-gray-500 text-xs md:text-sm">Thank you for your participation.</p>
+                        </div>
+
+                        <div class="mt-6 md:mt-8" x-show="!showEvaluation">
+                            <button @click="showEvaluation = true" class="w-full md:w-auto px-8 md:px-12 py-3 md:py-4 bg-[#800000] text-white font-bold rounded-xl md:rounded-2xl shadow-xl hover:bg-[#660000] transition-all transform active:scale-95 flex items-center justify-center gap-3 text-sm md:text-base">
+                                Proceed to Evaluation
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                    @else
+
+                        <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4 border border-gray-200">
+                            <i class="fa-solid fa-lock"></i>
+                            <span>System Closed</span>
+                        </div>
+
+                        <div class="space-y-3 md:space-y-4 text-gray-500 leading-relaxed text-sm md:text-base max-w-xl">
+                            <p class="text-[#800000] font-bold">The faculty evaluation period is currently closed.</p>
+                            <p>You cannot submit evaluations at this time. Please wait for an announcement regarding the schedule for the next academic term.</p>
+                            
+                            <div class="flex items-center gap-2 text-xs font-bold bg-gray-50 p-3 rounded-xl border border-gray-100 w-fit mt-2">
+                                <i class="fa-solid fa-circle-info text-blue-400"></i>
+                                <span>No actions required from you right now.</span>
+                            </div>
+                        </div>
+
+                    @endif
+
                 </div>
 
                 <div class="hidden md:block absolute right-8 bottom-0 z-0 opacity-90">
-                    <img src="{{ asset('images/student-evaluation.png') }}" alt="Student Illustration" class="w-64 lg:w-72 h-auto">
+                    <img src="{{ asset('images/student-evaluation.png') }}" alt="Student Illustration" class="w-64 lg:w-72 h-auto {{ !$isEvaluationOpen ? 'grayscale opacity-50' : '' }}">
                 </div>
             </div>
 
             <div x-show="showEvaluation" x-cloak x-transition:enter="transition ease-out duration-700" class="space-y-6 md:space-y-8">
 
-                {{-- PROGRESS SECTION --}}
                 <div class="relative bg-white p-5 md:p-6 rounded-3xl shadow-sm border border-gray-100">
                     <div class="flex justify-between items-end mb-2">
                         <div>
@@ -113,7 +132,6 @@
                     </div>
                 </div>
 
-                {{-- FACULTY GRID --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     @foreach($enrolledSubjects as $subject)
                     <div x-data="{ hover: false }" x-init="if(window.innerWidth < 768) hover = true" @mouseenter="hover = true" @mouseleave="if(window.innerWidth >= 768) hover = false" class="relative bg-white rounded-[1.5rem] shadow-md transition-all duration-500 overflow-hidden flex flex-col border border-gray-100 h-full group" :class="hover ? '-translate-y-1 md:-translate-y-3 shadow-xl ring-2 ring-[#800000]/10' : 'translate-y-0'">
@@ -158,7 +176,6 @@
     </main>
 </div>
 
-{{-- EVALUATION MODAL (Responsive) --}}
 <div id="evaluationModal" x-data="{ 
         ratings: {}, 
         get averageRating() {
@@ -174,7 +191,6 @@
             @csrf
             <input type="hidden" name="offering_id" id="evalOfferingId">
 
-            {{-- Modal Header --}}
             <div class="p-5 md:p-8 bg-[#800000] text-white flex flex-col md:flex-row justify-between items-center shrink-0 gap-4 md:gap-0">
                 <div class="flex items-center gap-4 w-full md:w-auto">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 md:h-14 w-auto object-contain">
@@ -199,10 +215,8 @@
                 </div>
             </div>
 
-            {{-- Modal Body --}}
             <div class="p-4 md:p-8 overflow-y-auto space-y-6 md:space-y-10 bg-gray-50/50 flex-1 min-h-0">
 
-                {{-- Info Box --}}
                 <div class="bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border-l-4 border-blue-400 flex gap-3 text-xs md:text-[13px] text-gray-600">
                     <i class="fa-solid fa-circle-info text-blue-500 text-lg md:mt-0"></i>
                     <div class="leading-relaxed">
@@ -210,7 +224,6 @@
                     </div>
                 </div>
 
-                {{-- Rating Scale --}}
                 <div class="bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm">
                     <p class="font-bold text-gray-800 mb-3 text-xs md:text-sm">Rating Scale Guide:</p>
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
@@ -222,9 +235,7 @@
                     </div>
                 </div>
 
-                {{-- 2. UPDATED: Dynamic Criteria Loop --}}
                 @php
-                    // Map section numbers to icons (since DB usually doesn't store icon class names)
                     $icons = [
                         1 => 'fa-book-open',
                         2 => 'fa-users-gear',
@@ -235,15 +246,12 @@
 
                 @foreach($criteria as $section)
                 <div class="bg-white rounded-2xl md:rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-                    {{-- Section Header --}}
                     <div class="bg-[#800000] px-5 md:px-8 py-3 md:py-4 flex items-center gap-3 text-white uppercase font-black tracking-widest text-[10px] md:text-[11px]">
-                        {{-- Use mapped icon or default star --}}
                         <i class="fa-solid {{ $icons[$section->section_number] ?? 'fa-star' }}"></i>
                         <span>{{ $section->section_name }}</span>
                     </div>
 
                     <div class="divide-y divide-gray-100">
-                        {{-- Desktop Header (Only show once per section) --}}
                         <div class="hidden md:flex text-[10px] uppercase text-gray-400 bg-gray-50/50 font-black py-4 px-8">
                             <div class="flex-1">Performance Criteria</div>
                             <div class="flex w-[400px] justify-between text-center px-4">
@@ -251,25 +259,17 @@
                             </div>
                         </div>
 
-                        {{-- Loop through Items (Questions) from Database --}}
                         @foreach($section->items as $item)
                         <div class="p-4 md:px-8 md:py-4 hover:bg-gray-50/50 transition flex flex-col md:flex-row md:items-center gap-3 md:gap-0">
-                            {{-- Question Text --}}
                             <div class="flex-1 text-sm text-gray-700 font-medium md:font-normal">
                                 <span class="md:hidden text-[10px] font-bold text-gray-400 mr-2">{{ $loop->parent->iteration }}.{{ $loop->iteration }}</span>
                                 {{ $item->question_text }}
                             </div>
 
-                            {{-- Radio Buttons --}}
                             <div class="flex justify-between md:w-[400px] md:px-4 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 md:border-none">
                                 @for($i=1; $i<=5; $i++) 
                                 <label class="flex flex-col items-center gap-1 cursor-pointer group">
                                     <span class="md:hidden text-[9px] font-bold text-gray-400 group-hover:text-[#800000]">{{$i}}</span>
-                                    {{-- 
-                                        IMPORTANT: 
-                                        name="ratings[{{ $item->id }}]" ensures the key in the controller array is the Question ID from the DB 
-                                        x-model="ratings['{{ $item->id }}']" binds it to AlpineJS for the average calculation
-                                    --}}
                                     <input type="radio" 
                                            name="ratings[{{ $item->id }}]" 
                                            value="{{ $i }}" 
@@ -291,7 +291,6 @@
                 </div>
             </div>
 
-            {{-- Footer Actions --}}
             <div class="p-4 md:p-8 border-t bg-white flex justify-between md:justify-end gap-3 shrink-0 pb-8 md:pb-8">
                 <button type="button" onclick="hideEvaluationModal()" class="w-1/3 md:w-auto px-4 md:px-8 py-3 font-bold text-gray-400 hover:text-gray-600 transition text-sm">Discard</button>
                 <button type="button" onclick="showConfirmSubmitModal()" class="w-2/3 md:w-auto px-6 md:px-12 py-3 md:py-4 bg-[#800000] text-white font-black rounded-xl md:rounded-2xl shadow-xl hover:bg-[#660000] transition uppercase text-[10px] md:text-xs tracking-widest">
@@ -302,7 +301,6 @@
     </div>
 </div>
 
-{{-- LOGOUT MODAL --}}
 <div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
     <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 md:p-8 border-t-8 border-[#800000]">
         <div class="bg-[#800000]/10 w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -319,7 +317,6 @@
     </div>
 </div>
 
-{{-- SUBMISSION CONFIRMATION MODAL --}}
 <div id="confirmSubmitModal" class="fixed inset-0 z-[120] hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
     <div class="relative w-full max-w-sm bg-white rounded-[2rem] shadow-2xl p-6 md:p-8 border-t-8 border-[#800000]">
         <div class="bg-orange-50 w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -339,10 +336,8 @@
     </div>
 </div>
 
-{{-- CHANGE PASSWORD MODAL --}}
 <form method="POST" action="{{ route('student.changePassword') }}" id="changePasswordForm">
     @csrf
-    {{-- This modal collects the inputs --}}
     <div id="changePasswordModal" class="fixed inset-0 z-[120] {{ $errors->any() ? 'flex' : 'hidden' }} items-center justify-center bg-black/60 backdrop-blur-sm p-4" x-data="{ 
              showOld: false, 
              showNew: false, 
@@ -369,16 +364,13 @@
             </div>
 
             <div class="p-8 space-y-5">
-                {{-- Global Error/Success Messages --}}
                 @if (session('error'))
                 <div class="p-3 bg-red-100 text-red-700 rounded-xl text-xs font-bold flex items-center gap-2">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     {{ session('error') }}
                 </div>
                 @endif
-                {{-- NOTE: We removed the inline session('success') here because we are using the new Success Modal below --}}
 
-                {{-- Inputs --}}
                 <div class="space-y-2">
                     <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Current Password</label>
                     <div class="relative">
@@ -417,7 +409,6 @@
             <div class="p-8 pt-0 flex gap-3">
                 <button type="button" onclick="hideChangePasswordModal()" class="flex-1 py-4 font-bold text-gray-400 hover:bg-gray-50 rounded-2xl transition">Cancel</button>
 
-                {{-- NOTICE: type="button" and onclick="showPasswordConfirm()" --}}
                 <button type="button" onclick="showPasswordConfirm()" :disabled="!isValid" :class="isValid ? 'bg-[#800000] hover:bg-[#660000] shadow-xl' : 'bg-gray-300 cursor-not-allowed'" class="flex-[2] py-4 text-white font-black rounded-2xl transition uppercase text-xs tracking-widest">
                     Update Password
                 </button>
@@ -426,7 +417,6 @@
     </div>
 </form>
 
-{{-- PASSWORD CONFIRMATION MODAL (POP OUT) --}}
 <div id="confirmPasswordModal" class="fixed inset-0 z-[130] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 mx-4 border-t-8 border-[#800000]">
         <div class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -440,7 +430,6 @@
             </p>
         </div>
         <div class="flex flex-col space-y-3">
-            {{-- This button submits the form by ID --}}
             <button onclick="submitPasswordChange()" class="w-full py-4 bg-[#800000] text-white font-black rounded-2xl shadow-lg hover:bg-[#660000] transition active:scale-[0.98] uppercase text-xs tracking-widest">
                 Yes, Update Now
             </button>
@@ -451,7 +440,6 @@
     </div>
 </div>
 
-{{-- SUCCESS MODAL --}}
 <div id="successModal" class="fixed inset-0 z-[150] {{ session('success') ? 'flex' : 'hidden' }} items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl p-8 mx-4 text-center transform transition-all scale-100 border-t-8 border-green-500">
 
@@ -470,7 +458,6 @@
     </div>
 </div>
 
-{{-- HIDDEN LOGOUT FORM (ADDED FOR FIX) --}}
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
     @csrf
 </form>

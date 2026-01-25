@@ -13,7 +13,6 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'student_number',
-        // 'email', <--- Make sure this is REMOVED from fillable
         'first_name',
         'middle_name',
         'last_name',
@@ -24,16 +23,8 @@ class Student extends Model
         'block_section'
     ];
 
-    // =========================================================
-    // 1. AUTO-LOAD THE USER (The Data Source)
-    // =========================================================
-    // This tells Laravel: "Always grab the User info when loading a Student"
     protected $with = ['user'];
 
-    // =========================================================
-    // 2. APPEND THE FIELD (The Label)
-    // =========================================================
-    // This tells Laravel: "Add a fake field called 'email' to the JSON output"
     protected $appends = ['email'];
 
     public function user(): BelongsTo
@@ -41,13 +32,8 @@ class Student extends Model
         return $this->belongsTo(User::class);
     }
 
-    // =========================================================
-    // 3. DEFINE THE ACCESSOR (The Logic)
-    // =========================================================
-    // This defines what goes inside that fake 'email' field
     public function getEmailAttribute()
     {
-        // If the student has a User account, grab that email. Otherwise, return null.
         return $this->user ? $this->user->email : null;
     }
 

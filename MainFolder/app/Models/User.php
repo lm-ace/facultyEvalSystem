@@ -18,13 +18,13 @@ class User extends Authenticatable
         'role',
         'username',
         'email',
-        'password_hash', // ✅ Match your DB column
+        'password_hash', 
         'is_active',
         'last_login',
     ];
 
     protected $hidden = [
-        'password_hash', // ✅ Hide the correct column
+        'password_hash', 
         'remember_token',
     ];
 
@@ -36,13 +36,12 @@ class User extends Authenticatable
         ];
     }
 
-    // ✅ IMPORTANT: Tell Laravel to use 'password_hash' for authentication
     public function getAuthPassword()
     {
         return $this->password_hash;
     }
 
-    // ... relations (student, faculty, admin, activityLogs) ...
+
     public function student(): HasOne
     {
         return $this->hasOne(Student::class);
@@ -53,7 +52,7 @@ class User extends Authenticatable
         return $this->hasOne(Faculty::class);
     }
     
-    // helper to get name from child relationships
+
     public function getNameAttribute()
     {
         if ($this->student) {

@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\StudentCredentialMail;
+use Illuminate\Support\Facades\Log; // <--- 1. IMPORT THIS
 
 class StudentController extends Controller
 {
     public function store(Request $request)
     {
+        // 1. Log the attempt
+        Log::info("Admin is registering a new student. Input: " . json_encode($request->only('student_number', 'email', 'first_name', 'last_name')));
+
         $validated = $request->validate([
             'student_number' => 'required|unique:students,student_number',
             'first_name'     => 'required|string|max:100',
@@ -36,7 +40,7 @@ class StudentController extends Controller
                 'role'          => 'student',
                 'username'      => $validated['student_number'],
                 'email'         => $validated['email'],
-                'password_hash' => Hash::make($generatedPassword), // Naka-hash sa database
+                'password_hash' => Hash::make($generatedPassword),
                 'is_active'     => true
             ]);
 
@@ -65,14 +69,11 @@ class StudentController extends Controller
                 'enrolled_at'      => now(),
             ]);
 
+            // 5. Send Email
             Mail::to($validated['email'])->send(new StudentCredentialMail($student, $generatedPassword));
 
-            DB::commit();
-
-            return redirect()->route('admin.departments')
-                ->with('success', "Student registered! Password: $generatedPassword");
-            // Email credentials
-           
+            // 2. Log Success (Replaces Audit Log)
+            Log::notice("SUCCESS: Student Registered - {$student->last_name}, {$student->first_name} ({$student->student_number})");
 
             DB::commit();
 
@@ -84,12 +85,15 @@ class StudentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("ERROR: Failed to register student. Reason: " . $e->getMessage()); // Log the error too
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
     public function update(Request $request, $id)
     {
+        Log::info("Admin is updating Student ID: $id");
+
         $student = Student::findOrFail($id);
 
         $validated = $request->validate([
@@ -130,6 +134,9 @@ class StudentController extends Controller
                 ]);
             }
 
+            // 3. Log Success
+            Log::notice("SUCCESS: Student Updated - {$student->student_number}");
+
             DB::commit();
 
             return redirect()->route('admin.departments')
@@ -140,12 +147,15 @@ class StudentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("ERROR: Failed to update student. Reason: " . $e->getMessage());
             return back()->with('error', $e->getMessage());
         }
     }
 
     public function destroy(Request $request, $id)
     {
+        Log::info("Admin is deleting Student ID: $id");
+
         $student = Student::findOrFail($id);
         
         // Retrieve context for redirect before deleting
@@ -154,6 +164,10 @@ class StudentController extends Controller
         $deptId = $section ? $section->course->department_id : null;
         
         $userId = $student->user_id;
+
+        // Capture data for log before deletion
+        $name = "{$student->last_name}, {$student->first_name}";
+        $number = $student->student_number;
 
         DB::beginTransaction();
         try {
@@ -165,6 +179,9 @@ class StudentController extends Controller
                 User::where('id', $userId)->delete();
             }
 
+            // 4. Log Success
+            Log::notice("SUCCESS: Student Deleted - {$name} ({$number})");
+
             DB::commit();
 
             return redirect()->route('admin.departments')
@@ -175,6 +192,7 @@ class StudentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("ERROR: Failed to delete student. Reason: " . $e->getMessage());
             return back()->with('error', $e->getMessage());
         }
     }

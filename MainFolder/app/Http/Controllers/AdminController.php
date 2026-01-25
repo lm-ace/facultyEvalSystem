@@ -11,7 +11,6 @@ use App\Models\ReviewPeriod;
 
 class AdminController extends Controller
 {
-    // --- 1. DASHBOARD LOGIC ---
     public function dashboard()
     {
         $totalFaculty = Faculty::count();
@@ -33,28 +32,11 @@ class AdminController extends Controller
             'departmentCount',
             'reviewPeriods',
             'isEvalOpen',
+            'activePeriod',
             'recentEvaluations'
         ));
     }
 
-    public function toggleStatus(Request $request)
-    {
-        $activePeriod = ReviewPeriod::where('is_open', 1)->first();
-
-        if ($activePeriod) {
-            $activePeriod->update(['is_open' => 0]);
-        } else {
-            $latestPeriod = ReviewPeriod::latest()->first();
-            if ($latestPeriod) {
-                $latestPeriod->update(['is_open' => 1]);
-            } else {
-                return back()->with('error', 'No review period found to open.');
-            }
-        }
-        return redirect()->route('admin.dashboard');
-    }
-
-    // --- 2. REPORTS PAGE LOGIC ---
     public function reports(Request $request)
     {
         $departments = Department::all();
@@ -68,12 +50,11 @@ class AdminController extends Controller
 
         $faculties = $query->get();
 
-        // Calculate ratings for each faculty member
         foreach ($faculties as $faculty) {
             $avgRating = $faculty->evaluations->avg('overall_rating');
             $faculty->overall_rating = $avgRating ?? 0;
         }
-
+        
         return view('admin.reports', compact('departments', 'semesters', 'faculties'));
     }
 }

@@ -40,11 +40,6 @@ class ClassOffering extends Model
         return $this->belongsTo(ReviewPeriod::class, 'semester_id');
     }
 
-    public function schedules(): HasMany
-    {
-        return $this->hasMany(Schedule::class);
-    }
-
     public function evaluations(): HasMany
     {
         return $this->hasMany(Evaluation::class);

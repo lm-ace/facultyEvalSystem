@@ -6,38 +6,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 <img id="pdfLogo" src="{{ asset('images/logo.png') }}" class="hidden">
 
-{{-- Navigation --}}
-<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-2 text-white bg-[#800000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
-    <div class="flex items-center space-x-3">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8">
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 py-2 text-white bg-[#800000]/95 backdrop-blur-md shadow-md transition-all">
+    <div class="flex items-center gap-3">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-7 md:h-8">
         <div>
-            <h1 class="font-bold leading-none text-base">EduRate</h1>
-            <p class="text-[9px] tracking-tighter uppercase opacity-80">Faculty Evaluation System</p>
+            <h1 class="font-bold leading-none text-sm md:text-lg">EduRate</h1>
+            <p class="text-[8px] md:text-[10px] tracking-tight uppercase opacity-80">Faculty Evaluation System</p>
         </div>
     </div>
-    <div class="flex items-center space-x-4">
-        <span class="text-xs font-medium opacity-70 hidden sm:inline tracking-wider uppercase">System Administrator</span>
-        <button type="button" onclick="showLogoutModal()" class="bg-white/10 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-white/20 transition flex items-center border border-white/20">
-            <i class="fa-solid fa-right-from-bracket mr-2"></i> Log Out
+    <div class="flex items-center gap-3">
+        <span class="text-[10px] md:text-xs font-medium opacity-70 hidden sm:inline tracking-wider uppercase">System Administrator</span>
+        <button onclick="showLogoutModal()" class="bg-white/10 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold hover:bg-white/20 transition flex items-center border border-white/20">
+            <i class="fa-solid fa-right-from-bracket md:mr-2"></i> <span class="hidden md:inline">Log Out</span>
         </button>
     </div>
 </nav>
+<div class="fixed top-[48px] md:top-[52px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-2 md:px-6">
+        
+        <div class="grid grid-cols-4 md:flex md:gap-8 py-2">
+            
+            <a href="{{ route('admin.dashboard') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/dashboard') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
+                <i class="fa-solid fa-chart-pie text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
+                <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Dashboard</span>
+            </a>
+            
+            <a href="{{ route('admin.departments') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/departments*') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
+                <i class="fa-solid fa-sitemap text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
+                <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Departments</span>
+            </a>
+            
+            <a href="{{ route('admin.criteria') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/criteria*') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
+                <i class="fa-solid fa-list-check text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
+                <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Criteria</span>
+            </a>
+            
+            <a href="{{ route('admin.reports') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/reports*') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
+                <i class="fa-solid fa-file-contract text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
+                <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Reports</span>
+            </a>
 
-{{-- Sub-Nav --}}
-<div class="fixed top-[48px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm px-10 py-3">
-    <div class="max-w-7xl mx-auto flex items-center space-x-8 text-xs font-bold uppercase tracking-widest">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center text-gray-400 hover:text-[#800000] pb-1 transition-all">
-            <i class="fa-solid fa-chart-pie mr-2"></i> Dashboard
-        </a>
-        <a href="{{ route('admin.departments') }}" class="flex items-center text-gray-400 hover:text-[#800000] pb-1 transition-all">
-            <i class="fa-solid fa-sitemap mr-2"></i> Departments
-        </a>
-        <a href="{{ route('admin.criteria') }}" class="flex items-center text-gray-400 hover:text-[#800000] pb-1 transition-all">
-            <i class="fa-solid fa-list-check mr-2"></i> Criteria
-        </a>
-        <a href="{{ route('admin.reports') }}" class="flex items-center text-[#800000] border-b-2 border-[#800000] pb-1 transition-all">
-            <i class="fa-solid fa-file-contract mr-2"></i> Reports
-        </a>
+        </div>
     </div>
 </div>
 
@@ -58,7 +67,6 @@
             </div>
         </div>
 
-        {{-- Filter Section --}}
         <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
                 <h3 class="font-bold text-gray-800 text-sm flex items-center uppercase tracking-widest">
@@ -66,7 +74,6 @@
                 </h3>
                 
                 <form action="{{ route('admin.reports') }}" method="GET" class="flex flex-wrap gap-4 items-end">
-                    {{-- Department Filter --}}
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Department</label>
                         <select name="department" id="departmentFilter" class="mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700 min-w-[200px]">
@@ -79,7 +86,6 @@
                         </select>
                     </div>
                     
-                    {{-- Semester Filter (Restored) --}}
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Semester</label>
                         <select name="semester" id="semesterFilter" class="mt-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#800000] outline-none text-xs font-bold text-gray-700 min-w-[200px]">
@@ -101,7 +107,6 @@
             </div>
         </div>
 
-        {{-- Table Section --}}
         <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-8">
             <div class="bg-[#800000] px-6 py-4 flex justify-between items-center text-white">
                 <h3 class="font-bold text-sm uppercase tracking-wider">Faculty Performance Summary</h3>
@@ -177,7 +182,6 @@
     </div>
 </main>
 
-{{-- Modal (Rank Removed) --}}
 <div id="facultyReportModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
         <div class="text-center mb-6">
@@ -209,7 +213,6 @@
     </div>
 </div>
 
-{{-- Logout Modal --}}
 <div id="logoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 mx-4 transform transition-all scale-95 duration-300 border-t-8 border-[#800000]">
         <div class="bg-[#800000]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -278,17 +281,16 @@
         doc.setTextColor(100);
         doc.text("Generated: " + date, 14, 26);
 
-        // Get table data from the DOM
         const rows = [];
         document.querySelectorAll('tbody tr').forEach(tr => {
             const cols = tr.querySelectorAll('td');
-            if(cols.length > 1) { // Skip empty message
+            if(cols.length > 1) { 
                 rows.push([
-                    cols[0].innerText.split('\n')[0], // Name only
-                    cols[1].innerText.trim(), // Dept
-                    cols[2].innerText.trim(), // Rating
-                    cols[3].innerText.trim(), // Responses
-                    cols[4].innerText.trim()  // Status
+                    cols[0].innerText.split('\n')[0], 
+                    cols[1].innerText.trim(), 
+                    cols[2].innerText.trim(), 
+                    cols[3].innerText.trim(), 
+                    cols[4].innerText.trim()  
                 ]);
             }
         });
