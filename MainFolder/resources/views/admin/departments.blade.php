@@ -61,7 +61,7 @@
         </div>
         @endif
 
-        {{-- 3. Logical Errors (e.g. Cannot delete because it has faculty) --}}
+        {{-- 3. Logical Errors --}}
         @if(session('error'))
         <div class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm font-bold flex items-center">
             <i class="fa-solid fa-circle-exclamation mr-2"></i> {{ session('error') }}
@@ -80,7 +80,6 @@
                 </button>
             </div>
 
-<<<<<<< HEAD
             {{-- Search Bar --}}
             <div class="p-4 border-b border-gray-100 bg-gray-50">
                 <div class="relative w-full max-w-xs">
@@ -92,30 +91,6 @@
             </div>
 
             {{-- Departments Table --}}
-=======
-<<<<<<< HEAD
-            <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100 max-w-2xl mx-auto">
-                <div class="space-y-6">
-                    <div class="flex justify-center mb-6">
-                        <img src="{{ asset('images/logo.png') }}" class="h-24 w-auto opacity-90">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Choose College / Department</label>
-                        <div class="relative">
-                            <select id="deptSelector" onchange="handleDeptSelection(this)" class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all appearance-none cursor-pointer">
-                                <option value="" disabled selected>-- Select an Institution --</option>
-                                @foreach($departments as $dept)
-                                    <option value="{{ $dept->id }}">{{ $dept->name }} ({{ $dept->code }})</option>
-                                @endforeach
-                            </select>
-                            <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </div>
-                        </div>
-                    </div>
-=======
->>>>>>> d1bab8c03beff481ad4e33557d1921bde25a341d
             <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden min-h-[400px]">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-100 text-gray-500 font-bold uppercase text-[11px] tracking-wider">
@@ -136,7 +111,7 @@
                                     <i class="fa-solid fa-list-check"></i>
                                 </button>
 
-                                {{-- 2. EDIT DEPARTMENT BUTTON (New) --}}
+                                {{-- 2. EDIT DEPARTMENT BUTTON --}}
                                 <button onclick="openEditDepartmentModal('{{ e($dept->code) }}', '{{ e($dept->name) }}', {{ $dept->id }})" type="button" class="text-green-600 hover:text-green-800 px-2" title="Edit Details">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
@@ -161,7 +136,6 @@
                         @endforelse
                     </tbody>
                 </table>
-<<<<<<< HEAD
             </div>
         </div>
 
@@ -206,12 +180,6 @@
                     <div id="noProgramsMsg" class="hidden p-8 text-center text-gray-400">
                         <p class="text-sm font-bold">No programs added to this department yet.</p>
                     </div>
-=======
-                <div id="emptyState" class="hidden p-12 text-center text-gray-400">
-                    <i class="fa-solid fa-folder-open text-4xl mb-3 opacity-50"></i>
-                    <p class="text-xs uppercase font-bold">No departments found.</p>
->>>>>>> f85b3c65440bfe9469d7de2ea101274d6fa532f9
->>>>>>> d1bab8c03beff481ad4e33557d1921bde25a341d
                 </div>
             </div>
         </div>
@@ -221,13 +189,7 @@
             <div class="flex items-end justify-between mb-6">
                 <div>
                     <h3 id="viewTitle" class="text-3xl font-black text-[#800000] uppercase tracking-tight leading-none">Manage Program</h3>
-<<<<<<< HEAD
                     <p id="viewSub" class="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Department</p>
-=======
-                    <div class="flex items-center space-x-4 mt-2">
-                        <span id="viewSub" class="text-sm text-gray-400 font-bold uppercase tracking-widest"></span>
-                    </div>
->>>>>>> f85b3c65440bfe9469d7de2ea101274d6fa532f9
                 </div>
                 <button onclick="closeProgramManage()" class="bg-white border border-gray-200 text-gray-500 hover:text-[#800000] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition-all hover:shadow-md">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Back to Department
@@ -251,10 +213,6 @@
         </div>
 
     </div>
-
-    {{-- ======================================================================= --}}
-    {{-- 1. DEPARTMENT MODALS (Standard Full Page Reload Submission) --}}
-    {{-- ======================================================================= --}}
 
     <div id="addDeptModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
@@ -303,340 +261,12 @@
         </div>
     </div>
 
-    {{-- ======================================================================= --}}
-    {{-- 2. PROGRAM (COURSE) MODALS (AJAX) --}}
-    {{-- ======================================================================= --}}
-
-    <div id="addProgramModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center">
-                <h3 class="text-white font-bold uppercase text-sm">Add Program</h3>
-                <button onclick="toggleModal('addProgramModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleAjaxSubmit(event, 'addProgramModal', renderProgramsTable)" action="{{ route('admin.courses.store') }}" method="POST">
-                @csrf
-                <input type="hidden" name="department_id" id="add-program-dept-id">
-                <div class="p-6 space-y-4">
-                    <div class="p-3 bg-red-50 rounded-lg border border-red-100">
-                        <p class="text-[10px] font-bold text-[#800000] uppercase tracking-wide">Target Dept: <span id="program-dept-target" class="text-gray-700"></span></p>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Program Code</label>
-                        <input name="code" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g., BSIT" required>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Program Name</label>
-                        <input name="name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g., Bachelor of Science in IT" required>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Save Program</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="editProgramModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center">
-                <h3 class="text-white font-bold uppercase text-sm">Edit Program</h3>
-                <button onclick="toggleModal('editProgramModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="editProgramForm" onsubmit="handleAjaxSubmit(event, 'editProgramModal', renderProgramsTable)" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Program Code</label>
-                        <input id="edit-program-code" name="code" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Program Name</label>
-                        <input id="edit-program-name" name="name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Update Program</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- ======================================================================= --}}
-    {{-- 3. SUBJECT MODALS (AJAX) --}}
-    {{-- ======================================================================= --}}
-
-    <div id="addSubjectModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center">
-                <h3 class="text-white font-bold uppercase text-sm">Add Subject</h3>
-                <button onclick="toggleModal('addSubjectModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleAjaxSubmit(event, 'addSubjectModal', renderSubjects)" action="{{ route('admin.subjects.store') }}" method="POST">
-                @csrf
-                <input type="hidden" name="department_id" id="add-subject-dept-id">
-                <input type="hidden" name="course_id" id="add-subject-course-id">
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Subject Code</label>
-                        <input name="subject_code" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g. COMP 101" required>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Description</label>
-                        <input name="name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g. Intro to Computing" required>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-gray-400 uppercase">Year Level</label>
-                            <input type="number" name="year_level" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" min="1" max="4" required>
-                        </div>
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-gray-400 uppercase">Credits</label>
-                            <input type="number" name="credits" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" min="1" max="10" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Save Subject</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="editSubjectModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center">
-                <h3 class="text-white font-bold uppercase text-sm">Edit Subject</h3>
-                <button onclick="toggleModal('editSubjectModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="editSubjectForm" onsubmit="handleAjaxSubmit(event, 'editSubjectModal', renderSubjects)" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Subject Code</label>
-                        <input id="edit-subject-code" name="subject_code" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Description</label>
-                        <input id="edit-subject-name" name="name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-gray-400 uppercase">Year Level</label>
-                            <input id="edit-subject-year" type="number" name="year_level" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" min="1" max="5" required>
-                        </div>
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-gray-400 uppercase">Credits</label>
-                            <input id="edit-subject-credits" type="number" name="credits" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" min="1" max="10" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Update Subject</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- ======================================================================= --}}
-    {{-- 4. CLASS SECTION MODALS (AJAX) --}}
-    {{-- ======================================================================= --}}
-
-    <div id="addClassModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center">
-                <h3 class="text-white font-bold uppercase text-sm">Add Class Section</h3>
-                <button onclick="toggleModal('addClassModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleAjaxSubmit(event, 'addClassModal', renderClasses)" action="{{ route('admin.sections.store') }}" method="POST">
-                @csrf
-                <input type="hidden" name="course_id" id="add-class-course-id">
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Year Level</label>
-                        <input type="number" name="year_level" id="new-section-year" oninput="loadSubjectsForClass(this.value, 'add-subject-list')" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g. 1" min="1" max="4" required>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Block</label>
-                        <input name="block" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g. A" required>
-                    </div>
-                    <div class="border-t pt-4">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block">Assign Subjects</label>
-                        <div id="add-subject-list" class="h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 text-sm grid grid-cols-1 gap-1">
-                            <p class="text-gray-400 italic text-xs text-center mt-4">Enter a Year Level to see subjects.</p>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Save Class</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="editClassModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center">
-                <h3 class="text-white font-bold uppercase text-sm">Edit Class Section</h3>
-                <button onclick="toggleModal('editClassModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="editSectionForm" onsubmit="handleAjaxSubmit(event, 'editClassModal', renderClasses)" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Year Level</label>
-                        <input type="number" name="year_level" id="edit-section-year" oninput="loadSubjectsForClass(this.value, 'edit-subject-list')" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" min="1" max="4" required>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Block</label>
-                        <input name="block" id="edit-section-block" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required>
-                    </div>
-                    <div class="border-t pt-4">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block">Assigned Subjects</label>
-                        <div id="edit-subject-list" class="h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 text-sm grid grid-cols-1 gap-1"></div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Update Class</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- ======================================================================= --}}
-    {{-- 5. FACULTY MODALS (AJAX with File Upload) --}}
-    {{-- ======================================================================= --}}
-
-    <div id="addFacultyModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center flex-shrink-0">
-                <h3 class="text-white font-bold uppercase text-sm">Add Faculty</h3>
-               <button onclick="openAddFaculty()" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleAjaxSubmit(event, 'addFacultyModal', renderFaculty)" action="{{ route('admin.faculty.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="department_id" id="add-faculty-dept-id">
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Faculty Code</label><input name="faculty_code" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Email</label><input type="email" name="email" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">First Name</label><input name="first_name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Last Name</label><input name="last_name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Contact No.</label><input name="contact_no" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="0912..."></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Profile Picture</label><input type="file" name="profile_picture" class="w-full text-xs text-gray-500 file:mr-2 file:py-2 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#800000] file:text-white hover:file:bg-[#660000]"></div>
-                    </div>
-                    <div class="border-t pt-4">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block">Qualified Subjects</label>
-                        <div id="faculty-subject-list" class="h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 text-sm grid grid-cols-1 gap-1"></div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Save Faculty</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="editFacultyModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center flex-shrink-0">
-                <h3 class="text-white font-bold uppercase text-sm">Edit Faculty</h3>
-                <button onclick="toggleModal('editFacultyModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="editFacultyForm" onsubmit="handleAjaxSubmit(event, 'editFacultyModal', renderFaculty)" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">First Name</label><input id="edit-faculty-fname" name="first_name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Last Name</label><input id="edit-faculty-lname" name="last_name" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                    </div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Email</label><input type="email" id="edit-faculty-email" name="email" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Contact No.</label><input id="edit-faculty-contact" name="contact_no" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Change Picture</label><input type="file" name="profile_picture" class="w-full text-xs text-gray-500 file:mr-2 file:py-2 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#800000] file:text-white hover:file:bg-[#660000]"></div>
-                    </div>
-                    <div class="border-t pt-4">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block">Qualified Subjects</label>
-                        <div id="edit-faculty-subject-list" class="h-32 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50 text-sm grid grid-cols-1 gap-1"></div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Update Faculty</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- ======================================================================= --}}
-    {{-- 6. STUDENT MODALS (AJAX) --}}
-    {{-- ======================================================================= --}}
-
-    <div id="addStudentModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center flex-shrink-0">
-                <h3 class="text-white font-bold uppercase text-sm">Add Student</h3>
-                <button onclick="toggleModal('addStudentModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form onsubmit="handleAjaxSubmit(event, 'addStudentModal', renderStudents)" action="{{ route('admin.students.store') }}" method="POST">
-                @csrf
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Student Number</label><input name="student_number" id="add_student_number" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Email</label><input type="email" name="email" id="add_student_email" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">First Name</label><input name="first_name" id="add_student_fname" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Middle Name</label><input name="middle_name" id="add_student_mname" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Last Name</label><input name="last_name" id="add_student_lname" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Suffix</label><input name="suffix" id="add_student_suffix" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                    </div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Contact Number</label><input name="contact_no" id="add_student_contact" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Year Level</label><select id="add_student_year" onchange="filterStudentSections(this.value, 'add_student_section')" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none cursor-pointer">
-                                <option value="">Select Year</option>
-                                <option value="1">1st Year</option>
-                                <option value="2">2nd Year</option>
-                                <option value="3">3rd Year</option>
-                                <option value="4">4th Year</option>
-                            </select></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Section / Block</label><select name="section_id" id="add_student_section" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none cursor-pointer disabled:bg-gray-100" disabled>
-                                <option value="">Select Year First</option>
-                            </select></div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Add Student</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="editStudentModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-            <div class="bg-[#800000] px-6 py-4 flex justify-between items-center flex-shrink-0">
-                <h3 class="text-white font-bold uppercase text-sm">Edit Student</h3>
-                <button onclick="toggleModal('editStudentModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="editStudentForm" onsubmit="handleAjaxSubmit(event, 'editStudentModal', renderStudents)" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Student Number</label><input id="edit-student-number" class="w-full p-2 border border-gray-200 rounded-lg text-sm bg-gray-100 text-gray-500 cursor-not-allowed" readonly></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">First Name</label><input name="first_name" id="edit-student-fname" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Middle Name</label><input name="middle_name" id="edit-student-mname" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Last Name</label><input name="last_name" id="edit-student-lname" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Suffix</label><input name="suffix" id="edit-student-suffix" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                    </div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Email</label><input type="email" name="email" id="edit-student-email" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" required></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Contact Number</label><input name="contact_no" id="edit-student-contact" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Year Level</label><select id="edit-student-year" onchange="filterStudentSections(this.value, 'edit-student-section')" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none cursor-pointer">
-                                <option value="1">1st Year</option>
-                                <option value="2">2nd Year</option>
-                                <option value="3">3rd Year</option>
-                                <option value="4">4th Year</option>
-                            </select></div>
-                        <div><label class="text-[10px] font-bold text-gray-400 uppercase">Section / Block</label><select name="section_id" id="edit-student-section" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none cursor-pointer"></select></div>
-                    </div>
-                    <button type="submit" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000] mt-2">Update Student</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    {{--other modals --}}
+    @include('admin.modals.programs')
+    @include('admin.modals.subjects')
+    @include('admin.modals.sections')
+    @include('admin.modals.faculties')
+    @include('admin.modals.students')
 
 </main>
 
@@ -648,26 +278,9 @@
     const departmentDrillDownView = document.getElementById('departmentDrillDownView');
     const programDrillDownView = document.getElementById('programDrillDownView');
     const content = document.getElementById('drillDownContent');
-<<<<<<< HEAD
 
     // Load Data from Laravel
     let allDepartments = @json($departments) || [];
-=======
-<<<<<<< HEAD
-    const deptSelector = document.getElementById('deptSelector');
-=======
-    const headerProgramSelect = document.getElementById('headerProgramSelect');
-    const deptTableBody = document.getElementById('departmentTableBody');
-    const emptyState = document.getElementById('emptyState');
-
-    // --- DATA STRUCTURE ---
-    let departmentList = [
-        { code: 'CCIS', name: 'College of Computer and Information Sciences', programs: ['BSIT', 'BSCS'] },
-        { code: 'COA', name: 'College of Accountancy', programs: ['BSA'] },
-        { code: 'COC', name: 'College of Communication', programs: [] }
-    ];
->>>>>>> f85b3c65440bfe9469d7de2ea101274d6fa532f9
->>>>>>> d1bab8c03beff481ad4e33557d1921bde25a341d
 
     // Active State Trackers
     let currentDepartmentId = null;
@@ -718,6 +331,9 @@
         document.getElementById('add-subject-dept-id').value = currentDepartmentId;
         document.getElementById('add-subject-course-id').value = progId;
         document.getElementById('add-class-course-id').value = progId;
+        document.getElementById('add-student-dept-id').value = currentDepartmentId;
+        document.getElementById('add-student-course-id').value = progId;
+        document.getElementById('add-faculty-course-id').value = progId;
 
         departmentDrillDownView.classList.add('hidden');
         programDrillDownView.classList.remove('hidden');
@@ -930,7 +546,25 @@
             const count = sec.class_offerings ? sec.class_offerings.length : 0;
             return `<tr><td class="px-6 py-4 font-bold text-[#800000]">${sec.full_name || (sec.year_level + ' - ' + sec.block)}</td><td class="px-6 py-4">${sec.year_level}</td><td class="px-6 py-4 text-xs text-gray-500">${count} Subjects Assigned</td><td class="px-6 py-4 text-right flex justify-end space-x-2"><button onclick='openEditSection(${safeSec})' class="text-green-500 hover:text-green-700 px-2"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="deleteSection(${sec.id})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;
         }).join('');
-        document.getElementById('drillDownContent').innerHTML = `<div class="flex justify-between mb-4"><h4 class="font-bold text-gray-800">Classes for ${activeProgram}</h4><button onclick="toggleModal('addClassModal', true)" class="bg-[#800000] text-white px-3 py-1 rounded text-xs">Add Class</button></div><table class="w-full text-sm text-left"><thead class="bg-gray-100 text-xs uppercase"><tr><th class="px-6 py-3">Section Name</th><th class="px-6 py-3">Year Level</th><th class="px-6 py-3">Status</th><th class="px-6 py-3 text-right">Action</th></tr></thead><tbody>${html}</tbody></table>`;
+
+        document.getElementById('drillDownContent').innerHTML = `
+        <div class="flex justify-between mb-4">
+            <h4 class="font-bold text-gray-800">Classes for ${activeProgram}</h4>
+            <button onclick="openAddClass()" class="bg-[#800000] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-[#660000] flex items-center">
+                <i class="fa-solid fa-plus mr-2"></i> Add Class
+            </button>
+        </div>
+        <table class="w-full text-sm text-left">
+            <thead class="bg-gray-100 text-xs uppercase">
+                <tr>
+                    <th class="px-6 py-3">Section Name</th>
+                    <th class="px-6 py-3">Year Level</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3 text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody>${html}</tbody>
+        </table>`;
     }
 
     function renderFaculty() {
@@ -1007,7 +641,25 @@
             const fullName = `${stu.first_name} ${stu.middle_name ? stu.middle_name + ' ' : ''}${stu.last_name}${stu.suffix ? ' ' + stu.suffix : ''}`;
             return `<tr class="hover:bg-gray-50 transition border-b border-gray-100"><td class="px-6 py-4 font-bold text-[#800000]">${stu.student_number}</td><td class="px-6 py-4"><div class="font-bold text-gray-700">${fullName}</div><div class="text-[10px] text-gray-400">${stu.email}</div></td><td class="px-6 py-4">${stu.section_name}</td><td class="px-6 py-4 text-right flex justify-end space-x-2"><button onclick='openEditStudent(${safeStu})' class="text-green-500 hover:text-green-700 px-2"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="deleteStudent(${stu.id})" class="text-gray-300 hover:text-red-500 px-2"><i class="fa-solid fa-trash"></i></button></td></tr>`;
         }).join('');
-        document.getElementById('drillDownContent').innerHTML = `<div class="flex justify-between mb-4"><h4 class="font-bold">Students in ${activeProgram}</h4><button onclick="toggleModal('addStudentModal', true)" class="bg-[#800000] text-white px-3 py-1 rounded text-xs">Add Student</button></div><table class="w-full text-sm text-left"><thead class="bg-gray-100 text-xs uppercase"><tr><th class="px-6 py-3">Student #</th><th class="px-6 py-3">Name / Email</th><th class="px-6 py-3">Section</th><th class="px-6 py-3 text-right">Action</th></tr></thead><tbody>${html}</tbody></table>`;
+
+        document.getElementById('drillDownContent').innerHTML = `
+        <div class="flex justify-between mb-4">
+            <h4 class="font-bold">Students in ${activeProgram}</h4>
+            <button onclick="toggleModal('addStudentModal', true)" class="bg-[#800000] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-[#660000] flex items-center">
+                <i class="fa-solid fa-plus mr-2"></i> Add Student
+            </button>
+        </div>
+        <table class="w-full text-sm text-left">
+            <thead class="bg-gray-100 text-xs uppercase">
+                <tr>
+                    <th class="px-6 py-3">Student #</th>
+                    <th class="px-6 py-3">Name / Email</th>
+                    <th class="px-6 py-3">Section</th>
+                    <th class="px-6 py-3 text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody>${html}</tbody>
+        </table>`;
     }
 
     // ==========================================
@@ -1041,46 +693,89 @@
         document.getElementById('edit-section-year').value = sec.year_level;
         document.getElementById('edit-section-block').value = sec.block;
         document.getElementById('editSectionForm').action = `/admin/sections/${sec.id}`;
-        let currentSubjectIds = sec.class_offerings ? sec.class_offerings.map(o => o.subject_id) : [];
-        loadSubjectsForClass(sec.year_level, 'edit-subject-list', currentSubjectIds);
+        document.getElementById('edit-class-dept-id').value = currentDepartmentId;
+
+        const activeCourseId = document.getElementById('add-class-course-id').value;
+        document.getElementById('edit-class-course-id').value = activeCourseId;
+
+        let currentOfferings = sec.class_offerings ? sec.class_offerings : [];
+
+        loadSubjectsForClass(sec.year_level, 'edit-subject-list', currentOfferings);
+
         toggleModal('editClassModal', true);
     }
 
+    // --- UPDATED EDIT FACULTY ---
     function openEditFaculty(fac) {
+        // 1. Pre-fill Info
         document.getElementById('edit-faculty-fname').value = fac.first_name;
+        document.getElementById('edit-faculty-mname').value = fac.middle_name || ''; // New
         document.getElementById('edit-faculty-lname').value = fac.last_name;
+        document.getElementById('edit-faculty-suffix').value = fac.suffix || ''; // New
         document.getElementById('edit-faculty-email').value = fac.email;
         document.getElementById('edit-faculty-contact').value = fac.contact_no || '';
-        document.getElementById('editFacultyForm').action = `/admin/faculty/${fac.id}`; // Note: POST with _method=PUT is handled by FormData
+        document.getElementById('edit-faculty-course-id').value = activeCourseId;
+        // Handle Picture Preview
+        const previewEl = document.getElementById('edit-faculty-preview');
+        // If they have a pic, show it. If not, show default.
+        if (fac.profile_picture && fac.profile_picture !== 'default-avatar.png') {
+            // Assuming your storage link is set up: /storage/faculties/...
+            previewEl.src = `/storage/${fac.profile_picture}`;
+        } else {
+            previewEl.src = "{{ asset('images/default-avatar.png') }}";
+        }
+
+        // 2. Set Action
+        document.getElementById('editFacultyForm').action = `/admin/faculty/${fac.id}`;
+
+        // 3. Inject Context IDs
+        document.getElementById('edit-faculty-dept-id').value = currentDepartmentId;
+
+        // --- THE FIX: Inject the Current Program ID ---
+        // We borrow the ID from one of the other hidden inputs that we know is already set
+        const activeCourseId = document.getElementById('add-class-course-id').value; 
+        
+        // ----------------------------------------------
+
+        // 4. Load Subjects
         let preSelectedIds = fac.subjects ? fac.subjects.map(s => s.id) : [];
         loadFacultySubjectCheckboxes('edit-faculty-subject-list', preSelectedIds);
+
+        // 5. Open Modal
         toggleModal('editFacultyModal', true);
     }
 
     function openEditStudent(stu) {
+        // 1. Pre-fill Info
         document.getElementById('edit-student-number').value = stu.student_number;
         document.getElementById('edit-student-fname').value = stu.first_name;
-        document.getElementById('edit-student-mname').value = stu.middle_name || '';
+        document.getElementById('edit-student-mname').value = stu.middle_name || ''; // New
         document.getElementById('edit-student-lname').value = stu.last_name;
-        document.getElementById('edit-student-suffix').value = stu.suffix || '';
+        document.getElementById('edit-student-suffix').value = stu.suffix || ''; // New
         document.getElementById('edit-student-email').value = stu.email;
         document.getElementById('edit-student-contact').value = stu.contact_no || '';
 
+        // 2. Context IDs
+        document.getElementById('edit-student-dept-id').value = currentDepartmentId;
+        // Reuse the add-course ID if needed, or rely on global currentProgramId
+        const activeCourseId = document.getElementById('add-class-course-id').value;
+        document.getElementById('edit-student-course-id').value = activeCourseId;
+
+        // 3. Set Action
+        document.getElementById('editStudentForm').action = `/admin/students/${stu.id}`;
+
+        // 4. Handle Dropdowns
         document.getElementById('edit-student-year').value = stu.year_level;
         filterStudentSections(stu.year_level, 'edit-student-section');
+
         setTimeout(() => {
             document.getElementById('edit-student-section').value = stu.section_id;
         }, 50);
 
-        document.getElementById('editStudentForm').action = `/admin/students/${stu.id}`;
         toggleModal('editStudentModal', true);
     }
 
-    // ==========================================
-    // 6. DELETE HANDLER (Standardized)
-    // ==========================================
-
-    function deleteItem(url, successCallback, title = "Are you sure?") {
+    function deleteItem(url, unusedCallback, title = "Are you sure?") {
         Swal.fire({
                 title: title
                 , text: "Cannot be undone."
@@ -1091,25 +786,33 @@
             })
             .then((result) => {
                 if (result.isConfirmed) {
-                    fetch(url, {
-                            method: "DELETE"
-                            , headers: {
-                                "Content-Type": "application/json"
-                                , "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            }
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Reload all data to ensure consistency (simpler than splicing nested arrays)
-                                location.reload();
-                                // OR if you want to keep the "No Reload" spirit, you must manually splice based on the ID passed.
-                                // For simplicity in this unified script, I'm using reload for deletions to guarantee state accuracy.
-                            } else Swal.fire('Error', data.message, 'error');
-                        });
+                    // Create a temporary form to submit the DELETE request naturally
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = url;
+
+                    // Add CSRF Token
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+
+                    // Add Method Spoofing (Laravel needs this to know it's a DELETE)
+                    const methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'DELETE';
+                    form.appendChild(methodField);
+
+                    // Submit the form
+                    document.body.appendChild(form);
+                    form.submit();
+                    // The page will now reload automatically because of the form submission
                 }
             });
     }
+
     // Specific Delete Wrappers
     function deleteProgram(id) {
         deleteItem(`/admin/courses/${id}`, null, 'Delete Program?');
@@ -1146,49 +849,64 @@
     // 7. HELPER LOGIC (Checkbox Loaders)
     // ==========================================
 
-function loadSubjectsForClass(year, containerId, currentOfferings = []) {
-    const container = document.getElementById(containerId);
-    if (!year) { container.innerHTML = '<p class="text-gray-400 italic text-xs text-center mt-4">Enter a Year Level.</p>'; return; }
-
-    const dept = allDepartments.find(d => d.id === currentDepartmentId);
-    const course = dept.courses.find(c => c.code === activeProgram);
-    
-    // Filter subjects by year
-    const subjects = (course && course.subjects) ? course.subjects.filter(s => s.year_level == year) : [];
-
-    if (subjects.length === 0) {
-        container.innerHTML = `<p class="text-red-400 italic text-xs text-center mt-4">No subjects found for Year ${year}</p>`;
-        return;
+    // --- HELPER FOR IMAGE PREVIEW ---
+    function previewImage(input, previewId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(previewId).src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
-    container.innerHTML = subjects.map(sub => {
-        // Check if this subject is currently assigned (for Edit Mode)
-        const existingOffering = currentOfferings.find(off => off.subject_id === sub.id);
-        const isSubjectChecked = existingOffering ? 'checked' : '';
-        const assignedFacultyId = existingOffering ? existingOffering.faculty_id : 'TBA';
 
-        // Generate Radio Buttons for Faculty
-        // Default option is "TBA" (null)
-        let facultyRadios = `
+    function loadSubjectsForClass(year, containerId, currentOfferings = []) {
+        const container = document.getElementById(containerId);
+        if (!year) {
+            container.innerHTML = '<p class="text-gray-400 italic text-xs text-center mt-4">Enter a Year Level.</p>';
+            return;
+        }
+
+        const dept = allDepartments.find(d => d.id === currentDepartmentId);
+        const course = dept.courses.find(c => c.code === activeProgram);
+
+        // Filter subjects by year
+        const subjects = (course && course.subjects) ? course.subjects.filter(s => s.year_level == year) : [];
+
+        if (subjects.length === 0) {
+            container.innerHTML = `<p class="text-red-400 italic text-xs text-center mt-4">No subjects found for Year ${year}</p>`;
+            return;
+        }
+
+        container.innerHTML = subjects.map(sub => {
+            // Check if this subject is currently assigned (for Edit Mode)
+            const existingOffering = currentOfferings.find(off => off.subject_id === sub.id);
+            const isSubjectChecked = existingOffering ? 'checked' : '';
+            const assignedFacultyId = existingOffering ? existingOffering.faculty_id : 'TBA';
+
+            // Generate Radio Buttons for Faculty
+            // Default option is "TBA" (null)
+            let facultyRadios = `
             <label class="flex items-center space-x-2 text-xs text-gray-500 cursor-pointer">
                 <input type="radio" name="faculty_for[${sub.id}]" value="TBA" class="accent-gray-500" ${assignedFacultyId === 'TBA' || !assignedFacultyId ? 'checked' : ''}>
                 <span>TBA (No Instructor)</span>
             </label>
         `;
 
-        if (sub.faculties && sub.faculties.length > 0) {
-            facultyRadios += sub.faculties.map(fac => `
+            if (sub.faculties && sub.faculties.length > 0) {
+                facultyRadios += sub.faculties.map(fac => `
                 <label class="flex items-center space-x-2 text-xs text-gray-700 cursor-pointer">
                     <input type="radio" name="faculty_for[${sub.id}]" value="${fac.id}" class="accent-[#800000]" ${assignedFacultyId == fac.id ? 'checked' : ''}>
                     <span>${fac.first_name} ${fac.last_name}</span>
                 </label>
             `).join('');
-        } else {
-            facultyRadios += `<div class="text-[10px] text-red-400 italic ml-5">No qualified faculty found.</div>`;
-        }
+            } else {
+                facultyRadios += `<div class="text-[10px] text-red-400 italic ml-5">No qualified faculty found.</div>`;
+            }
 
-        // Return the Card HTML
-        return `
+            // Return the Card HTML
+            return `
         <div class="border border-gray-100 rounded-lg p-2 mb-2 bg-white">
             <label class="flex items-center space-x-2 cursor-pointer mb-2 border-b border-gray-50 pb-1">
                 <input type="checkbox" name="subject_ids[]" value="${sub.id}" class="accent-[#800000] font-bold" ${isSubjectChecked} 
@@ -1204,30 +922,46 @@ function loadSubjectsForClass(year, containerId, currentOfferings = []) {
                 ${facultyRadios}
             </div>
         </div>`;
-    }).join('');
-}
-
-// Helper to disable radios if subject is not selected
-function toggleFacultyRadios(checkbox, targetId) {
-    const target = document.getElementById(targetId);
-    if (checkbox.checked) {
-        target.classList.remove('hidden', 'opacity-50', 'pointer-events-none');
-    } else {
-        target.classList.add('hidden', 'opacity-50', 'pointer-events-none');
+        }).join('');
     }
-}
+
+    // Helper to disable radios if subject is not selected
+    function toggleFacultyRadios(checkbox, targetId) {
+        const target = document.getElementById(targetId);
+        if (checkbox.checked) {
+            target.classList.remove('hidden', 'opacity-50', 'pointer-events-none');
+        } else {
+            target.classList.add('hidden', 'opacity-50', 'pointer-events-none');
+        }
+    }
+
+    function openAddClass() {
+        // 1. Reset the form
+        const form = document.querySelector('#addClassModal form');
+        if (form) form.reset();
+
+        // 2. Force-set the IDs (The "Just-in-Time" Fix)
+        document.getElementById('add-class-dept-id').value = currentDepartmentId;
+        document.getElementById('add-class-course-id').value = activeProgram ? 
+            (allDepartments.find(d => d.id === currentDepartmentId).courses.find(c => c.code === activeProgram).id) 
+            : '';
+
+        // 3. Clear the "Subjects" list (optional UI cleanup)
+        document.getElementById('add-subject-list').innerHTML = 
+            '<p class="text-gray-400 italic text-xs text-center mt-4">Enter a Year Level to see subjects.</p>';
+
+        // 4. Show the modal
+        toggleModal('addClassModal', true);
+    }
+
     function openAddFaculty() {
-        // 1. Clear the form first (optional but good for UX)
         const form = document.querySelector('#addFacultyModal form');
         if (form) form.reset();
 
-        // 2. Ensure the hidden Department ID is set
         document.getElementById('add-faculty-dept-id').value = currentDepartmentId;
 
-        // 3. LOAD THE CHECKBOXES (This is the missing piece!)
         loadFacultySubjectCheckboxes('faculty-subject-list');
 
-        // 4. Show the modal
         toggleModal('addFacultyModal', true);
     }
 
@@ -1304,311 +1038,83 @@ function toggleFacultyRadios(checkbox, targetId) {
         }
     }
 
-<<<<<<< HEAD
-=======
-    function confirmAction(title, text, callback) {
+    // Replaced the 'Logout' logic with SweetAlert to match the other confirmations
+    function confirmLogout() {
         Swal.fire({
-            title: title,
-            text: text,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#800000',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, proceed!',
-            background: '#fff',
-            color: '#333'
+            title: 'Log Out?'
+            , text: "You will be returned to the login screen."
+            , icon: 'warning'
+            , showCancelButton: true
+            , confirmButtonColor: '#800000'
+            , confirmButtonText: 'Yes, log out!'
         }).then((result) => {
             if (result.isConfirmed) {
-                callback();
+                // Assuming you have a standard Laravel logout route
+                // Create a form dynamically to submit POST request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ route('logout') }}"; // Ensure this route exists in web.php
+
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+
+                document.body.appendChild(form);
+                form.submit();
             }
         });
     }
 
-    // --- TAB SWITCHING LOGIC ---
-    function switchTab(tabName) {
-        ['subjects', 'faculty', 'classes', 'students'].forEach(t => {
-            const el = document.getElementById(`tab-${t}`);
-            if(el) {
-                el.classList.remove('text-[#800000]', 'scale-105');
-                el.classList.add('text-gray-400');
+    // ==========================================
+    // 8. AUTO-OPEN LOGIC (THE STANDARD WAY MAGIC)
+    // ==========================================
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // We use setTimeout to ensure the DOM is fully painted before we try to click things.
+        setTimeout(() => {
+            try {
+                // 1. Check if we need to open a Department
+                @if(session('open_dept_id'))
+                // Parse as integer to ensure ID matching works (String "1" vs Number 1)
+                const deptIdToOpen = parseInt("{{ session('open_dept_id') }}");
+
+                if (deptIdToOpen) {
+                    const deptData = allDepartments.find(d => d.id === deptIdToOpen);
+
+                    if (deptData) {
+                        console.log("Auto-opening Department:", deptData.name);
+                        // Open Level 1: Department View
+                        openDepartmentManage(deptData.code, deptData.name, deptData.id);
+
+                        // 2. Check if we ALSO need to open a Program (Level 2)
+                        @if(session('open_program_id'))
+                        const progIdToOpen = parseInt("{{ session('open_program_id') }}");
+                        if (progIdToOpen) {
+                            console.log("Auto-opening Program ID:", progIdToOpen);
+                            // Because renderProgramsTable() is synchronous, the buttons are ready.
+                            openProgramManage(progIdToOpen);
+
+                            // 3. Check if we need to switch tabs (e.g. for Classes/Students)
+                            @if(session('open_tab'))
+                            const tabToOpen = "{{ session('open_tab') }}";
+                            console.log("Switching to tab:", tabToOpen);
+                            switchTab(tabToOpen);
+                            @endif
+                        }
+                        @endif
+                    }
+                }
+                @endif
+            } catch (error) {
+                console.error("Auto-open logic failed:", error);
+                // Even if auto-open fails, this catch block prevents the rest of the page 
+                // (like the 'Manage' buttons) from breaking.
             }
-        });
-        const activeTab = document.getElementById(`tab-${tabName}`);
-        if(activeTab) {
-            activeTab.classList.remove('text-gray-400');
-            activeTab.classList.add('text-[#800000]', 'scale-105');
-        }
-        
-        if(tabName === 'subjects') renderSubjects();
-        else if(tabName === 'faculty') renderFaculty();
-        else if(tabName === 'classes') renderClasses(); 
-        else if(tabName === 'students') renderStudents();
-    }
+        }, 100); // 100ms delay to ensure stability
+    });
 
-    // --- SUB-FUNCTIONS (Subjects, Classes, etc.) ---
-    function renderSubjects() {
-        const rows = subjects.map((sub, i) => `
-            <tr class="bg-white border-b hover:bg-gray-50 transition">
-                <td class="px-6 py-4 font-bold text-[#800000]">${sub.code}</td>
-                <td class="px-6 py-4 text-gray-700 font-bold text-xs uppercase">${sub.name}</td>
-<<<<<<< HEAD
-                <td class="px-6 py-4 text-center text-xs text-gray-400 italic">Managed in Classes</td>
-                <td class="px-6 py-4 text-right"><button class="text-gray-300 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i></button></td>
-=======
-                <td class="px-6 py-4">
-                     <select class="bg-gray-50 border border-gray-200 text-xs font-bold rounded-lg p-2 w-full outline-none focus:border-[#800000]">
-                        <option value="" disabled ${!sub.assignedProf ? 'selected' : ''}>-- Assign Prof --</option>
-                        ${faculty.map(f => `<option value="${f.name}" ${sub.assignedProf === f.name ? 'selected' : ''}>${f.name}</option>`).join('')}
-                    </select>
-                </td>
-                <td class="px-6 py-4 text-right"><button onclick="deleteSubject(${i})" class="text-gray-300 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i></button></td>
->>>>>>> f85b3c65440bfe9469d7de2ea101274d6fa532f9
-            </tr>
-        `).join('');
-
-        const modalHtml = `
-        <div id="addSubjectModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-            <div class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.25)] w-full max-w-md overflow-hidden pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-                <div class="bg-[#800000] px-6 py-4 flex justify-between items-center shrink-0">
-                    <h3 class="text-white font-bold uppercase text-sm">Add New Subject to ${activeProgram}</h3>
-                    <button onclick="toggleModal('addSubjectModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Subject Code</label><input id="sub-code-val" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="COMP 101"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Description</label><input id="sub-name-val" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="Programming 1"></div>
-                </div>
-                <div class="p-6 pt-0 shrink-0"><button onclick="confirmAddSubject()" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000]">Save Subject</button></div>
-            </div>
-        </div>`;
-
-        content.innerHTML = `
-            <div class="animate-fade-in-up">
-                <div class="flex justify-between items-center mb-6">
-                    <h4 class="text-lg font-bold text-gray-800 font-black uppercase tracking-tight">1. Manage Subjects (${activeProgram})</h4>
-                    <button onclick="toggleModal('addSubjectModal', true)" class="bg-[#800000] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-[#660000] flex items-center">
-                        <i class="fa-solid fa-plus mr-2"></i> Add Subject
-                    </button>
-                </div>
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-50 text-gray-400 font-bold uppercase text-[10px]"><tr><th class="px-6 py-3">Code</th><th class="px-6 py-3">Description</th><th class="px-6 py-3">Assigned Prof</th><th class="px-6 py-3 text-right">Action</th></tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
-                ${modalHtml}
-            </div>`;
-    }
-
-<<<<<<< HEAD
-    // Modal and Logout Logic
-    function showLogoutModal() { document.getElementById('logoutModal').classList.remove('hidden'); document.getElementById('logoutModal').classList.add('flex'); }
-    function hideLogoutModal() { document.getElementById('logoutModal').classList.add('hidden'); document.getElementById('logoutModal').classList.remove('flex'); }
-    function executeLogout() { window.location.href = "/"; }
-=======
-    function confirmAddSubject() {
-        const code = document.getElementById('sub-code-val').value;
-        const name = document.getElementById('sub-name-val').value;
-        if(!code || !name) return Swal.fire('Error', 'Fill all fields', 'error');
-
-        confirmAction('Add Subject?', 'Are you sure?', function() {
-            subjects.push({ code: code, name: name, assignedProf: null });
-            toggleModal('addSubjectModal', false);
-            renderSubjects();
-        });
-    }
-    function deleteSubject(index) { confirmAction('Delete Subject?', 'This cannot be undone.', function() { subjects.splice(index, 1); renderSubjects(); }); }
-
-    function renderClasses() {
-        const filteredSections = sections.filter(s => s.course === activeProgram);
-        const rows = filteredSections.map((sec, i) => `<tr class="bg-white border-b hover:bg-gray-50 transition"><td class="px-6 py-4 font-black text-gray-800">${sec.name}</td><td class="px-6 py-4"><div class="flex flex-wrap gap-2">${sec.subjects.map(s => `<span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded text-[10px] font-bold">${s}</span>`).join('')}</div></td><td class="px-6 py-4 text-right"><button onclick="manageSectionSubjects(${i})" class="text-[#800000] font-bold text-xs underline mr-2 hover:text-[#660000]">Manage Subjects</button><button onclick="deleteSection(${i})" class="text-gray-300 hover:text-red-600"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-        
-        const modalHtml = `
-        <div id="addClassModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-            <div class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.25)] w-full max-w-md overflow-hidden pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-                <div class="bg-[#800000] px-6 py-4 flex justify-between items-center shrink-0">
-                    <h3 class="text-white font-bold uppercase text-sm">Create New Class for ${activeProgram}</h3>
-                    <button onclick="toggleModal('addClassModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="p-6 space-y-4 overflow-y-auto">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase">Section Name</label><input id="class-name-val" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:border-[#800000] outline-none" placeholder="e.g. ${activeProgram} 3-1"></div>
-                </div>
-                <div class="p-6 pt-0 shrink-0"><button onclick="confirmAddClass()" class="w-full bg-[#800000] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-[#660000]">Create Class</button></div>
-            </div>
-        </div>`;
-
-        content.innerHTML = `
-        <div class="animate-fade-in-up">
-            <div class="flex justify-between items-center mb-6">
-                <h4 class="text-lg font-bold text-gray-800 font-black uppercase tracking-tight">2. Manage Classes (${activeProgram})</h4>
-                 <button onclick="toggleModal('addClassModal', true)" class="bg-[#800000] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-[#660000] flex items-center"><i class="fa-solid fa-plus mr-2"></i> Add Class</button>
-            </div>
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-400 font-bold uppercase text-[10px]"><tr><th class="px-6 py-3">Section</th><th class="px-6 py-3">Subjects Assigned</th><th class="px-6 py-3 text-right">Action</th></tr></thead><tbody>${rows}</tbody></table>
-            </div>
-            ${modalHtml}
-        </div>`;
-    }
-
-    function confirmAddClass() {
-        const name = document.getElementById('class-name-val').value;
-        if(!name) return Swal.fire('Error', 'Section name required', 'error');
-        confirmAction('Create Class?', 'Are you sure?', function() { 
-            sections.push({ name: name, course: activeProgram, subjects: [] }); 
-            toggleModal('addClassModal', false); 
-            renderClasses(); 
-        });
-    }
-    function deleteSection(index) { confirmAction('Delete Section?', 'All students in this section will be affected.', function() { sections.splice(index, 1); renderClasses(); }); }
-    
-    function manageSectionSubjects(index) {
-        currentEditIndex = index;
-        const currentSubjects = sections[index].subjects;
-        const container = document.getElementById('subjectCheckboxes');
-        container.innerHTML = subjects.map(sub => `
-            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                <input type="checkbox" class="form-checkbox text-[#800000] h-4 w-4" value="${sub.code}" ${currentSubjects.includes(sub.code) ? 'checked' : ''}>
-                <span class="ml-2 text-xs font-bold text-gray-700">${sub.code} - ${sub.name}</span>
-            </label>
-        `).join('');
-        toggleModal('manageClassSubjectModal', true);
-    }
-    function confirmClassSubjects() {
-        const checkboxes = document.querySelectorAll('#subjectCheckboxes input[type="checkbox"]:checked');
-        const selectedSubjects = Array.from(checkboxes).map(cb => cb.value);
-        confirmAction('Update Subjects?', 'Update assigned subjects for this section?', function() { sections[currentEditIndex].subjects = selectedSubjects; toggleModal('manageClassSubjectModal', false); renderClasses(); });
-    }
-
-    function renderFaculty() {
-        const rows = faculty.map((fac, i) => `
-            <tr class="bg-white border-b hover:bg-gray-50 transition">
-                <td class="px-6 py-4"><div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 font-bold text-xs border border-gray-200">${fac.name.charAt(0)}</div></td>
-                <td class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">${fac.id}</td>
-                <td class="px-6 py-4 font-bold text-gray-800 text-sm">${fac.name}</td>
-                <td class="px-6 py-4"><div class="flex flex-wrap gap-2">${fac.assignedSections.map(sec => `<span class="bg-red-50 text-[#800000] border border-red-100 px-2 py-1 rounded text-[10px] font-bold">${sec}</span>`).join('')}</div></td>
-                <td class="px-6 py-4 text-right"><button onclick="assignSectionsToProf(${i})" class="text-[#800000] font-bold text-xs underline mr-4 hover:text-[#660000]">Assign Sections</button><button onclick="deleteFaculty(${i})" class="text-gray-300 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i></button></td>
-            </tr>
-        `).join('');
-
-        const modalHtml = `
-        <div id="addFacultyModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-            <div class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.25)] w-full max-w-2xl overflow-hidden pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-                <div class="bg-[#800000] px-6 py-4 flex justify-between items-center shrink-0">
-                    <h3 class="text-white font-bold uppercase text-sm">Add New Faculty</h3>
-                    <button onclick="toggleModal('addFacultyModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="p-8 overflow-y-auto">
-                      <div class="flex flex-col md:flex-row gap-8">
-                        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Faculty ID</label><input id="fac-id-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="FAC-2026-001"></div>
-                            <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Name</label><input id="fac-name-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="Dr. Rogelio Reyes"></div>
-                            <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input id="fac-email-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="email@pup.edu.ph"></div>
-                            <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label><div class="relative"><input id="fac-pass-val" type="text" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="••••••••"><button onclick="generatePassword('fac-pass-val')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000] transition"><i class="fa-solid fa-key"></i></button></div></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-8 pt-0 shrink-0 flex justify-end"><button onclick="confirmAddFaculty()" class="bg-[#800000] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:bg-[#660000] transition active:scale-95">Save Faculty</button></div>
-            </div>
-        </div>`;
-
-        content.innerHTML = `
-            <div class="animate-fade-in-up">
-                <div class="flex justify-between items-center mb-6">
-                    <h4 class="text-lg font-bold text-gray-800 font-black uppercase tracking-tight">3. Manage Professors</h4>
-                    <button onclick="toggleModal('addFacultyModal', true)" class="bg-[#800000] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-[#660000] flex items-center"><i class="fa-solid fa-plus mr-2"></i> Add Faculty</button>
-                </div>
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-400 font-bold uppercase text-[10px] tracking-widest"><tr><th class="px-6 py-4">Image</th><th class="px-6 py-4">ID</th><th class="px-6 py-4">Name</th><th class="px-6 py-4">Handled Sections</th><th class="px-6 py-4 text-right">Action</th></tr></thead><tbody>${rows}</tbody></table>
-                </div>
-                ${modalHtml}
-            </div>`;
-    }
-
-    function assignSectionsToProf(index) {
-        currentEditIndex = index;
-        const currentAssigned = faculty[index].assignedSections;
-        const container = document.getElementById('sectionCheckboxes');
-        container.innerHTML = sections.map(sec => `
-            <label class="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
-                <input type="checkbox" class="form-checkbox text-[#800000] h-4 w-4" value="${sec.name}" ${currentAssigned.includes(sec.name) ? 'checked' : ''}>
-                <span class="ml-2 text-xs font-bold text-gray-700">${sec.name}</span>
-            </label>
-        `).join('');
-        toggleModal('assignSectionModal', true);
-    }
-    function confirmAssignSections() {
-        const checkboxes = document.querySelectorAll('#sectionCheckboxes input[type="checkbox"]:checked');
-        const selectedSections = Array.from(checkboxes).map(cb => cb.value);
-        confirmAction('Update Assignment?', 'Assign these sections to the professor?', function() { faculty[currentEditIndex].assignedSections = selectedSections; toggleModal('assignSectionModal', false); renderFaculty(); });
-    }
-    function confirmAddFaculty() {
-         const id = document.getElementById('fac-id-val').value;
-         const name = document.getElementById('fac-name-val').value;
-         const email = document.getElementById('fac-email-val').value;
-         if(!id || !name) return Swal.fire('Error', 'ID and Name are required', 'error');
-         confirmAction('Add Faculty?', 'Confirm details.', function() { faculty.push({ id: id, name: name, email: email, assignedSections: [] }); toggleModal('addFacultyModal', false); renderFaculty(); });
-    }
-    function deleteFaculty(index) { confirmAction('Remove Faculty?', 'This action is irreversible.', function() { faculty.splice(index, 1); renderFaculty(); }); }
-
-    function renderStudents() {
-        const rows = students.map((std, i) => {
-            const sectionData = sections.find(s => s.name === std.section);
-            const subCount = sectionData ? sectionData.subjects.length : 0;
-            const profs = faculty.filter(f => f.assignedSections.includes(std.section)).map(f => f.name).join(', ');
-            return `
-            <tr class="bg-white border-b hover:bg-gray-50 transition">
-                <td class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">${std.id}</td>
-                <td class="px-6 py-4 font-bold text-gray-800 text-sm">${std.name}</td>
-                <td class="px-6 py-4"><span class="bg-green-50 text-green-700 px-2 py-1 rounded font-bold text-[10px] uppercase">${std.section}</span></td>
-                <td class="px-6 py-4 text-xs text-gray-600"><div class="font-bold">${subCount} Subjects</div><div class="text-[10px] text-gray-400 mt-1">Profs: ${profs || 'None'}</div></td>
-                <td class="px-6 py-4 text-right"><button onclick="deleteStudent(${i})" class="text-gray-300 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i></button></td>
-            </tr>`;
-        }).join('');
-
-        const modalHtml = `
-        <div id="addStudentModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center animate-fade-in pointer-events-none">
-            <div class="bg-white rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.25)] w-full max-w-2xl overflow-hidden pointer-events-auto border-2 border-gray-100 max-h-[90vh] flex flex-col">
-                <div class="bg-[#800000] px-6 py-4 flex justify-between items-center shrink-0">
-                    <h3 class="text-white font-bold uppercase text-sm">Register New Student</h3>
-                    <button onclick="toggleModal('addStudentModal', false)" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="p-8 overflow-y-auto">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Student Number</label><input id="std-id-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="2026-00123-MN-0"></div>
-                        <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Student Name</label><input id="std-name-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="Juan Dela Cruz"></div>
-                        <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input id="std-email-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="juan@isko.pup.edu.ph"></div>
-                        <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label><div class="relative"><input id="std-pass-val" type="text" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all" placeholder="••••••••"><button onclick="generatePassword('std-pass-val')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800000] transition"><i class="fa-solid fa-key"></i></button></div></div>
-                         <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Assign Section</label><div class="relative"><select id="std-sec-val" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:border-[#800000] outline-none text-gray-700 font-bold transition-all appearance-none cursor-pointer"><option value="" disabled selected>-- Select Section --</option>${sections.map(s => `<option value="${s.name}">${s.name}</option>`).join('')}</select><div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><i class="fa-solid fa-chevron-down"></i></div></div></div>
-                    </div>
-                </div>
-                <div class="p-8 pt-0 shrink-0 flex justify-end"><button onclick="confirmAddStudent()" class="bg-[#800000] text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:bg-[#660000] transition active:scale-95">Register Student</button></div>
-            </div>
-        </div>`;
-
-        content.innerHTML = `
-            <div class="animate-fade-in-up">
-                <div class="flex justify-between items-center mb-6">
-                     <h4 class="text-lg font-bold text-gray-800 font-black uppercase tracking-tight">4. Student Registry</h4>
-                     <button onclick="toggleModal('addStudentModal', true)" class="bg-[#800000] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase shadow hover:bg-[#660000] flex items-center"><i class="fa-solid fa-plus mr-2"></i> Add Student</button>
-                </div>
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-400 font-bold uppercase text-[10px] tracking-widest"><tr><th class="px-6 py-4">Student #</th><th class="px-6 py-4">Name</th><th class="px-6 py-4">Section</th><th class="px-6 py-4">Load Info</th><th class="px-6 py-4 text-right">Action</th></tr></thead><tbody>${rows}</tbody></table>
-                </div>
-                ${modalHtml}
-            </div>`;
-    }
-
-    function confirmAddStudent() {
-        const id = document.getElementById('std-id-val').value;
-        const name = document.getElementById('std-name-val').value;
-        const sec = document.getElementById('std-sec-val').value;
-        if(!id || !name || !sec) return Swal.fire('Error', 'Complete all details', 'error');
-        confirmAction('Register Student?', 'Confirm registration details.', function() { students.push({ id: id, name: name, section: sec, email: 'temp@mail.com' }); toggleModal('addStudentModal', false); renderStudents(); });
-    }
-    function deleteStudent(index) { confirmAction('Delete Student?', 'Are you sure?', function() { students.splice(index, 1); renderStudents(); }); }
-    function confirmLogout() { confirmAction('Log Out?', 'You will be returned to the login screen.', function() { window.location.href = "{{ route('home') }}"; }); }
-
->>>>>>> f85b3c65440bfe9469d7de2ea101274d6fa532f9
->>>>>>> d1bab8c03beff481ad4e33557d1921bde25a341d
 </script>
 
 <style>

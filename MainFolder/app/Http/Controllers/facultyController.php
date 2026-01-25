@@ -9,10 +9,11 @@ use App\Models\ReviewPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class facultyController extends Controller
 {
-    public function show(){
+   public function show(){
       
         $faculty = auth()->user()->faculty; 
 
@@ -20,31 +21,47 @@ class facultyController extends Controller
             abort(403, 'No faculty found');
         }
 
-        $fullName = $faculty->first_name; 
-
-        if(!empty($faculty->middle_name)){
-            $fullName .= ' ' . $faculty->middle_name;
-        }
-
-        $fullName .= ' ' . $faculty->last_name;
-
-        if(!empty($faculty->suffix)){
-            $fullName .= ', ' .$faculty->suffix;
-        }
+        $fullName = $faculty->first_name . ' ' . $faculty->last_name; 
+        if(!empty($faculty->suffix)){ $fullName .= ', ' .$faculty->suffix; }
 
         $facID = $faculty->faculty_code;
         $deptCode = $faculty->department->code;
 
-        $summary = EvaluationResponse::join('evaluations', 'evaluation_responses.evaluation_id', '=', 'evaluations.id')
+        // =========================================================
+        // PART 1: HIGH-LEVEL SUMMARY (Corrects the Participation Count)
+        // =========================================================
+        
+        // 1. Get unique completed forms (using Evaluation model)
+        $evaluations = Evaluation::where('faculty_id', $faculty->id)
+                        ->where('completed', true)
+                        ->get();
+
+        // 2. Count unique students
+        $totalEvaluations = $evaluations->count(); 
+
+        // 3. Average of the Overall Ratings
+        $rawAverage = $evaluations->avg('overall_rating'); 
+        $averageRating = number_format($rawAverage ?? 0, 2);
+
+        // =========================================================
+        // PART 2: DETAILED REPORT DATA (Uses EvaluationResponse)
+        // =========================================================
+        // This calculates the average score PER CRITERIA SECTION
+        // useful for your PDF report to show strengths/weaknesses.
+        
+        $sectionAverages = EvaluationResponse::join('evaluations', 'evaluation_responses.evaluation_id', '=', 'evaluations.id')
+            ->join('criteria_items', 'evaluation_responses.criteria_item_id', '=', 'criteria_items.id')
+            ->join('criteria_sections', 'criteria_items.section_id', '=', 'criteria_sections.id')
             ->where('evaluations.faculty_id', $faculty->id)
-            ->selectRaw('AVG(evaluation_responses.score) as average_rating, COUNT(evaluation_responses.id) as total_evaluations')
-            ->first();
+            ->where('evaluations.completed', true)
+            ->select(
+                'criteria_sections.section_name',
+                DB::raw('AVG(evaluation_responses.score) as avg_score')
+            )
+            ->groupBy('criteria_sections.id', 'criteria_sections.section_name')
+            ->get();
 
-        $averageRating = $summary->average_rating ?? 0; 
-        $totalEvaluations = $summary->total_evaluations ?? 0; 
-
-        //this will format the result in 2 decimal places
-        $averageRating = number_format($averageRating,2);
+        // =========================================================
 
         $currentReviewPeriod = ReviewPeriod::where('is_open', true)->first();
         if(!$currentReviewPeriod){
@@ -64,7 +81,8 @@ class facultyController extends Controller
             'deptCode',
             'fullName', 
             'averageRating', 
-            'totalEvaluations',
+            'totalEvaluations', // Correct Student Count
+            'sectionAverages',  // <--- NEW: Pass this to your view/PDF
             'reviewPeriodDisplay',
             'feedbacks'
             ));

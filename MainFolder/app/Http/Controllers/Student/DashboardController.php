@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\CriteriaSection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -13,37 +14,52 @@ class DashboardController extends Controller
     public function index()
     {
         $submissionValidation = session('success') ? true : false;
-        // 1. Get Logged in User
         $user = Auth::user();
 
-        // Find student record linked to this user
+        // 1. Get Student Record
         $student = DB::table('students')->where('user_id', $user->id)->first();
 
-        // Safety Check: If data is missing
+        // Safety Check
         if (!$student) {
-            return view('student.index', [ // Changed view name to match your file 'student.index'
+            return view('student.index', [
+                'studentName' => 'Student', // Fallback
                 'completedCount' => 0,
                 'totalToEvaluate' => 0,
                 'percentage' => 0,
-                'enrolledSubjects' => []
+                'enrolledSubjects' => [],
+                'criteria' => [] // Empty criteria
             ]);
         }
 
-        // 2. Get the Active Review Period (Semester)
+        // 2. CREATE STUDENT NAME STRING
+        $studentName = $student->first_name . ' ' . $student->last_name;
+
+        // 3. FETCH CRITERIA FROM DATABASE
+        // This replaces the hardcoded array in your Blade file
+        $criteria = CriteriaSection::with('items')
+            ->orderBy('section_number')
+            ->get();
+
+        // 4. Get Active Review Period
         $activePeriod = DB::table('review_periods')
             ->where('is_open', true)
             ->first();
 
         if (!$activePeriod) {
             return view('student.index', [
+                'studentName' => $studentName,
                 'completedCount' => 0,
                 'totalToEvaluate' => 0,
                 'percentage' => 0,
-                'enrolledSubjects' => []
+                'enrolledSubjects' => [],
+                'criteria' => $criteria,
+                'submissionValidation' => $submissionValidation
             ]);
         }
 
-        // 3. GET ENROLLED SUBJECTS & FACULTY
+        // ... (Keep your existing Enrollment/Evaluation logic exactly the same) ...
+
+        // 5. GET ENROLLED SUBJECTS logic...
         $enrolledSubjects = DB::table('enrollments')
             ->join('class_offerings', 'enrollments.class_section_id', '=', 'class_offerings.class_section_id')
             ->join('subjects', 'class_offerings.subject_id', '=', 'subjects.id')
@@ -60,7 +76,6 @@ class DashboardController extends Controller
             )
             ->get();
 
-        // 4. CHECK COMPLETION STATUS
         foreach ($enrolledSubjects as $subject) {
             $isDone = DB::table('evaluations')
                 ->where('student_id', $student->id)
@@ -71,7 +86,6 @@ class DashboardController extends Controller
             $subject->is_evaluated = $isDone;
         }
 
-        // 5. CALCULATE TOTAL & COMPLETED
         $totalToEvaluate = $enrolledSubjects->count();
         $completedCount = $enrolledSubjects->where('is_evaluated', true)->count();
 
@@ -80,11 +94,14 @@ class DashboardController extends Controller
             : 0;
 
         return view('student.index', compact(
-            'completedCount', 
-            'totalToEvaluate', 
-            'percentage', 
-            'enrolledSubjects', 
-            'submissionValidation'));
+            'studentName',      // <--- Passed to view
+            'criteria',         // <--- Passed to view
+            'completedCount',
+            'totalToEvaluate',
+            'percentage',
+            'enrolledSubjects',
+            'submissionValidation'
+        ));
     }
 
     public function store(Request $request)
@@ -92,20 +109,30 @@ class DashboardController extends Controller
         // 1. Validation
         $request->validate([
             'offering_id' => 'required|exists:class_offerings,id',
-            'ratings' => 'required|array', // Array of [question_id => score]
+            'ratings' => 'required|array',
             'comments' => 'nullable|string'
         ]);
 
         $user = Auth::user();
         $student = DB::table('students')->where('user_id', $user->id)->first();
-
-        // Get active period
         $activePeriod = DB::table('review_periods')->where('is_open', true)->first();
 
-        // 2. Database Transaction
-        DB::transaction(function () use ($request, $student, $activePeriod) {
+        // --- NEW: Calculate Overall Rating ---
+        $totalScore = 0;
+        $count = 0;
 
-            // A. Get Faculty ID from Offering
+        // Sum up all scores from the ratings array
+        foreach ($request->ratings as $score) {
+            $totalScore += intval($score);
+            $count++;
+        }
+
+        // Calculate Average (Avoid division by zero)
+        $overallRating = $count > 0 ? round($totalScore / $count, 2) : 0;
+        // -------------------------------------
+
+        DB::transaction(function () use ($request, $student, $activePeriod, $overallRating) {
+
             $offering = DB::table('class_offerings')->where('id', $request->offering_id)->first();
 
             // B. Create Main Evaluation Record
@@ -116,12 +143,13 @@ class DashboardController extends Controller
                 'review_period_id' => $activePeriod->id,
                 'submitted_at' => now(),
                 'feedback_text' => $request->comments,
+                'overall_rating' => $overallRating, // <--- ADD THIS LINE (Save the calculated average)
                 'completed' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            // C. Save Answer (Loop through the ratings array)
+            // C. Save Answers
             foreach ($request->ratings as $questionId => $score) {
                 DB::table('evaluation_responses')->insert([
                     'evaluation_id' => $evaluationId,
@@ -143,7 +171,7 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
-        
+
         if (!Hash::check($request->current_password, $user->password_hash)) {
             return back()->withErrors(['current_password' => 'Current password is incorrect']);
         }

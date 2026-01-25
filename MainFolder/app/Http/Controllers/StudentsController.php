@@ -5,43 +5,105 @@ namespace App\Http\Controllers;
 use App\Models\Evaluation;
 use App\Models\EvaluationResponse;
 use App\Models\User;
+use App\Models\ClassOffering;
+use App\Models\ReviewPeriod;
+use App\Models\EvaluationCriteriaSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str; // Needed for Str::limit
 
 class StudentsController extends Controller
 {
-    // Password Change Function
+    public function index()
+    {
+        $student = Auth::user();
+
+        // --- 1. CHECK IF EVALUATION IS OPEN ---
+        // We check if 'is_open' is 1 AND if today is within the start/end dates.
+        // Based on your screenshot:
+        // DB End Date: 2025-05-01
+        // Current Date: 2026-01-25
+        // Result: This will return NULL (Closed) because 2026 is past 2025.
+        $activePeriod = DB::table('review_periods')
+            ->where('is_open', 1)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->first();
+
+        $isEvaluationOpen = $activePeriod ? true : false;
+
+        // --- 2. GET ENROLLED SUBJECTS ---
+        $enrolledSubjects = DB::table('enrollments')
+            ->join('class_offerings', 'enrollments.class_offering_id', '=', 'class_offerings.id')
+            ->join('subjects', 'class_offerings.subject_id', '=', 'subjects.id')
+            ->join('faculties', 'class_offerings.faculty_id', '=', 'faculties.id')
+            ->join('users as faculty_user', 'faculties.user_id', '=', 'faculty_user.id')
+            ->leftJoin('evaluations', function($join) use ($student) {
+                $join->on('evaluations.class_offering_id', '=', 'class_offerings.id')
+                     ->where('evaluations.student_id', '=', $student->id);
+            })
+            ->select(
+                'class_offerings.id as offering_id',
+                'subjects.code as subject_code',
+                'subjects.name as subject_name',
+                'faculty_user.first_name',
+                'faculty_user.last_name',
+                'faculty_user.profile_picture',
+                'evaluations.id as evaluation_id'
+            )
+            ->where('enrollments.student_id', $student->id)
+            ->get();
+
+        foreach($enrolledSubjects as $subject) {
+            $subject->is_evaluated = !is_null($subject->evaluation_id);
+        }
+
+        // --- 3. CALCULATE PROGRESS ---
+        $totalToEvaluate = $enrolledSubjects->count();
+        $completedCount = $enrolledSubjects->where('is_evaluated', true)->count();
+        $percentage = $totalToEvaluate > 0 ? round(($completedCount / $totalToEvaluate) * 100) : 0;
+
+        // --- 4. GET QUESTIONS ---
+        $criteria = EvaluationCriteriaSection::with('items')->get();
+
+        // --- 5. RETURN VIEW WITH ALL VARIABLES ---
+        return view('student.index', [
+            'studentName' => $student->first_name,
+            'isEvaluationOpen' => $isEvaluationOpen, // <--- THIS WAS MISSING
+            'enrolledSubjects' => $enrolledSubjects,
+            'totalToEvaluate' => $totalToEvaluate,
+            'completedCount' => $completedCount,
+            'percentage' => $percentage,
+            'criteria' => $criteria,
+            'submissionValidation' => session('success') ? true : false
+        ]);
+    }
+
+    // ... (Keep your existing changePassword, store, and logout methods below) ...
+    
     public function changePassword(Request $request)
     {
-        // 1. Validate the inputs
         $request->validate([
             'current_password' => 'required',
             'new_password' => 'required|min:8|confirmed',
         ]);
 
-        // 2. Get the User safely
-        // We use the ID to ensure we get the Eloquent Model, not a generic auth object
-        $user = \App\Models\User::find(Auth::id());
+        $user = User::find(Auth::id());
 
-        // Safety Net: If the session expired, kick them to login instead of crashing
         if (!$user) {
             Auth::logout();
             return redirect()->route('login')->withErrors(['email' => 'Session expired. Please log in again.']);
         }
 
-        // 3. Verify the Old Password
-        // matches your database column: 'password_hash'
         if (!Hash::check($request->current_password, $user->password_hash)) {
             return back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
 
-        // 4. Update the Password
-        // We manually set the hash and save to trigger the update
         $user->password_hash = Hash::make($request->new_password);
         $user->save();
 
-        // 5. Logout and Redirect
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -51,53 +113,48 @@ class StudentsController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validation (Ensure answers are between 1 and 5)
         $request->validate([
-            'faculty_id' => 'required|exists:faculties,id',
-            'answers'    => 'required|array', // Array of [question_id => score]
-            'answers.*'  => 'required|integer|min:1|max:5',
+            'offering_id' => 'required|exists:class_offerings,id',
+            'ratings'     => 'required|array',
+            'ratings.*'   => 'required|integer|min:1|max:5',
         ]);
 
-        // 2. Create the Main Evaluation Record
-        // This creates the row you showed in the screenshot
+        $offering = DB::table('class_offerings')->where('id', $request->offering_id)->first();
+
         $evaluation = Evaluation::create([
-            'student_id'        => auth()->id(), // Assuming logged in student
-            'faculty_id'        => $request->faculty_id,
-            'class_offering_id' => $request->class_offering_id, // If you track this
-            'review_period_id'  => 1, // Current active period ID
+            'student_id'        => Auth::id(),
+            'faculty_id'        => $offering->faculty_id,
+            'class_offering_id' => $request->offering_id,
+            'review_period_id'  => 1, 
+            'comments'          => $request->comments,
             'submitted_at'      => now(),
-            'completed'         => true,
-            'overall_rating'    => 0, // Temporary value, we calculate it below
+            'status'            => 'completed',
+            'overall_rating'    => 0, 
         ]);
 
-        // 3. Save Individual Answers & Calculate Total
         $totalScore = 0;
         $totalQuestions = 0;
 
-        foreach ($request->answers as $criteriaItemId => $score) {
-            // Save the detailed answer (for deep analysis later)
+        foreach ($request->ratings as $criteriaItemId => $score) {
             EvaluationResponse::create([
                 'evaluation_id'    => $evaluation->id,
                 'criteria_item_id' => $criteriaItemId,
-                'score'            => $score,
+                'rating'           => $score,
             ]);
 
             $totalScore += $score;
             $totalQuestions++;
         }
 
-        // 4. THE MAGIC PART: Calculate Average
-        // Example: (5 + 4 + 5) / 3 = 4.66
         $averageRating = $totalQuestions > 0 ? ($totalScore / $totalQuestions) : 0;
 
-        // 5. Save it to the database column you showed in the screenshot
         $evaluation->update([
             'overall_rating' => $averageRating
         ]);
 
         return redirect()->back()->with('success', 'Evaluation submitted successfully!');
     }
-    // Logout Redirect Function
+
     public function logout(Request $request)
     {
         Auth::logout();
