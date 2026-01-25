@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('title', 'Contact Us')
 @section('content')
 <nav class="fixed top-0 left-0 right-0 z-50 px-4 md:px-10 py-2 text-white bg-[#660000]/90 backdrop-blur-md shadow-lg transition-all duration-300">
     <div class="flex items-center justify-between">

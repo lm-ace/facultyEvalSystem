@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Admin Criteria Management')
+
 @section('content')
 
 {{-- NAVBAR --}}
