@@ -2,47 +2,66 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'users';
+
     protected $fillable = [
-        'name',
+        'role',
+        'username',
         'email',
-        'password',
+        'password_hash', // ✅ Match your DB column
+        'is_active',
+        'last_login',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
-        'password',
+        'password_hash', // ✅ Hide the correct column
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    // ✅ IMPORTANT: Tell Laravel to use 'password_hash' for authentication
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
+    // ... relations (student, faculty, admin, activityLogs) ...
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function faculty(): HasOne
+    {
+        return $this->hasOne(Faculty::class);
+    }
+    
+    // helper to get name from child relationships
+    public function getNameAttribute()
+    {
+        if ($this->student) {
+            return $this->student->first_name . ' ' . $this->student->last_name;
+        }
+        if ($this->faculty) {
+            return $this->faculty->first_name . ' ' . $this->faculty->last_name;
+        }
+        return $this->username;
     }
 }
