@@ -10,11 +10,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FacultyCredentialMail;
+use Illuminate\Support\Facades\Log; // <--- 1. IMPORT THIS
 
 class FacultyController extends Controller
 {
     public function store(Request $request)
     {
+        // 1. Log the attempt
+        Log::info("Admin is registering a new faculty member. Input: " . json_encode($request->only('faculty_code', 'first_name', 'last_name', 'email')));
+
         $validated = $request->validate([
             'faculty_code' => 'required|unique:faculties,faculty_code|unique:users,username',
             'first_name'   => 'required|string|max:100',
@@ -59,22 +65,31 @@ class FacultyController extends Controller
             // 4. Sync Subjects
             $faculty->subjects()->sync($request->input('subject_ids', []));
 
+            // Email credentials
+            Mail::to($validated['email'])->send(new FacultyCredentialMail($faculty, $generatedPassword));
+
+            // 2. Log Success
+            Log::notice("SUCCESS: Faculty Registered - {$faculty->last_name}, {$faculty->first_name} ({$faculty->faculty_code})");
+
             DB::commit();
 
-            // Redirect back with the password in the session flash message
             return redirect()->route('admin.departments')
-                ->with('success', "Faculty added! Generated Password: $generatedPassword")
+                ->with('success', "Faculty added! Credentials sent to email: " . $validated['email'])
                 ->with('open_dept_id', $request->department_id)
                 ->with('open_program_id', $request->course_id)
                 ->with('open_tab', 'faculty');
+
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("ERROR: Failed to register faculty. Reason: " . $e->getMessage());
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
     public function update(Request $request, $id)
     {
+        Log::info("Admin is updating Faculty ID: $id");
+
         $faculty = Faculty::findOrFail($id);
 
         $validated = $request->validate([
@@ -90,7 +105,6 @@ class FacultyController extends Controller
         try {
             // 1. Update Picture
             if ($request->hasFile('profile_picture')) {
-                // Delete old if exists and not default
                 if ($faculty->profile_picture && $faculty->profile_picture !== 'default-avatar.png') {
                     Storage::disk('public')->delete($faculty->profile_picture);
                 }
@@ -113,6 +127,9 @@ class FacultyController extends Controller
             // 4. Sync Subjects
             $faculty->subjects()->sync($request->input('subject_ids', []));
 
+            // 3. Log Success
+            Log::notice("SUCCESS: Faculty Updated - {$faculty->last_name}, {$faculty->first_name}");
+
             DB::commit();
 
             return redirect()->route('admin.departments')
@@ -122,36 +139,42 @@ class FacultyController extends Controller
                 ->with('open_tab', 'faculty');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("ERROR: Failed to update faculty. Reason: " . $e->getMessage());
             return back()->with('error', $e->getMessage());
         }
     }
 
     public function destroy($id)
     {
+        Log::info("Admin is deleting Faculty ID: $id");
+
         $faculty = Faculty::findOrFail($id);
         $deptId = $faculty->department_id;
         $userId = $faculty->user_id;
 
+        // Capture data for log before deletion
+        $name = "{$faculty->last_name}, {$faculty->first_name}";
+        $code = $faculty->faculty_code;
+
         DB::beginTransaction();
         try {
-            // 1. Unassign from Classes (Set to NULL/TBA)
             DB::table('class_offerings')
                 ->where('faculty_id', $id)
                 ->update(['faculty_id' => null]);
 
-            // 2. Detach Subjects
             $faculty->subjects()->detach();
 
-            // 3. Delete File
             if ($faculty->profile_picture && $faculty->profile_picture !== 'default-avatar.png') {
                 Storage::disk('public')->delete($faculty->profile_picture);
             }
 
-            // 4. Delete Records
             $faculty->delete();
             if ($userId) {
                 User::where('id', $userId)->delete();
             }
+
+            // 4. Log Success
+            Log::notice("SUCCESS: Faculty Deleted - {$name} ({$code})");
 
             DB::commit();
 
@@ -161,6 +184,7 @@ class FacultyController extends Controller
                 ->with('open_tab', 'faculty');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("ERROR: Failed to delete faculty. Reason: " . $e->getMessage());
             return back()->with('error', $e->getMessage());
         }
     }

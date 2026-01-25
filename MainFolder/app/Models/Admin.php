@@ -25,13 +25,4 @@ class Admin extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function createdCriteriaTemplates(): HasMany
-    {
-        return $this->hasMany(CriteriaTemplate::class, 'created_by');
-    }
-
-    public function auditLogs(): HasMany
-    {
-        return $this->hasMany(AuditLog::class, 'admin_user_id');
-    }
 }

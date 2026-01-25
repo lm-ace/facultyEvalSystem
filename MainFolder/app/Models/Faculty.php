@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany; // <--- 1. ADD THIS IMPORT
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; 
 
 class Faculty extends Model
 {
@@ -22,7 +22,6 @@ class Faculty extends Model
         'department_id'
     ];
 
-    // Auto-load department
     protected $with = ['department'];
 
     public function user()
@@ -37,7 +36,6 @@ class Faculty extends Model
 
     public function subjects(): BelongsToMany
     {
-        // This tells Laravel: "I am related to Subjects via the 'faculty_subject' table"
         return $this->belongsToMany(Subject::class, 'faculty_subject');
     }
     
@@ -51,14 +49,13 @@ class Faculty extends Model
         return $this->hasMany(Evaluation::class);
     }
 
-    // --- 2. ADD THIS MISSING RELATIONSHIP ---
     public function sections(): BelongsToMany
     {
         return $this->belongsToMany(
-            ClassSection::class, // The related model
-            'class_offerings',   // The pivot table acting as the bridge
-            'faculty_id',        // Foreign key for Faculty on the pivot table
-            'class_section_id'   // Foreign key for ClassSection on the pivot table
-        )->distinct();           // distinct() prevents duplicates if they teach multiple subjects to the same section
+            ClassSection::class, 
+            'class_offerings',   
+            'faculty_id',        
+            'class_section_id'   
+        )->distinct();          
     }
 }
