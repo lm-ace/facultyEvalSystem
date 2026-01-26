@@ -50,45 +50,45 @@
 
             <div class="relative bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border-l-8 md:border-l-[10px] border-[#800000] mb-8 overflow-hidden">
                 <div class="relative z-10 pr-0 md:pr-96">
-                    
+
                     <h2 class="text-2xl md:text-4xl font-black text-gray-800 mb-2 md:mb-4 leading-tight">Welcome, {{ $studentName }}!</h2>
 
                     @if($isEvaluationOpen && $activePeriod)
-                        
-                        <div class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4 border border-green-200">
-                            <i class="fa-solid fa-calendar-check"></i>
-                            <span>{{ $activePeriod->semester }} | {{ $activePeriod->academic_year }}</span>
-                        </div>
 
-                        <div class="space-y-3 md:space-y-4 text-gray-600 leading-relaxed text-sm md:text-base max-w-xl">
-                            <p>This evaluation is a critical part of our institutional quality assurance. Your objective feedback helps us maintain high academic standards.</p>
-                            <p>Please complete all sections based on your actual classroom experience this term.</p>
-                            <p class="font-bold text-gray-500 text-xs md:text-sm">Thank you for your participation.</p>
-                        </div>
+                    <div class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4 border border-green-200">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>{{ $activePeriod->semester }} | {{ $activePeriod->academic_year }}</span>
+                    </div>
 
-                        <div class="mt-6 md:mt-8" x-show="!showEvaluation">
-                            <button @click="showEvaluation = true" class="w-full md:w-auto px-8 md:px-12 py-3 md:py-4 bg-[#800000] text-white font-bold rounded-xl md:rounded-2xl shadow-xl hover:bg-[#660000] transition-all transform active:scale-95 flex items-center justify-center gap-3 text-sm md:text-base">
-                                Proceed to Evaluation
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
+                    <div class="space-y-3 md:space-y-4 text-gray-600 leading-relaxed text-sm md:text-base max-w-xl">
+                        <p>This evaluation is a critical part of our institutional quality assurance. Your objective feedback helps us maintain high academic standards.</p>
+                        <p>Please complete all sections based on your actual classroom experience this term.</p>
+                        <p class="font-bold text-gray-500 text-xs md:text-sm">Thank you for your participation.</p>
+                    </div>
+
+                    <div class="mt-6 md:mt-8" x-show="!showEvaluation">
+                        <button @click="showEvaluation = true" class="w-full md:w-auto px-8 md:px-12 py-3 md:py-4 bg-[#800000] text-white font-bold rounded-xl md:rounded-2xl shadow-xl hover:bg-[#660000] transition-all transform active:scale-95 flex items-center justify-center gap-3 text-sm md:text-base">
+                            Proceed to Evaluation
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
 
                     @else
 
-                        <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4 border border-gray-200">
-                            <i class="fa-solid fa-lock"></i>
-                            <span>System Closed</span>
-                        </div>
+                    <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4 border border-gray-200">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>System Closed</span>
+                    </div>
 
-                        <div class="space-y-3 md:space-y-4 text-gray-500 leading-relaxed text-sm md:text-base max-w-xl">
-                            <p class="text-[#800000] font-bold">The faculty evaluation period is currently closed.</p>
-                            <p>You cannot submit evaluations at this time. Please wait for an announcement regarding the schedule for the next academic term.</p>
-                            
-                            <div class="flex items-center gap-2 text-xs font-bold bg-gray-50 p-3 rounded-xl border border-gray-100 w-fit mt-2">
-                                <i class="fa-solid fa-circle-info text-blue-400"></i>
-                                <span>No actions required from you right now.</span>
-                            </div>
+                    <div class="space-y-3 md:space-y-4 text-gray-500 leading-relaxed text-sm md:text-base max-w-xl">
+                        <p class="text-[#800000] font-bold">The faculty evaluation period is currently closed.</p>
+                        <p>You cannot submit evaluations at this time. Please wait for an announcement regarding the schedule for the next academic term.</p>
+
+                        <div class="flex items-center gap-2 text-xs font-bold bg-gray-50 p-3 rounded-xl border border-gray-100 w-fit mt-2">
+                            <i class="fa-solid fa-circle-info text-blue-400"></i>
+                            <span>No actions required from you right now.</span>
                         </div>
+                    </div>
 
                     @endif
 
@@ -157,7 +157,14 @@
                         @endif
 
                         <div class="h-56 md:h-64 overflow-hidden bg-gray-100 relative">
-                            <img src="{{ asset('images/' . $subject->profile_picture) }}" class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105 {{ $subject->is_evaluated ? 'grayscale' : '' }}" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($subject->first_name . ' ' . $subject->last_name) }}&background=random&size=500'">
+                            @if($subject->profile_picture && $subject->profile_picture !== 'default-avatar.png')
+                            <img src="{{ asset('storage/' . $subject->profile_picture) }}" class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105 {{ $subject->is_evaluated ? 'grayscale' : '' }}" onerror="this.style.display='none'; document.getElementById('initials-{{ $subject->offering_id }}').classList.remove('hidden'); document.getElementById('initials-{{ $subject->offering_id }}').classList.add('flex');">
+                            @endif
+
+                            <div id="initials-{{ $subject->offering_id }}" class="{{ ($subject->profile_picture && $subject->profile_picture !== 'default-avatar.png') ? 'hidden' : 'flex' }} 
+                absolute inset-0 w-full h-full bg-[#800000] text-white items-center justify-center font-bold text-4xl {{ $subject->is_evaluated ? 'grayscale' : '' }}">
+                                {{ substr($subject->first_name, 0, 1) }}{{ substr($subject->last_name, 0, 1) }}
+                            </div>
                         </div>
 
                         <div class="bg-[#800000] p-4 flex items-center gap-3 md:gap-4 relative z-10 mt-auto">
@@ -238,12 +245,12 @@
                 </div>
 
                 @php
-                    $icons = [
-                        1 => 'fa-book-open',
-                        2 => 'fa-users-gear',
-                        3 => 'fa-clipboard-check',
-                        4 => 'fa-user-tie'
-                    ];
+                $icons = [
+                1 => 'fa-book-open',
+                2 => 'fa-users-gear',
+                3 => 'fa-clipboard-check',
+                4 => 'fa-user-tie'
+                ];
                 @endphp
 
                 @foreach($criteria as $section)
@@ -269,17 +276,11 @@
                             </div>
 
                             <div class="flex justify-between md:w-[400px] md:px-4 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 md:border-none">
-                                @for($i=1; $i<=5; $i++) 
-                                <label class="flex flex-col items-center gap-1 cursor-pointer group">
+                                @for($i=1; $i<=5; $i++) <label class="flex flex-col items-center gap-1 cursor-pointer group">
                                     <span class="md:hidden text-[9px] font-bold text-gray-400 group-hover:text-[#800000]">{{$i}}</span>
-                                    <input type="radio" 
-                                           name="ratings[{{ $item->id }}]" 
-                                           value="{{ $i }}" 
-                                           x-model="ratings['{{ $item->id }}']" 
-                                           class="w-6 h-6 md:w-5 md:h-5 accent-[#800000] cursor-pointer" 
-                                           required>
-                                </label>
-                                @endfor
+                                    <input type="radio" name="ratings[{{ $item->id }}]" value="{{ $i }}" x-model="ratings['{{ $item->id }}']" class="w-6 h-6 md:w-5 md:h-5 accent-[#800000] cursor-pointer" required>
+                                    </label>
+                                    @endfor
                             </div>
                         </div>
                         @endforeach
@@ -507,8 +508,6 @@
     function executeLogout() {
         document.getElementById('logout-form').submit();
     }
-
-    // --- PASSWORD MODAL FUNCTIONS ---
 
     function showChangePasswordModal() {
         document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');

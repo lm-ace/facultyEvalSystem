@@ -76,7 +76,6 @@ class AdminDepartmentController extends Controller
         try {
             $department = Department::findOrFail($id);
 
-            // Safety Checks
             if ($department->faculties()->count() > 0) {
                 Log::warning("BLOCKED: Admin tried to delete department {$department->code} but it has faculties.");
                 return redirect()->route('admin.departments')->with('error', 'Cannot delete: Faculty members assigned.');

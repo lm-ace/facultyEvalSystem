@@ -21,24 +21,24 @@
 </nav>
 <div class="fixed top-[48px] md:top-[52px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-2 md:px-6">
-        
+
         <div class="grid grid-cols-4 md:flex md:gap-8 py-2">
-            
+
             <a href="{{ route('admin.dashboard') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/dashboard') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-chart-pie text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
                 <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Dashboard</span>
             </a>
-            
+
             <a href="{{ route('admin.departments') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/departments*') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-sitemap text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
                 <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Departments</span>
             </a>
-            
+
             <a href="{{ route('admin.criteria') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/criteria*') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-list-check text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
                 <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Criteria</span>
             </a>
-            
+
             <a href="{{ route('admin.reports') }}" class="group flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left rounded-lg p-2 transition-all {{ Request::is('admin/reports*') ? 'text-[#800000] bg-red-50' : 'text-gray-400 hover:text-[#800000] hover:bg-gray-50' }}">
                 <i class="fa-solid fa-file-contract text-sm md:text-xs md:mr-2 mb-1 md:mb-0 group-hover:scale-110 transition-transform"></i>
                 <span class="text-[9px] md:text-xs font-bold uppercase tracking-tight md:tracking-widest">Reports</span>
@@ -67,16 +67,16 @@
             </div>
             <ul class="list-disc list-inside ml-6">
                 @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
         @endif
 
         <div class="flex flex-col lg:grid lg:grid-cols-4 gap-6 md:gap-8">
-            
+
             <div class="lg:col-span-3 space-y-6">
-                
+
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-4">
                     <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border-l-4 md:border-l-8 border-[#800000] w-full md:w-auto flex-1">
                         <h2 class="text-xl md:text-3xl font-bold text-gray-800 mb-1">Evaluation Criteria</h2>
@@ -100,9 +100,9 @@
                                 {{ $section->section_name }}
                             </h3>
                         </div>
-                        
+
                         <div class="flex items-center bg-black/20 rounded-lg p-1 flex-shrink-0">
-                            <button onclick="showAddQuestionModal({{ $section->id }})" class="hover:bg-white/20 text-white p-1.5 md:p-2 rounded-md transition" title="Add Question">
+                            <button onclick="showAddQuestionModal({{ $section->id }}, '{{ e($section->section_name) }}')" class="hover:bg-white/20 text-white p-1.5 md:p-2 rounded-md transition" title="Add Question">
                                 <i class="fa-solid fa-plus text-[10px] md:text-xs"></i>
                             </button>
                             <div class="w-px h-3 md:h-4 bg-white/20 mx-0.5 md:mx-1"></div>
@@ -240,32 +240,35 @@
 </div>
 
 <div id="addQuestionModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[500px] overflow-hidden transform transition-all relative flex flex-col max-h-[90vh]">
-        <div class="bg-[#E6A600] px-5 py-3 flex justify-between items-center flex-shrink-0">
-            <h3 class="text-[#800000] font-black uppercase text-sm tracking-wider">Add Question</h3>
-            <button onclick="hideModal('addQuestionModal')" class="text-[#800000]/70 hover:text-[#800000] transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[500px] overflow-hidden transform transition-all relative flex flex-col">
+
+        <div class="bg-yellow-500 px-5 py-3 flex justify-between items-center">
+            <h3 class="text-white font-black uppercase text-sm tracking-wider">Add Question</h3>
+            <button onclick="hideModal('addQuestionModal')" class="text-white/80 hover:text-white transition p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
         </div>
-        <div class="p-6 overflow-y-auto custom-scrollbar">
-            <form action="{{ route('admin.criteria.item.store') }}" method="POST">
-                @csrf
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1 mb-1 block">Category</label>
-                        <select name="section_id" id="addQuestionCategorySelect" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold outline-none focus:border-[#E6A600] cursor-pointer" required>
-                            <option value="">Select Category</option>
-                            @foreach($sections as $section)
-                            <option value="{{ $section->id }}">{{ $section->section_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1 mb-1 block">Question Text</label>
-                        <textarea name="question_text" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-medium h-32 focus:border-[#E6A600] outline-none transition-all resize-none" placeholder="Enter the evaluation question here..." required></textarea>
-                    </div>
+
+        <form action="{{ route('admin.criteria.item.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="section_id" id="add-question-section-id">
+
+            <div class="p-6 space-y-4">
+
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    Category: <span id="add-question-section-name" class="text-[#800000]"></span>
                 </div>
-                <button type="submit" class="w-full bg-[#E6A600] text-[#800000] py-3 rounded-xl font-bold text-sm uppercase tracking-widest shadow-md hover:bg-yellow-500 transition-all transform active:scale-[0.98] mt-6">Save Question</button>
-            </form>
-        </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1 mb-1 block">Question Text</label>
+                    <textarea name="question_text" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold focus:border-yellow-500 outline-none transition-all placeholder-gray-300 resize-none" placeholder="Enter the evaluation question here..." required></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold text-sm uppercase tracking-widest shadow-md hover:bg-yellow-600 transition-all transform active:scale-[0.98] mt-2">
+                    Save Question
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -307,7 +310,7 @@
         <div class="text-red-600 text-xs mb-6 bg-red-50 p-3 rounded-xl border border-red-100 font-medium">
             <i class="fa-solid fa-circle-exclamation mr-1"></i> Warning: This will delete ALL questions inside this category.
         </div>
-        
+
         <form id="deleteCategoryForm" method="POST" class="flex space-x-3">
             @csrf
             @method('DELETE')
@@ -343,13 +346,11 @@
         document.getElementById('addCategoryModal').classList.add('flex');
     }
 
-    function showAddQuestionModal(preselectedSectionId = null) {
-        const select = document.getElementById('addQuestionCategorySelect');
-        if (preselectedSectionId) {
-            select.value = preselectedSectionId;
-        } else {
-            select.value = "";
-        }
+    function showAddQuestionModal(sectionId, sectionName) {
+        document.getElementById('add-question-section-id').value = sectionId;
+
+        document.getElementById('add-question-section-name').innerText = sectionName;
+
         document.getElementById('addQuestionModal').classList.remove('hidden');
         document.getElementById('addQuestionModal').classList.add('flex');
     }
@@ -378,15 +379,16 @@
     }
 
     function confirmDelete() {
-        if(confirm('Delete this question?')) {
+        if (confirm('Delete this question?')) {
             document.getElementById('deleteQuestionForm').submit();
         }
     }
-    
-    function showLogoutModal() { 
-        document.getElementById('logoutModal').classList.remove('hidden'); 
+
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.remove('hidden');
         document.getElementById('logoutModal').classList.add('flex');
     }
+
 </script>
 
 <style>
@@ -394,9 +396,13 @@
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
     .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
     }
+
 </style>
 @endsection

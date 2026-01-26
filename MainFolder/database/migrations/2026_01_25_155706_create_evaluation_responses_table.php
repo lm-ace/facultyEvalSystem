@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
        Schema::create('evaluation_responses', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('evaluation_id')->constrained('evaluations')->onDelete('cascade');
-        $table->foreignId('criteria_item_id')->constrained('criteria_items');
-        $table->tinyInteger('score');
-        $table->timestamp('created_at')->useCurrent(); // No updated_at in PDF
-    });
+            $table->id();
+            
+            $table->foreignId('evaluation_id')->constrained('evaluations')->onDelete('cascade');
+        
+            $table->foreignId('criteria_item_id')->constrained('criteria_items')->onDelete('cascade');
+            
+            $table->tinyInteger('score');
+            $table->timestamp('created_at')->useCurrent(); 
+        });
     }
 
     /**

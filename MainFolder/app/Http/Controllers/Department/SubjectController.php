@@ -5,13 +5,12 @@ namespace App\Http\Controllers\Department;
 use App\Http\Controllers\Controller;
 use App\Models\Subject;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; // <--- 1. IMPORT THIS
+use Illuminate\Support\Facades\Log; 
 
 class SubjectController extends Controller
 {
     public function store(Request $request)
     {
-        // 1. Log the attempt
         Log::info("Admin is adding a subject. Input: " . json_encode($request->only('subject_code', 'name')));
 
         $validated = $request->validate([
@@ -25,7 +24,6 @@ class SubjectController extends Controller
 
         $subject = Subject::create($validated);
 
-        // 2. Log Success (Replaces Audit Log)
         Log::notice("SUCCESS: Subject Created - {$subject->subject_code} ({$subject->name})");
 
         return redirect()->route('admin.departments')
@@ -49,7 +47,6 @@ class SubjectController extends Controller
 
         $subject->update($validated);
 
-        // 3. Log Success
         Log::notice("SUCCESS: Subject Updated - Code: {$subject->subject_code}");
 
         return redirect()->route('admin.departments')
@@ -66,13 +63,11 @@ class SubjectController extends Controller
         $deptId = $subject->department_id;
         $courseId = $subject->course_id;
 
-        // Capture data for log before deletion
         $code = $subject->subject_code;
         $name = $subject->name;
 
         $subject->delete();
 
-        // 4. Log Success
         Log::notice("SUCCESS: Subject Deleted - {$code} ({$name})");
 
         return redirect()->route('admin.departments')

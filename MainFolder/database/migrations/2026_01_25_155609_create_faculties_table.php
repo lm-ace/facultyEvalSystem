@@ -22,7 +22,7 @@ return new class extends Migration
         $table->string('email', 255);
         $table->string('profile_picture', 500)->nullable();
         $table->string('contact_no', 30)->nullable();
-        $table->foreignId('department_id')->constrained('departments'); // No cascade in PDF
+        $table->foreignId('department_id')->constrained('departments'); 
         $table->timestamps();
     });
     }

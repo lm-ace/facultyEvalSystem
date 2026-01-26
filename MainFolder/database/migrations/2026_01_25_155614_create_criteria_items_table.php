@@ -18,7 +18,6 @@ return new class extends Migration
         $table->text('question_text');
         $table->tinyInteger('max_score')->default(5);
         $table->integer('position');
-        // No timestamps in PDF
     });
     }
 

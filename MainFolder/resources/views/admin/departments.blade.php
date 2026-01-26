@@ -299,7 +299,6 @@
         document.getElementById('deptTitleName').innerText = name;
         document.getElementById('program-dept-target').innerText = name;
 
-        // Context IDs for hidden inputs
         document.getElementById('add-program-dept-id').value = id;
         document.getElementById('add-faculty-dept-id').value = id;
 

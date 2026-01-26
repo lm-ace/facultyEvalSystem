@@ -12,13 +12,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\FacultyCredentialMail;
-use Illuminate\Support\Facades\Log; // <--- 1. IMPORT THIS
+use Illuminate\Support\Facades\Log; 
 
 class FacultyController extends Controller
 {
     public function store(Request $request)
     {
-        // 1. Log the attempt
         Log::info("Admin is registering a new faculty member. Input: " . json_encode($request->only('faculty_code', 'first_name', 'last_name', 'email')));
 
         $validated = $request->validate([
@@ -34,13 +33,10 @@ class FacultyController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Handle File Upload
             $avatarPath = 'default-avatar.png';
             if ($request->hasFile('profile_picture')) {
                 $avatarPath = $request->file('profile_picture')->store('faculties', 'public');
             }
-
-            // 2. Create User Credentials
             $generatedPassword = Str::random(12);
             $user = User::create([
                 'role'          => 'faculty',
@@ -50,7 +46,6 @@ class FacultyController extends Controller
                 'is_active'     => true
             ]);
 
-            // 3. Create Faculty Profile
             $faculty = Faculty::create([
                 'user_id'         => $user->id,
                 'faculty_code'    => $validated['faculty_code'],
@@ -62,13 +57,10 @@ class FacultyController extends Controller
                 'profile_picture' => $avatarPath
             ]);
 
-            // 4. Sync Subjects
             $faculty->subjects()->sync($request->input('subject_ids', []));
 
-            // Email credentials
             Mail::to($validated['email'])->send(new FacultyCredentialMail($faculty, $generatedPassword));
 
-            // 2. Log Success
             Log::notice("SUCCESS: Faculty Registered - {$faculty->last_name}, {$faculty->first_name} ({$faculty->faculty_code})");
 
             DB::commit();
@@ -103,7 +95,6 @@ class FacultyController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Update Picture
             if ($request->hasFile('profile_picture')) {
                 if ($faculty->profile_picture && $faculty->profile_picture !== 'default-avatar.png') {
                     Storage::disk('public')->delete($faculty->profile_picture);
@@ -111,7 +102,6 @@ class FacultyController extends Controller
                 $faculty->profile_picture = $request->file('profile_picture')->store('faculties', 'public');
             }
 
-            // 2. Update Details
             $faculty->update([
                 'first_name' => $validated['first_name'],
                 'last_name'  => $validated['last_name'],
@@ -119,15 +109,12 @@ class FacultyController extends Controller
                 'contact_no' => $request->contact_no
             ]);
 
-            // 3. Update User Email
             if ($faculty->user) {
                 $faculty->user->update(['email' => $validated['email']]);
             }
 
-            // 4. Sync Subjects
             $faculty->subjects()->sync($request->input('subject_ids', []));
 
-            // 3. Log Success
             Log::notice("SUCCESS: Faculty Updated - {$faculty->last_name}, {$faculty->first_name}");
 
             DB::commit();
@@ -152,7 +139,6 @@ class FacultyController extends Controller
         $deptId = $faculty->department_id;
         $userId = $faculty->user_id;
 
-        // Capture data for log before deletion
         $name = "{$faculty->last_name}, {$faculty->first_name}";
         $code = $faculty->faculty_code;
 
@@ -173,7 +159,6 @@ class FacultyController extends Controller
                 User::where('id', $userId)->delete();
             }
 
-            // 4. Log Success
             Log::notice("SUCCESS: Faculty Deleted - {$name} ({$code})");
 
             DB::commit();
