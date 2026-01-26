@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evaluation_responses', function (Blueprint $table) {
+       Schema::create('evaluation_responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('evaluation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('criteria_item_id')->constrained('criteria_items');
+            
+            $table->foreignId('evaluation_id')->constrained('evaluations')->onDelete('cascade');
+        
+            $table->foreignId('criteria_item_id')->constrained('criteria_items')->onDelete('cascade');
+            
             $table->tinyInteger('score');
-            $table->text('comment')->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('created_at')->useCurrent(); 
         });
     }
 

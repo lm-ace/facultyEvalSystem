@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('system_ratings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('review_period_id')->constrained('review_periods');
-            $table->tinyInteger('rating');
-            $table->text('feedback_text')->nullable();
-            $table->timestamp('created_at')->useCurrent();
-        });
+        $table->id();
+        $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+        $table->foreignId('review_period_id')->constrained('review_periods');
+        $table->tinyInteger('rating');
+        $table->text('feedback_text')->nullable();
+        $table->timestamp('created_at')->useCurrent();
+    });
     }
 
     /**

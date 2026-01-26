@@ -5,15 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Department;
+use Illuminate\Support\Facades\Log; 
 
 class AdminDepartmentController extends Controller
 {
-    // =========================================================================
-    // MAIN VIEW (The only thing this controller needs to load)
-    // =========================================================================
     public function index()
     {
-        // We load all the relationships here so the Drill-Down UI works instantly
         $departments = Department::with([
             'courses.subjects.faculties',
             'courses.classSections.students',
@@ -24,49 +21,80 @@ class AdminDepartmentController extends Controller
         return view('admin.departments', compact('departments'));
     }
 
-    // =========================================================================
-    // DEPARTMENT MANAGEMENT (Keep this here for now)
-    // =========================================================================
-
     public function storeDepartment(Request $request)
     {
+        Log::info('=================>>> STARTING DEPARTMENT CREATION');
+        Log::info('Admin Input: ', $request->all());
+
         $validated = $request->validate([
             'code' => 'required|unique:departments,code|max:10',
             'name' => 'required|max:255'
         ]);
 
-        Department::create($validated);
+        try {
+            $department = Department::create($validated);
 
-        return redirect()->route('admin.departments')->with('success', 'Department added!');
+            Log::notice("SUCCESS: Created Department - {$department->code} ({$department->name})");
+
+            return redirect()->route('admin.departments')->with('success', 'Department added!');
+
+        } catch (\Exception $e) {
+            Log::error("ERROR: Failed to create department. Reason: " . $e->getMessage());
+            return back()->with('error', 'Error creating department.');
+        }
     }
 
     public function updateDepartment(Request $request, $id)
     {
+        Log::info("=================>>> STARTING DEPARTMENT UPDATE (ID: $id)");
+
         $validated = $request->validate([
             'code' => 'required|max:10|unique:departments,code,' . $id,
             'name' => 'required|max:255'
         ]);
 
-        $department = Department::findOrFail($id);
-        $department->update($validated);
+        try {
+            $department = Department::findOrFail($id);
+            $oldCode = $department->code; 
+            
+            $department->update($validated);
 
-        return redirect()->route('admin.departments')->with('success', 'Department updated successfully!');
+            Log::notice("SUCCESS: Updated Department. Old Code: $oldCode -> New Code: {$department->code}");
+
+            return redirect()->route('admin.departments')->with('success', 'Department updated successfully!');
+
+        } catch (\Exception $e) {
+            Log::error("ERROR: Failed to update department ID $id. Reason: " . $e->getMessage());
+            return back()->with('error', 'Error updating department.');
+        }
     }
 
     public function departmentDestroy($id)
     {
-        $department = Department::findOrFail($id);
+        Log::info("=================>>> STARTING DEPARTMENT DELETION (ID: $id)");
 
-        // Safety Checks
-        if ($department->faculties()->count() > 0) {
-            return redirect()->route('admin.departments')->with('error', 'Cannot delete: Faculty members assigned.');
+        try {
+            $department = Department::findOrFail($id);
+
+            if ($department->faculties()->count() > 0) {
+                Log::warning("BLOCKED: Admin tried to delete department {$department->code} but it has faculties.");
+                return redirect()->route('admin.departments')->with('error', 'Cannot delete: Faculty members assigned.');
+            }
+            if ($department->courses()->count() > 0) {
+                Log::warning("BLOCKED: Admin tried to delete department {$department->code} but it has courses.");
+                return redirect()->route('admin.departments')->with('error', 'Cannot delete: Courses assigned.');
+            }
+
+            $code = $department->code;
+            $department->delete();
+
+            Log::notice("SUCCESS: Deleted Department - $code");
+
+            return redirect()->route('admin.departments')->with('success', 'Department deleted!');
+
+        } catch (\Exception $e) {
+            Log::error("ERROR: Failed to delete department ID $id. Reason: " . $e->getMessage());
+            return back()->with('error', 'Error deleting department.');
         }
-        if ($department->courses()->count() > 0) {
-            return redirect()->route('admin.departments')->with('error', 'Cannot delete: Courses assigned.');
-        }
-
-        $department->delete();
-
-        return redirect()->route('admin.departments')->with('success', 'Department deleted!');
     }
 }

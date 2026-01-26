@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('criteria_sections', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('template_id')->constrained('criteria_templates')->cascadeOnDelete();
-            $table->integer('section_number');
-            $table->string('section_name', 200);
-            $table->integer('position');
-        });
+        $table->id();
+        $table->integer('section_number');
+        $table->string('section_name', 200);
+        $table->integer('position');
+    });
     }
 
     /**

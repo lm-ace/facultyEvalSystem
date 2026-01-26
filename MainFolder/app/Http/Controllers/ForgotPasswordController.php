@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class ForgotPasswordController extends Controller
 {
-    // 1. Send OTP
     public function sendOtp(Request $request) {
         $request->validate(['email' => 'required|email']);
 
@@ -22,10 +21,8 @@ class ForgotPasswordController extends Controller
             return response()->json(['success' => false, 'message' => 'Email not found in our records.']);
         }
 
-        // Generate 6 digit OTP
         $otp = rand(100000, 999999);
 
-        // Store OTP in password_reset_tokens table
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $request->email],
             [
@@ -34,7 +31,6 @@ class ForgotPasswordController extends Controller
             ]
         );
 
-        // SEND EMAIL
         try {
             Mail::raw("Your EduRate verification code is: $otp", function ($message) use ($user) {
                 $message->to($user->email)
@@ -47,7 +43,6 @@ class ForgotPasswordController extends Controller
         }
     }
 
-    // 2. Verify OTP
     public function verifyOtp(Request $request) {
         $record = DB::table('password_reset_tokens')
             ->where('email', $request->email)
@@ -61,7 +56,6 @@ class ForgotPasswordController extends Controller
         return response()->json(['success' => false, 'message' => 'Invalid OTP']);
     }
 
-    // 3. Reset Password 
     public function resetPassword(Request $request) {
         $user = User::where('email', $request->email)->first();
         

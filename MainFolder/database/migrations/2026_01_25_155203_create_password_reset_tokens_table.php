@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 200);
-            $table->string('code', 32)->unique();
-            $table->timestamps();
-        });
+      Schema::create('password_reset_tokens', function (Blueprint $table) {
+        $table->string('email', 255)->primary();
+        $table->string('token', 255);
+        $table->timestamp('created_at')->nullable();
+    });
     }
 
     /**
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deparments');
+        Schema::dropIfExists('password_reset_tokens');
     }
 };
