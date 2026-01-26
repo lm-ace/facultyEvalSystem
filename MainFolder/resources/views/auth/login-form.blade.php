@@ -4,7 +4,6 @@
 
 @section('content')
 @php
-    // Define dynamic labels based on the role
     $identifierLabel = 'Username';
     $placeholder = 'Enter your username';
 
@@ -219,19 +218,16 @@
 </div>
 
 <script>
-    // 1. CLEAR FORM ON PAGE LOAD / BACK BUTTON
-    // This event fires when the page is loaded, even from the bfcache (back-forward cache)
     window.addEventListener('pageshow', function(event) {
         var form = document.getElementById('loginForm');
         if (form) {
             form.reset(); 
         }
-        // Force clear password specifically for extra security
+
         var passInput = document.querySelector('input[name="password"]');
         if(passInput) passInput.value = "";
     });
 
-    // Toggle Password Visibility (Login Form)
     function togglePasswordVisibility() {
         const passwordField = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -247,7 +243,6 @@
         }
     }
 
-    // Mobile Menu Toggle
     document.addEventListener('DOMContentLoaded', function() {
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
@@ -259,8 +254,6 @@
         }
     });
 
-    // ============= FORGOT PASSWORD LOGIC =============
-
     let currentEmail = '';
 
     function openForgotModal() {
@@ -271,12 +264,12 @@
         document.getElementById('forgotEmailModal').classList.add('hidden');
         document.getElementById('forgotOtpModal').classList.add('hidden');
         document.getElementById('forgotNewPassModal').classList.add('hidden');
-        // Reset Inputs to clean state
+
         document.getElementById('resetEmail').value = '';
         document.querySelectorAll('.otp-input').forEach(i => i.value = '');
         document.getElementById('newPassword').value = '';
         document.getElementById('confirmPassword').value = '';
-        // Hide errors
+
         document.getElementById('emailError').classList.add('hidden');
         document.getElementById('otpError').classList.add('hidden');
         document.getElementById('passError').classList.add('hidden');
@@ -287,7 +280,7 @@
         document.getElementById('forgotEmailModal').classList.remove('hidden');
     }
 
-    // Auto-focus logic for OTP inputs
+
     function moveFocus(element) {
         if (element.value.length >= 1) {
             const next = element.nextElementSibling;
@@ -297,7 +290,7 @@
         }
     }
 
-    // Handle backspace in OTP inputs
+
     function handleBackspace(event, element) {
         if (event.key === 'Backspace' && element.value.length === 0) {
             const prev = element.previousElementSibling;
@@ -307,8 +300,7 @@
         }
     }
 
-    // ---- AJAX FUNCTIONS ----
-    // NOTE: You must create the backend routes for these to work.
+
 
     async function sendOtp() {
         const email = document.getElementById('resetEmail').value;
@@ -321,14 +313,12 @@
             return;
         }
 
-        // Loading State
         btn.disabled = true;
         const originalText = btn.innerText;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Sending...';
         errorDiv.classList.add('hidden');
 
         try {
-            // REQUEST TO BACKEND
             const response = await fetch("{{ route('forgot.sendOtp') }}", { 
                 method: 'POST',
                 headers: {
@@ -345,7 +335,6 @@
                 document.getElementById('displayEmail').innerText = email;
                 document.getElementById('forgotEmailModal').classList.add('hidden');
                 document.getElementById('forgotOtpModal').classList.remove('hidden');
-                // Focus first OTP input
                 setTimeout(() => document.querySelector('.otp-input').focus(), 100);
             } else {
                 errorDiv.textContent = data.message || "Email not found in our records.";
@@ -445,8 +434,6 @@
             if (data.success) {
                 alert("Success! Your password has been changed. You can now login.");
                 closeForgotModal();
-                // Optionally fill the username field for convenience
-                // document.querySelector('input[name="username"]').value = ... (if using email as username)
             } else {
                 errorDiv.textContent = data.message || "Failed to reset password.";
                 errorDiv.classList.remove('hidden');

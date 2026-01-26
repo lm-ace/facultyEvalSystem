@@ -16,7 +16,6 @@ return new class extends Migration
         $table->integer('section_number');
         $table->string('section_name', 200);
         $table->integer('position');
-        // PDF shows no timestamps for this table
     });
     }
 

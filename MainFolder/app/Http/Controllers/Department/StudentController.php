@@ -13,13 +13,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\StudentCredentialMail;
-use Illuminate\Support\Facades\Log; // <--- 1. IMPORT THIS
+use Illuminate\Support\Facades\Log; 
 
 class StudentController extends Controller
 {
     public function store(Request $request)
     {
-        // 1. Log the attempt
         Log::info("Admin is registering a new student. Input: " . json_encode($request->only('student_number', 'email', 'first_name', 'last_name')));
 
         $validated = $request->validate([
@@ -28,13 +27,12 @@ class StudentController extends Controller
             'last_name'      => 'required|string|max:100',
             'email'          => 'required|email|unique:users,email',
             'section_id'     => 'required|exists:class_sections,id',
-            'department_id'  => 'required', // Needed for redirection
-            'course_id'      => 'required'  // Needed for redirection
+            'department_id'  => 'required', 
+            'course_id'      => 'required' 
         ]);
 
         DB::beginTransaction();
         try {
-            // 1. Generate Credentials
             $generatedPassword = Str::random(12);
             $user = User::create([
                 'role'          => 'student',
@@ -44,10 +42,8 @@ class StudentController extends Controller
                 'is_active'     => true
             ]);
 
-            // 2. Fetch Section details for "block_section"
             $section = ClassSection::findOrFail($request->section_id);
 
-            // 3. Create Student Profile
             $student = Student::create([
                 'user_id'        => $user->id,
                 'student_number' => $validated['student_number'],
@@ -62,17 +58,14 @@ class StudentController extends Controller
                 'section_id'     => $validated['section_id']
             ]);
 
-            // 4. Create Enrollment Record
             Enrollment::create([
                 'student_id'       => $student->id,
                 'class_section_id' => $validated['section_id'],
                 'enrolled_at'      => now(),
             ]);
 
-            // 5. Send Email
             Mail::to($validated['email'])->send(new StudentCredentialMail($student, $generatedPassword));
 
-            // 2. Log Success (Replaces Audit Log)
             Log::notice("SUCCESS: Student Registered - {$student->last_name}, {$student->first_name} ({$student->student_number})");
 
             DB::commit();
@@ -85,7 +78,7 @@ class StudentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("ERROR: Failed to register student. Reason: " . $e->getMessage()); // Log the error too
+            Log::error("ERROR: Failed to register student. Reason: " . $e->getMessage()); 
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
@@ -108,7 +101,6 @@ class StudentController extends Controller
             $oldSectionId = $student->section_id;
             $newSectionId = $validated['section_id'];
 
-            // 1. Update Profile
             $student->update([
                 'first_name'  => $validated['first_name'],
                 'last_name'   => $validated['last_name'],
@@ -120,12 +112,10 @@ class StudentController extends Controller
                 'section_id'  => $newSectionId
             ]);
 
-            // 2. Update User Email (Login credentials)
             if ($student->user) {
                 $student->user->update(['email' => $validated['email']]);
             }
 
-            // 3. New Enrollment if section changed
             if ($oldSectionId != $newSectionId) {
                 Enrollment::create([
                     'student_id'       => $student->id,
@@ -134,7 +124,6 @@ class StudentController extends Controller
                 ]);
             }
 
-            // 3. Log Success
             Log::notice("SUCCESS: Student Updated - {$student->student_number}");
 
             DB::commit();
@@ -158,28 +147,23 @@ class StudentController extends Controller
 
         $student = Student::findOrFail($id);
         
-        // Retrieve context for redirect before deleting
         $section = ClassSection::with('course')->find($student->section_id);
         $courseId = $section ? $section->course_id : null;
         $deptId = $section ? $section->course->department_id : null;
         
         $userId = $student->user_id;
 
-        // Capture data for log before deletion
         $name = "{$student->last_name}, {$student->first_name}";
         $number = $student->student_number;
 
         DB::beginTransaction();
         try {
-            // Delete student
             $student->delete();
             
-            // Delete associated User account
             if ($userId) {
                 User::where('id', $userId)->delete();
             }
 
-            // 4. Log Success
             Log::notice("SUCCESS: Student Deleted - {$name} ({$number})");
 
             DB::commit();

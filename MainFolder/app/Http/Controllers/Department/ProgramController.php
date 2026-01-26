@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Department;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; // <--- 1. IMPORT THIS
+use Illuminate\Support\Facades\Log;
 
 class ProgramController extends Controller
 {
@@ -21,7 +21,6 @@ class ProgramController extends Controller
 
         $program = Course::create($validated);
 
-        // 2. Log Success
         Log::notice("SUCCESS: Program Created - {$program->code} ({$program->name})");
 
         return redirect()->route('admin.departments')
@@ -45,7 +44,6 @@ class ProgramController extends Controller
             'name' => $request->name
         ]);
 
-        // 3. Log Success
         Log::notice("SUCCESS: Program Updated - {$course->code}");
 
         return redirect()->route('admin.departments')
@@ -60,20 +58,17 @@ class ProgramController extends Controller
         $course = Course::findOrFail($id);
         $deptId = $course->department_id; 
 
-        // Safety check
         if($course->subjects()->count() > 0) {
              Log::warning("BLOCKED: Admin tried to delete program {$course->code} but it has subjects.");
              return back()->with('error', 'Cannot delete: Program has subjects assigned.')
                           ->with('open_dept_id', $deptId);
         }
 
-        // Capture data for log before deleting so we know what was removed
         $code = $course->code;
         $name = $course->name;
 
         $course->delete();
 
-        // 4. Log Success
         Log::notice("SUCCESS: Program Deleted - {$code} ({$name})");
 
         return redirect()->route('admin.departments')

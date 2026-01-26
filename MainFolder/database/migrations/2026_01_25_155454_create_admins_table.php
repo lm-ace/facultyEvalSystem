@@ -17,7 +17,7 @@ return new class extends Migration
         $table->string('first_name', 100);
         $table->string('last_name', 100);
         $table->string('role_label', 50)->nullable();
-        $table->timestamp('created_at')->useCurrent(); // Only created_at in PDF
+        $table->timestamp('created_at')->useCurrent(); 
     });
     }
 

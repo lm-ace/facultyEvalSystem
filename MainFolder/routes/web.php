@@ -14,6 +14,7 @@ use App\Http\Controllers\Department\SectionController;
 use App\Http\Controllers\Department\StudentController;
 use App\Http\Controllers\Department\SubjectController;
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\facultyController as ControllersFacultyController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ReviewPeriodController;
@@ -112,15 +113,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/review-periods/{id}', [ReviewPeriodController::class, 'update'])->name('review_periods.update');
     Route::delete('/review-periods/{id}', [ReviewPeriodController::class, 'destroy'])->name('review_periods.destroy');
     Route::post('/review-periods/close', [ReviewPeriodController::class, 'close'])->name('review_periods.close');
-
-
 });
 
 
 // FACULTY ROUTES
 Route::middleware(['auth'])->prefix('faculty')->name('faculty.')->group(function () {
-    Route::get('/dashboard', [FacultyController::class, 'show'])->name('dashboard');
-    Route::post('/changePassword', [FacultyController::class, 'changePassword'])->name('changePassword');
+    Route::get('/dashboard', [ControllersFacultyController::class, 'show'])->name('dashboard');
+    Route::post('/changePassword', [ControllersFacultyController::class, 'changePassword'])->name('changePassword');
 });
 
 // STUDENT ROUTES

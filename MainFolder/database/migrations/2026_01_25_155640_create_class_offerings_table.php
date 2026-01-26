@@ -16,7 +16,7 @@ return new class extends Migration
         $table->foreignId('class_section_id')->constrained('class_sections')->onDelete('cascade');
         $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
         $table->foreignId('faculty_id')->nullable()->constrained('faculties')->onDelete('cascade');
-        $table->foreignId('semester_id')->constrained('review_periods'); // Points to review_periods
+        $table->foreignId('semester_id')->constrained('review_periods');
         $table->timestamps();
 
         $table->unique(['class_section_id', 'subject_id', 'semester_id'], 'offering_unique_idx');

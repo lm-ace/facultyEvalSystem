@@ -13,7 +13,7 @@ return new class extends Migration
         $table->string('role', 16);
         $table->string('username', 100)->nullable()->unique();
         $table->string('email', 255)->nullable()->unique();
-        $table->string('password_hash', 255); // Custom name per your PDF
+        $table->string('password_hash', 255); 
         $table->tinyInteger('is_active')->default(1);
         $table->timestamp('last_login')->nullable();
         $table->timestamps();
