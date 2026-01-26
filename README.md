@@ -1,11 +1,8 @@
-## Database Configuration
+EduRate @ 2026 
 
-Create a `.env` file in the project root and add the following:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=mainline.proxy.rlwy.net
-DB_PORT=42607
-DB_DATABASE=railway
-DB_USERNAME=root
-DB_PASSWORD=AnEAAIfZYZxYdXbEmBpNugynjmRieYvS
+Contributors:
+1. Calapatia, Raziela
+2. Taroma, Yra
+3. Delda, Zellphie
+4. Sebido, Jermhaine
+5. Aceitunas, Leo Miguel 
