@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "vercel-build": "cd MainFolder && composer install --no-dev --optimize-autoloader"
+    "build": "cd MainFolder && composer install --no-dev --optimize-autoloader"
   }
 }
