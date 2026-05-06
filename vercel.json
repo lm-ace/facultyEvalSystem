@@ -6,11 +6,14 @@
   "routes": [
     { "src": "/(.*)", "dest": "/api/index.php" }
   ],
+  "buildCommand": "cd MainFolder && composer install --no-dev --optimize-autoloader && php artisan config:cache --no-interaction || true",
   "env": {
     "APP_ENV": "production",
-    "APP_DEBUG": "true",
+    "APP_DEBUG": "false",
+    "APP_KEY": "your-app-key-here",
     "VIEW_COMPILED_PATH": "/tmp",
     "CACHE_DRIVER": "array",
-    "SESSION_DRIVER": "cookie"
+    "SESSION_DRIVER": "cookie",
+    "LOG_CHANNEL": "stderr"
   }
 }
